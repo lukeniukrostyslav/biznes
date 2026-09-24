@@ -50,6 +50,58 @@ function validateStore(input) {
   const findById = (collection, id) =>
     (Array.isArray(source[collection]) ? source[collection] : []).find(item => item.id === id);
 
+  const seenIds = new Set();
+  for (const collection of COLLECTIONS) {
+    const records = source[collection];
+    if (!Array.isArray(records)) {
+      errors.push(`${collection} must be an array`);
+      continue;
+    }
+    for (const record of records) {
+      if (!record || typeof record !== 'object' || Array.isArray(record)) {
+        errors.push(`${collection} contains a non-object record`);
+        continue;
+      }
+      if (!record.id || typeof record.id !== 'string') {
+        errors.push(`${collection} contains a record without a valid id`);
+      } else {
+        const key = `${collection}:${record.id}`;
+        if (seenIds.has(key)) errors.push(`duplicate id: ${key}`);
+        seenIds.add(key);
+      }
+    }
+  }
+
+  const validateMoneyField = (collection, field) => {
+    for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
+      if (record?.[field] == null || record[field] === '') continue;
+      const value = Number(record[field]);
+      if (!Number.isFinite(value) || value < 0) {
+        errors.push(`${collection}.${record.id || '<unknown>'}.${field} must be a finite non-negative number`);
+      }
+    }
+  };
+
+  for (const [collection, field] of [
+    ['leads', 'value'], ['proposals', 'subtotal'], ['proposals', 'tax'], ['proposals', 'total'],
+    ['projects', 'revenue'], ['projects', 'estimatedCosts'], ['projects', 'actualCosts'],
+    ['invoices', 'amount'], ['invoices', 'value'], ['payments', 'amount'], ['expenses', 'amount']
+  ]) validateMoneyField(collection, field);
+
+  for (const invoice of Array.isArray(source.invoices) ? source.invoices : []) {
+    if (!Array.isArray(invoice.lineItems)) continue;
+    for (const item of invoice.lineItems) {
+      if (!item || typeof item !== 'object') {
+        errors.push(`invoices.${invoice.id || '<unknown>'}.lineItems contains a non-object item`);
+        continue;
+      }
+      const quantity = Number(item.quantity ?? 0);
+      const unitPrice = Number(item.unitPrice ?? 0);
+      if (!Number.isFinite(quantity) || quantity < 0) errors.push(`invoices.${invoice.id || '<unknown>'}.lineItems.quantity must be finite and non-negative`);
+      if (!Number.isFinite(unitPrice) || unitPrice < 0) errors.push(`invoices.${invoice.id || '<unknown>'}.lineItems.unitPrice must be finite and non-negative`);
+    }
+  }
+
   for (const collection of COLLECTIONS) {
     for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
       for (const [field, target] of Object.entries(RELATION_FIELDS[collection] || {})) {
