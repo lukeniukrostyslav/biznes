@@ -26,10 +26,10 @@
 <div id="dashboardScreen" class="screen active">
 <div class="heading"><div><h1 id="greeting">Good morning</h1><p id="subtitle">Here’s what’s happening with your business today.</p></div><button class="period">This month ▾</button></div>
 <div class="kpis">
-<div class="card kpi"><div class="kpi-top"><span class="muted">Revenue</span><span class="icon">↗</span></div><h3>$48,250</h3><span class="delta">↑ 12% <span class="muted">vs. last month</span></span></div>
-<div class="card kpi"><div class="kpi-top"><span class="muted">Outstanding</span><span class="icon">▣</span></div><h3>$8,420</h3><span class="delta danger">↓ 8% <span class="muted">vs. last month</span></span></div>
-<div class="card kpi"><div class="kpi-top"><span class="muted">Pipeline</span><span class="icon">◆</span></div><h3>$31,600</h3><span class="delta">↑ 24% <span class="muted">vs. last month</span></span></div>
-<div class="card kpi"><div class="kpi-top"><span class="muted">Profit</span><span class="icon">◔</span></div><h3>$22,180</h3><span class="delta">↑ 18% <span class="muted">vs. last month</span></span></div>
+<div class="card kpi"><div class="kpi-top"><span class="muted">Revenue</span><span class="icon">↗</span></div><h3 id="metricRevenue">$0</h3><span class="delta">↑ 12% <span class="muted">vs. last month</span></span></div>
+<div class="card kpi"><div class="kpi-top"><span class="muted">Outstanding</span><span class="icon">▣</span></div><h3 id="metricOutstanding">$0</h3><span class="delta danger">↓ 8% <span class="muted">vs. last month</span></span></div>
+<div class="card kpi"><div class="kpi-top"><span class="muted">Pipeline</span><span class="icon">◆</span></div><h3 id="metricPipeline">$0</h3><span class="delta">↑ 24% <span class="muted">vs. last month</span></span></div>
+<div class="card kpi"><div class="kpi-top"><span class="muted">Profit</span><span class="icon">◔</span></div><h3 id="metricProfit">$0</h3><span class="delta">↑ 18% <span class="muted">vs. last month</span></span></div>
 </div>
 <div class="grid">
 <div class="card wide"><div class="card-title"><h2>Revenue & Profit</h2><span class="muted">This year ▾</span></div><div class="chart" id="chart"></div></div>
@@ -122,6 +122,23 @@ function toast(message){const el=document.getElementById('toast');el.textContent
 function addRecord(type,record){
   businessStore=saveStore({...businessStore,[type]:[...(businessStore[type]||[]),{id:uid(type.slice(0,-1)),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),...record}]});
   toast('Запись сохранена локально');
+  refreshDashboardMetrics();
+}
+function money(value){
+  return new Intl.NumberFormat(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(value)||0);
+}
+function refreshDashboardMetrics(){
+  const invoices=businessStore.invoices||[], payments=businessStore.payments||[], leads=businessStore.leads||[], expenses=businessStore.expenses||[];
+  const paid=payments.reduce((sum,x)=>sum+Number(x.amount||x.total||0),0);
+  const invoiced=invoices.reduce((sum,x)=>sum+Number(x.total||x.amount||x.value||0),0);
+  const pipeline=leads.reduce((sum,x)=>sum+Number(x.value||x.amount||0),0);
+  const costs=expenses.reduce((sum,x)=>sum+Number(x.amount||x.total||0),0);
+  const outstanding=Math.max(0,invoiced-paid);
+  const profit=paid-costs;
+  document.getElementById('metricRevenue').textContent=money(paid);
+  document.getElementById('metricOutstanding').textContent=money(outstanding);
+  document.getElementById('metricPipeline').textContent=money(pipeline);
+  document.getElementById('metricProfit').textContent=money(profit);
 }
 function exportBusinessData(){
   const blob=new Blob([JSON.stringify(businessStore,null,2)],{type:'application/json'});
@@ -137,6 +154,7 @@ function importBusinessData(file){
   }catch(e){toast('Ошибка импорта');}};
   reader.readAsText(file);
 }
+refreshDashboardMetrics();
 const saved=localStorage.getItem('business-os-lang')||'en';document.getElementById('lang').value=saved;render(saved);document.getElementById('lang').addEventListener('change',e=>{localStorage.setItem('business-os-lang',e.target.value);render(e.target.value)});
 document.getElementById('exportData').addEventListener('click',exportBusinessData);
 document.getElementById('importData').addEventListener('click',()=>document.getElementById('importDataInput').click());
