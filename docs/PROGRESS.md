@@ -456,3 +456,10 @@ Dashboard больше не использует фиктивные финанс
 Усилена validateStore: проверяются обязательные ID, дубли ID внутри коллекций, типы записей, основные неотрицательные денежные поля и quantity/unitPrice invoice line items. Добавлен regression test. Полный npm test в текущей execution environment не запускался из-за отсутствия сетевого доступа для клонирования репозитория, поэтому **B07 остаётся 89%** до фактической test verification.
 
 Checkpoint: `docs/B07.7_PERSISTENCE_VALIDATION.md`.
+
+
+## B13 — localization/data re-render checkpoint — 2026-09-24
+
+Исправлен важный UI consistency edge case: после переключения языка Dashboard повторно строится из local-first данных; Project Profitability headers локализуются; dynamic status badges используют текущий язык. Новых бизнес-функций не добавлялось. Browser/mobile visual QA и полный npm test execution ещё не выполнены, поэтому проценты не повышаются.
+
+Commits: `f754e10ad8b1896be22e11611c715a2915938fe6`, `7a1b1d7cdca74c8d2fc59b213f5aff6547d83266`, checkpoint `80a9bea0e7ee98bd79f5c70e1da8a1a2b3780250`.
