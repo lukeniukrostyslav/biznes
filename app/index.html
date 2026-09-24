@@ -36,7 +36,7 @@
 <div class="card wide"><div class="card-title"><h2 data-ui="cashflowOverview">Cashflow Overview</h2><span class="muted" data-ui="thisYearPlain">This year</span></div><div class="cash"><div><div class="metric"><span data-ui="totalIncome">Total Income</span><strong id="dashIncome">€0</strong></div><div class="meter"><div class="fill" id="dashIncomeFill" style="width:0%"></div></div></div><div><div class="metric"><span data-ui="totalExpenses">Total Expenses</span><strong id="dashExpenses">€0</strong></div><div class="meter"><div class="fill" id="dashExpensesFill" style="width:0%"></div></div></div><div><div class="metric"><span data-ui="netProfit">Net Profit</span><strong id="dashNetProfit">€0</strong></div><div class="meter"><div class="fill" id="dashProfitFill" style="width:0%"></div></div></div></div></div>
 </div>
 <div class="lower">
-<div class="card wide"><div class="card-title"><h2 data-ui="followupsToday">Follow-ups Today</h2><span class="muted">5</span></div><div class="list" id="followups"></div></div>
+<div class="card wide"><div class="card-title"><h2 data-ui="followupsToday">Follow-ups Today</h2><span class="muted" id="followupCount">0</span></div><div class="list" id="followups"></div></div>
 <div class="card wide"><div class="card-title"><h2 data-ui="overdueInvoices">Overdue Invoices</h2><span class="danger" id="overdueCount">0</span></div><div class="list" id="overdueList"></div></div>
 <div class="card wide"><div class="card-title"><h2 data-ui="projectProfitability">Project Profitability</h2><span class="muted" data-ui="viewAll">View all →</span></div><table class="profit-table"><thead><tr><th data-ui-label="project">Project</th><th data-ui-label="revenue">Revenue</th><th data-ui-label="profit">Profit</th><th data-ui-label="margin">Margin</th></tr></thead><tbody id="projectProfitabilityBody"></tbody></table></div>
 </div>
@@ -414,6 +414,13 @@ function renderCashflow(){
   }).join(''):'<div class="empty">No scheduled cash movements in the next 30 days.</div>';
 }
 function renderDashboardRealData(){
+  const followupList=document.getElementById('followups');
+  const followupCount=document.getElementById('followupCount');
+  if(followupList){
+    const leads=(businessStore.leads||[]).filter(x=>x.nextAction).slice(0,5);
+    followupCount.textContent=leads.length;
+    followupList.innerHTML=leads.length?leads.map(x=>'<div class="row"><span class="dot"></span><div><strong>'+escapeHtml(x.name||x.title||'Lead')+'</strong><small>'+escapeHtml(x.nextAction)+'</small></div><span class="amount">'+money(x.value||0)+'</span></div>').join(''):'<div class="empty" data-ui="noFollowups">No follow-ups</div>';
+  }
   const overdueList=document.getElementById('overdueList');
   const overdueCount=document.getElementById('overdueCount');
   const profitBody=document.getElementById('projectProfitabilityBody');
