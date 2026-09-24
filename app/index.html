@@ -10,7 +10,7 @@
 .screen{display:none}.screen.active{display:block}.page-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.toolbar{display:flex;gap:9px;align-items:center}.filter{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 12px}.primary{border:0;background:var(--blue);color:#fff;border-radius:9px;padding:10px 14px;font-weight:700}.secondary{border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px 14px}.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;overflow:auto}.stage{background:#eef2f8;border-radius:12px;padding:10px;min-width:190px}.stage-head{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:10px}.deal{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 2px 8px rgba(19,35,66,.03)}.deal strong{font-size:13px}.deal small{display:block;color:var(--muted);margin-top:5px}.deal-value{font-weight:800;margin-top:9px}.table-card{padding:8px 16px}.data-table{width:100%;border-collapse:collapse}.data-table th,.data-table td{text-align:left;padding:13px 8px;border-bottom:1px solid #edf0f5}.data-table th{font-size:12px;color:var(--muted)}.badge{padding:5px 8px;border-radius:99px;background:#edf5ff;color:var(--blue);font-size:11px;font-weight:700}.badge.green{background:#eaf8f0;color:var(--green)}.badge.red{background:#fff0f1;color:var(--red)}.detail-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.mini{padding:14px}.mini strong{display:block;font-size:19px;margin-top:6px}.timeline{display:grid;gap:0}.event{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #edf0f5}.event-dot{width:9px;height:9px;border-radius:50%;background:var(--blue);margin-top:5px}.empty{padding:42px;text-align:center;color:var(--muted)}@media(max-width:900px){.pipeline{grid-template-columns:repeat(5,190px)}.detail-grid{grid-template-columns:1fr}.stat-strip{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.page-title{align-items:flex-start}.toolbar .filter{display:none}.data-table{min-width:650px}.table-card{overflow:auto}.stat-strip{grid-template-columns:1fr 1fr}.pipeline{grid-template-columns:repeat(5,175px)}}
 .drawer{position:fixed;inset:0;z-index:20;display:none;background:rgba(8,18,35,.32)}.drawer.open{display:flex;justify-content:flex-end}.drawer-panel{width:min(520px,100%);height:100%;background:#fff;padding:24px;box-shadow:-12px 0 40px rgba(10,25,50,.16);overflow:auto}.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.close{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 10px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:700;color:var(--muted)}.field input,.field select,.field textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;font:inherit}.field textarea{min-height:90px;resize:vertical}.drawer-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:18px}@media(max-width:600px){.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.drawer-panel{padding:18px}}.entity-view{display:grid;grid-template-columns:1.35fr .65fr;gap:14px}.entity-card{padding:18px}.entity-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.entity-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.pill{border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:11px;color:var(--muted)}.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.kpi{background:#f7f9fc;border-radius:10px;padding:12px}.kpi b{display:block;font-size:18px;margin-top:5px}.action-list{display:grid;gap:8px}.action-item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #edf0f5}.action-item:last-child{border-bottom:0}.action-item small{display:block;color:var(--muted);margin-top:3px}.entity-section{margin-top:18px}.entity-section h3{margin:0 0 9px}@media(max-width:800px){.entity-view{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}}.mobile-nav{display:none}.mobile-nav button{border:0;background:transparent;color:var(--muted);font-size:10px;padding:7px 4px}.mobile-nav button.active{color:var(--blue);font-weight:800}.mobile-nav span{display:block;font-size:17px;margin-bottom:2px}@media(max-width:720px){.mobile-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:15;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:6px 4px;box-shadow:0 -6px 20px rgba(20,35,60,.08)}body{padding-bottom:64px}.sidebar .nav{display:none}}
 /* B07.2 persistence-ready UI state */
-.data-table tbody tr,.deal{cursor:pointer}.data-table tbody tr:hover,.deal:hover{background:#f7faff}.toast{position:fixed;right:18px;bottom:18px;z-index:50;background:#0b1730;color:#fff;padding:11px 14px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:13px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:none}
+.data-table tbody tr,.deal{cursor:pointer}.data-table tbody tr:hover,.deal:hover{background:#f7faff}.toast{position:fixed;right:18px;bottom:18px;z-index:50;background:#0b1730;color:#fff;padding:11px 14px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:13px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:none}.invoice-lines{display:grid;gap:8px}.invoice-line{display:grid;grid-template-columns:1.5fr .65fr .8fr auto;gap:7px;align-items:end;padding:10px;background:#f7f9fc;border:1px solid var(--line);border-radius:9px}.invoice-line input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;font:inherit}.invoice-line label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px}.invoice-line-remove{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}@media(max-width:600px){.invoice-line{grid-template-columns:1fr 1fr}.invoice-line .invoice-line-description{grid-column:1/-1}.invoice-line-remove{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -113,10 +113,12 @@
 <div class="field project-field" style="display:none"><label>Actual hours</label><input id="fProjectActualHours" type="number" min="0" step="0.01" placeholder="0"></div>
 <div class="field project-field" style="display:none"><label>Labour cost / hour</label><input id="fProjectLabourRate" type="number" min="0" step="0.01" placeholder="0.00"></div>
 <div class="field value-field"><label>Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
-<div class="field invoice-field" style="display:none"><label>Item description</label><input id="fInvoiceDescription" placeholder="Service or deliverable"></div>
-<div class="field invoice-field" style="display:none"><label>Quantity</label><input id="fInvoiceQuantity" type="number" min="0" step="0.01" value="1"></div>
-<div class="field invoice-field" style="display:none"><label>Unit price</label><input id="fInvoiceUnitPrice" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field invoice-field" style="display:none"><label>Tax rate %</label><input id="fInvoiceTaxRate" type="number" min="0" step="0.01" value="0"></div>
+<div class="field full invoice-field" style="display:none">
+<label>Invoice line items</label>
+<div id="fInvoiceLines" class="invoice-lines"></div>
+<button type="button" class="secondary" id="addInvoiceLine" style="margin-top:8px">＋ Add line</button>
+</div>
+<div class="field invoice-field" style="display:none"><label>Tax rate %</label><input id="fInvoiceTaxRate" type="number" min="0" max="100" step="0.01" value="0"></div>
 <div class="field invoice-field" style="display:none"><label>Due date</label><input id="fInvoiceDueDate" type="date"></div>
 <div class="field payment-field" style="display:none"><label>Payment amount</label><input id="fPaymentAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
 <div class="field payment-field" style="display:none"><label>Payment date</label><input id="fPaymentDate" type="date"></div>
@@ -424,6 +426,31 @@ function visibleRelations(type){
   };
   return relations[type]||[];
 }
+function setInvoiceLines(items){
+  const container=document.getElementById('fInvoiceLines');
+  if(!container)return;
+  container.innerHTML='';
+  (Array.isArray(items)&&items.length?items:[{description:'',quantity:1,unitPrice:0}]).forEach(item=>addInvoiceLine(item));
+}
+function addInvoiceLine(item={description:'',quantity:1,unitPrice:0}){
+  const container=document.getElementById('fInvoiceLines');
+  if(!container)return;
+  const row=document.createElement('div');
+  row.className='invoice-line';
+  row.innerHTML='<div class="invoice-line-description"><label>Description</label><input data-line="description" placeholder="Service or deliverable"></div><div><label>Qty</label><input data-line="quantity" type="number" min="0.01" step="0.01"></div><div><label>Unit price</label><input data-line="unitPrice" type="number" min="0" step="0.01"></div><button type="button" class="invoice-line-remove" aria-label="Remove line">Remove</button>';
+  row.querySelector('[data-line="description"]').value=item.description||'';
+  row.querySelector('[data-line="quantity"]').value=item.quantity??1;
+  row.querySelector('[data-line="unitPrice"]').value=item.unitPrice??0;
+  row.querySelector('.invoice-line-remove').addEventListener('click',()=>{if(container.children.length>1)row.remove();else toast('Invoice needs at least one line');});
+  container.appendChild(row);
+}
+function getInvoiceLines(){
+  return Array.from(document.querySelectorAll('#fInvoiceLines .invoice-line')).map(row=>({
+    description:row.querySelector('[data-line="description"]').value.trim(),
+    quantity:Number(row.querySelector('[data-line="quantity"]').value),
+    unitPrice:Number(row.querySelector('[data-line="unitPrice"]').value)
+  }));
+}
 function prepareDrawerRelations(type,record={}){
   document.querySelectorAll('.relation-field').forEach(el=>el.style.display='none');
   visibleRelations(type).forEach(key=>document.querySelector('[data-relation="'+key+'"]').style.display='grid');
@@ -439,8 +466,8 @@ function openCreateDrawer(type){
   document.getElementById('drawerTitle').textContent='New '+type.replace(/s$/,'');
   document.getElementById('fName').value='';
   ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate','fExpenseDate'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fInvoiceQuantity').value='1';
   document.getElementById('fInvoiceTaxRate').value='0';
+  setInvoiceLines([{description:'',quantity:1,unitPrice:0}]);
   document.getElementById('fPaymentDate').value=new Date().toISOString().slice(0,10);
   document.getElementById('fProjectBillingType').value='Fixed Fee';
   document.getElementById('fProjectBudgetType').value='Fee';
@@ -456,10 +483,8 @@ function openEditDrawer(type,record){
   document.getElementById('drawerTitle').textContent='Edit '+type.replace(/s$/,'');
   document.getElementById('fName').value=record.name||record.client||record.title||'';
   document.getElementById('fValue').value=record.amount??record.total??record.value??0;
-  const invoiceItem=Array.isArray(record.lineItems)&&record.lineItems[0]?record.lineItems[0]:{};
-  document.getElementById('fInvoiceDescription').value=invoiceItem.description||'';
-  document.getElementById('fInvoiceQuantity').value=invoiceItem.quantity??1;
-  document.getElementById('fInvoiceUnitPrice').value=invoiceItem.unitPrice??record.value??record.amount??0;
+  const invoiceItems=Array.isArray(record.lineItems)&&record.lineItems.length?record.lineItems:[{description:'',quantity:1,unitPrice:record.value??record.amount??0}];
+  setInvoiceLines(invoiceItems);
   document.getElementById('fInvoiceTaxRate').value=record.taxRate??0;
   document.getElementById('fInvoiceDueDate').value=record.dueDate||'';
   document.getElementById('fPaymentAmount').value=record.amount??0;
@@ -492,6 +517,7 @@ document.querySelectorAll('[data-i18n]').forEach(el=>el.addEventListener('click'
   const key=el.dataset.i18n;
   if(createMap[key]) openCreateDrawer(createMap[key]);
 }));
+document.getElementById('addInvoiceLine').addEventListener('click',()=>addInvoiceLine());
 document.getElementById('drawerSave').addEventListener('click',()=>{
   if(!pendingType)return;
   const relationFields={leads:['clientId'],proposals:['clientId','leadId'],projects:['clientId','proposalId'],invoices:['clientId','projectId'],payments:['clientId','invoiceId'],expenses:['clientId','projectId']};
@@ -516,15 +542,19 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     const outstanding=Math.max(total-linkedPaid,0);
     if(paymentAmount>outstanding+0.0001){toast('Ошибка: платёж превышает остаток счёта');return;}
   }
-  const invoiceQuantity=Number(document.getElementById('fInvoiceQuantity').value)||0;
-  const invoiceUnitPrice=Number(document.getElementById('fInvoiceUnitPrice').value)||0;
-  const invoicePatch=isInvoice?{
-    lineItems:[{description:document.getElementById('fInvoiceDescription').value.trim(),quantity:invoiceQuantity,unitPrice:invoiceUnitPrice}],
-    taxRate:Number(document.getElementById('fInvoiceTaxRate').value)||0,
-    dueDate:document.getElementById('fInvoiceDueDate').value||null,
-    value:invoiceQuantity*invoiceUnitPrice,
-    amount:invoiceQuantity*invoiceUnitPrice
-  }:{value,amount:value};
+  const invoiceLines=isInvoice?getInvoiceLines():[];
+  if(isInvoice){
+    const taxRate=Number(document.getElementById('fInvoiceTaxRate').value);
+    if(!invoiceLines.length || invoiceLines.some(line=>!Number.isFinite(line.quantity)||line.quantity<=0||!Number.isFinite(line.unitPrice)||line.unitPrice<0)){
+      toast('Ошибка: проверьте позиции счёта');return;
+    }
+    if(!Number.isFinite(taxRate)||taxRate<0||taxRate>100){toast('Ошибка: налоговая ставка должна быть от 0 до 100%');return;}
+    const subtotal=invoiceLines.reduce((sum,line)=>sum+(line.quantity*line.unitPrice),0);
+    const total=subtotal+(subtotal*(taxRate/100));
+    const invoicePatch={lineItems:invoiceLines,taxRate,dueDate:document.getElementById('fInvoiceDueDate').value||null,value:total,amount:total};
+  }else{
+    var invoicePatch={value,amount:value};
+  }
   const isProject=pendingType==='projects';
   const projectPatch=isProject?{
     billingType:document.getElementById('fProjectBillingType').value,
