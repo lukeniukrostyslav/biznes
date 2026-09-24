@@ -26,14 +26,14 @@
 <div id="dashboardScreen" class="screen active">
 <div class="heading"><div><h1 id="greeting">Good morning</h1><p id="subtitle">Here’s what’s happening with your business today.</p></div><button class="period" id="dashboardPeriod">This month ▾</button></div>
 <div class="kpis">
-<div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="revenueLabel">Revenue</span><span class="icon">↗</span></div><h3 id="metricRevenue">$0</h3><span class="delta">↑ 12% <span class="muted">vs. last month</span></span></div>
-<div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="outstandingLabel">Outstanding</span><span class="icon">▣</span></div><h3 id="metricOutstanding">$0</h3><span class="delta danger">↓ 8% <span class="muted">vs. last month</span></span></div>
-<div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="pipelineLabel">Pipeline</span><span class="icon">◆</span></div><h3 id="metricPipeline">$0</h3><span class="delta">↑ 24% <span class="muted">vs. last month</span></span></div>
-<div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="profitLabel">Profit</span><span class="icon">◔</span></div><h3 id="metricProfit">$0</h3><span class="delta">↑ 18% <span class="muted">vs. last month</span></span></div>
+<div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="revenueLabel">Revenue</span><span class="icon">↗</span></div><h3 id="metricRevenue">$0</h3><span class="muted" data-ui="actualMetric">Actual</span></div>
+<div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="outstandingLabel">Outstanding</span><span class="icon">▣</span></div><h3 id="metricOutstanding">$0</h3><span class="muted" data-ui="actualMetric">Actual</span></div>
+<div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="pipelineLabel">Pipeline</span><span class="icon">◆</span></div><h3 id="metricPipeline">$0</h3><span class="muted" data-ui="actualMetric">Actual</span></div>
+<div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="profitLabel">Profit</span><span class="icon">◔</span></div><h3 id="metricProfit">$0</h3><span class="muted" data-ui="actualMetric">Actual</span></div>
 </div>
 <div class="grid">
 <div class="card wide"><div class="card-title"><h2 data-ui="revenueProfitTitle">Revenue & Profit</h2><span class="muted" data-ui="thisYear">This year ▾</span></div><div class="chart" id="chart"></div></div>
-<div class="card wide"><div class="card-title"><h2 data-ui="cashflowOverview">Cashflow Overview</h2><span class="muted" data-ui="thisYearPlain">This year</span></div><div class="cash"><div><div class="metric"><span data-ui="totalIncome">Total Income</span><strong>$62,400</strong></div><div class="meter"><div class="fill" style="width:82%"></div></div></div><div><div class="metric"><span data-ui="totalExpenses">Total Expenses</span><strong>$18,220</strong></div><div class="meter"><div class="fill" style="width:30%"></div></div></div><div><div class="metric"><span data-ui="netProfit">Net Profit</span><strong>$44,180</strong></div><div class="meter"><div class="fill" style="width:71%"></div></div></div></div></div>
+<div class="card wide"><div class="card-title"><h2 data-ui="cashflowOverview">Cashflow Overview</h2><span class="muted" data-ui="thisYearPlain">This year</span></div><div class="cash"><div><div class="metric"><span data-ui="totalIncome">Total Income</span><strong id="dashIncome">€0</strong></div><div class="meter"><div class="fill" id="dashIncomeFill" style="width:0%"></div></div></div><div><div class="metric"><span data-ui="totalExpenses">Total Expenses</span><strong id="dashExpenses">€0</strong></div><div class="meter"><div class="fill" id="dashExpensesFill" style="width:0%"></div></div></div><div><div class="metric"><span data-ui="netProfit">Net Profit</span><strong id="dashNetProfit">€0</strong></div><div class="meter"><div class="fill" id="dashProfitFill" style="width:0%"></div></div></div></div></div>
 </div>
 <div class="lower">
 <div class="card wide"><div class="card-title"><h2 data-ui="followupsToday">Follow-ups Today</h2><span class="muted">5</span></div><div class="list" id="followups"></div></div>
@@ -409,6 +409,46 @@ function renderCashflow(){
     return '<div class="event"><span class="event-dot"'+(isExpense?' style="background:var(--red)"':'')+'></span><div><strong>'+escapeHtml(new Date(event.date+'T00:00:00').toLocaleDateString())+' · '+sign+money(event.amount)+'</strong><small class="muted">'+label+' · '+escapeHtml(event.label||'—')+(event.installmentIndex!==null&&event.installmentIndex!==undefined?' · Installment '+(event.installmentIndex+1):'')+'</small></div></div>';
   }).join(''):'<div class="empty">No scheduled cash movements in the next 30 days.</div>';
 }
+function renderDashboardRealData(){
+  const metrics=calculateBusinessMetrics(businessStore);
+  const paid=Number(metrics.paid||0), expenses=Number(metrics.actualExpenses||0), profit=Number(metrics.actualProfit||0);
+  const incomeEl=document.getElementById('dashIncome'), expEl=document.getElementById('dashExpenses'), profitEl=document.getElementById('dashNetProfit');
+  if(incomeEl)incomeEl.textContent=money(paid);
+  if(expEl)expEl.textContent=money(expenses);
+  if(profitEl)profitEl.textContent=money(profit);
+  const base=Math.max(paid,expenses,profit,1);
+  [['dashIncomeFill',paid],['dashExpensesFill',expenses],['dashProfitFill',Math.max(0,profit)]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.style.width=Math.min(100,Math.round(v/base*100))+'%';});
+  const chart=document.getElementById('chart');
+  if(chart){
+    const payments=businessStore.payments||[];
+    const expensesRows=businessStore.expenses||[];
+    const months=Array.from({length:12},(_,i)=>{const d=new Date();d.setMonth(d.getMonth()-11+i);return {y:d.getFullYear(),m:d.getMonth(),v:0};});
+    payments.forEach(p=>{const d=new Date(p.date||p.paymentDate||p.createdAt);if(!isNaN(d))months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth())?.v+=Number(p.amount||0);});
+    expensesRows.forEach(e=>{const d=new Date(e.date||e.expenseDate||e.createdAt);if(!isNaN(d))months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth())?.v-=Number(e.amount||0);});
+    const vals=months.map(x=>Math.max(0,x.v)); const max=Math.max(...vals,0);
+    chart.innerHTML=max?vals.map(v=>'<div class="bar" title="'+money(v)+'" style="height:'+Math.max(8,Math.round(v/max*190))+'px"></div>').join(''):'<div class="empty" style="width:100%">No financial history yet.</div>';
+  }
+  const lower=document.querySelector('.lower');
+  if(!lower)return;
+  const lang=activeLanguage||'en';
+  const t={
+    en:{follow:'Follow-ups Today',overdue:'Overdue Invoices',profit:'Project Profitability',none:'No data yet.',view:'View all →',actual:'Actual'},
+    ru:{follow:'Задачи на сегодня',overdue:'Просроченные счета',profit:'Прибыльность проектов',none:'Пока нет данных.',view:'Смотреть всё →',actual:'Факт'},
+    es:{follow:'Seguimientos de hoy',overdue:'Facturas vencidas',profit:'Rentabilidad de proyectos',none:'Aún no hay datos.',view:'Ver todo →',actual:'Real'},
+    de:{follow:'Heute nachfassen',overdue:'Überfällige Rechnungen',profit:'Projektprofitabilität',none:'Noch keine Daten.',view:'Alle anzeigen →',actual:'Ist'},
+    fr:{follow:'Relances du jour',overdue:'Factures en retard',profit:'Rentabilité des projets',none:'Aucune donnée pour le moment.',view:'Tout voir →',actual:'Réel'}
+  }[lang]||{follow:'Follow-ups Today',overdue:'Overdue Invoices',profit:'Project Profitability',none:'No data yet.',view:'View all →',actual:'Actual'};
+  const cols=lower.querySelectorAll('.wide');
+  const follow=businessStore.leads||[];
+  const followHtml=follow.length?follow.slice(0,5).map(x=>'<div class="row"><span class="dot"></span><div><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.nextAction||x.notes||'Follow up')+'</small></div><span class="amount">'+recordAmount(x)+'</span></div>').join(''):'<div class="empty">'+t.none+'</div>';
+  const overdue=(businessStore.invoices||[]).map(i=>({i,status:calculateInvoicePaymentStatus(i,businessStore.payments||[],new Date())})).filter(x=>x.status==='Overdue');
+  const overdueHtml=overdue.length?overdue.slice(0,5).map(x=>'<div class="row"><span class="dot" style="background:#dc3c4c"></span><div><strong>'+recordLabel(x.i)+'</strong><small>'+escapeHtml(x.i.dueDate||'')+'</small></div><span class="amount danger">'+recordAmount(x.i)+'</span></div>').join(''):'<div class="empty">'+t.none+'</div>';
+  const projects=businessStore.projects||[];
+  const projectHtml=projects.length?projects.slice(0,5).map(p=>{const pr=calculateProjectProfit(p,{expenses:businessStore.expenses||[]});return '<tr><td>'+recordLabel(p)+'</td><td>'+money(pr.revenue)+'</td><td class="green">'+money(pr.profit)+'</td><td>'+escapeHtml(pr.margin!=null?pr.margin+'%':'—')+'</td></tr>';}).join(''):'<tr><td colspan="4" class="empty">'+t.none+'</td></tr>';
+  if(cols[0])cols[0].innerHTML='<div class="card-title"><h2>'+t.follow+'</h2><span class="muted">'+follow.length+'</span></div><div class="list">'+followHtml+'</div>';
+  if(cols[1])cols[1].innerHTML='<div class="card-title"><h2>'+t.overdue+'</h2><span class="danger">'+overdue.length+'</span></div><div class="list">'+overdueHtml+'</div>';
+  if(cols[2])cols[2].innerHTML='<div class="card-title"><h2>'+t.profit+'</h2><span class="muted">'+t.view+'</span></div><table class="profit-table"><thead><tr><th>Project</th><th>Revenue</th><th>Profit</th><th>Margin</th></tr></thead><tbody>'+projectHtml+'</tbody></table>';
+}
 function refreshDashboardMetrics(){
   const metrics=calculateBusinessMetrics(businessStore);
   document.getElementById('metricRevenue').textContent=money(metrics.paid);
@@ -416,6 +456,7 @@ function refreshDashboardMetrics(){
   document.getElementById('metricPipeline').textContent=money(metrics.pipeline);
   document.getElementById('metricProfit').textContent=money(metrics.actualProfit);
   renderCashflow();
+  renderDashboardRealData();
 }
 function exportBusinessData(){
   const blob=new Blob([JSON.stringify(businessStore,null,2)],{type:'application/json'});
