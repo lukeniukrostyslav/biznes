@@ -191,3 +191,12 @@ Local-first store, schema versioning, save/load, upsert/remove, reset, JSON expo
 Порядок реализации: entity relationships → entity-specific forms/validation → archive/restore → financial engine as single source of truth → relationship/edge-case tests → пересчёт процента только после проверки.
 
 **Правило проекта:** перед существенными продуктовыми решениями повторно проверять актуальный рынок и конкурентов; не копировать функции механически. В обзорах 2026 конкуренты закрывают широкий client lifecycle, включая CRM, proposals, contracts, invoicing, payments, projects и automation. Для BUSINESS OS сохраняется ставка на standalone local-first продукт, единый финансовый граф и profit-first workflow. citeturn0search0turn0search1turn0search2
+
+
+## Продуктовый контроль — 2026-09-24
+
+Перед продолжением B07 проведён свежий конкурентный review. В 2026 HoneyBook, Dubsado, Bonsai и Moxie продолжают закрывать широкий lifecycle: CRM, proposals/contracts, invoicing/payments и project/workflow management; HoneyBook также отдельно предлагает automations, client portal и reports. citeturn0search0turn0search1turn0search2
+
+Решение для BUSINESS OS: не наращивать функции ради количества. Следующий приоритет — целостный lifecycle и качество данных: строгие связи сущностей, финансовая достоверность, прозрачный Actual/Forecast Cashflow, быстрые entity-specific действия и простота local-first продукта. Конкурентные цены и возможности перепроверять перед каждым крупным коммерческим решением, поскольку публичные цены меняются. citeturn0search0turn0search5
+
+**Правило работы:** после каждого существенного изменения — тестирование, checkpoint и сохранение в GitHub; процент повышается только за реально реализованный и проверенный функционал.
