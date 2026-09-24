@@ -194,3 +194,18 @@ test('forecast payments use derived invoice status, not stale stored status', ()
   assert.equal(result.outstanding, 750);
   assert.equal(result.expectedPayments, 750);
 });
+
+test('multi-line invoice calculates subtotal and tax correctly', () => {
+  const result = calculateInvoice({
+    lineItems: [
+      { description: 'Design', quantity: 2, unitPrice: 500 },
+      { description: 'Development', quantity: 3, unitPrice: 750 }
+    ],
+    taxRate: 20,
+    status: 'Sent'
+  });
+  assert.equal(result.subtotal, 3250);
+  assert.equal(result.tax, 650);
+  assert.equal(result.total, 3900);
+  assert.equal(result.outstanding, 3900);
+});
