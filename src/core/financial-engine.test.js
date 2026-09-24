@@ -38,3 +38,21 @@ test('cashflow separates paid and outstanding', () => {
   assert.equal(result.expenses, 300);
   assert.equal(result.profit, 900);
 });
+
+
+test('business metrics use invoice engine and separate actual from forecast',()=>{
+  const result=calculateBusinessMetrics({
+    leads:[{value:10000,probability:50}],
+    invoices:[{lineItems:[{quantity:1,unitPrice:1000}],taxRate:0,status:'Sent',dueDate:'2099-01-01'}],
+    payments:[{amount:300}],
+    expenses:[{amount:100,status:'Paid'},{amount:50,status:'Planned'}]
+  },new Date('2026-01-01'));
+  assert.equal(result.invoiced,1000);
+  assert.equal(result.paid,300);
+  assert.equal(result.outstanding,700);
+  assert.equal(result.actualProfit,200);
+  assert.equal(result.expectedPayments,700);
+  assert.equal(result.plannedExpenses,50);
+  assert.equal(result.forecastCash,850);
+  assert.equal(result.weightedPipeline,5000);
+});
