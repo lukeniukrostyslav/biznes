@@ -139,7 +139,7 @@
 <div class="field full"><label data-ui="notes">Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…" data-ui-placeholder="notesPlaceholder"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
-import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast } from "../src/core/financial-engine.js";
+import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus } from "../src/core/financial-engine.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres']}};
 
 const screenCopy={
@@ -955,11 +955,9 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     if(!invoice){toast(t('invoiceMissing'));return;}
     if(invoice.clientId && relations.clientId && invoice.clientId!==relations.clientId){toast(t('paymentClient'));return;}
     relations.clientId=invoice.clientId||relations.clientId;
-    const linkedPaid=(businessStore.payments||[]).filter(p=>p.invoiceId===selectedInvoiceId && p.id!==editingId).reduce((sum,p)=>sum+Number(p.amount||0),0);
-    const items=Array.isArray(invoice.lineItems)?invoice.lineItems:[];
-    const subtotal=items.reduce((sum,item)=>sum+(Number(item.quantity||0)*Number(item.unitPrice||0)),0);
-    const total=subtotal+(subtotal*(Number(invoice.taxRate||0)/100));
-    const outstanding=Math.max(total-linkedPaid,0);
+    const linkedPayments=(businessStore.payments||[]).filter(p=>p.id!==editingId);
+    const invoiceStatus=calculateInvoicePaymentStatus(invoice,linkedPayments,new Date());
+    const outstanding=invoiceStatus.outstanding;
     if(paymentAmount>outstanding+0.0001){toast(t('paymentInvoiceAmount'));return;}
     const installmentRaw=document.getElementById('fPaymentInstallment').value;
     const installmentIndex=installmentRaw===''?null:Number(installmentRaw);
