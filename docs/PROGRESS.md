@@ -52,7 +52,7 @@ ICP, не-ICP, jobs-to-be-done, основная боль, позиционир�
 
 ## B05 — дизайн
 
-B05 = **50%**.
+B05 = **100%** — визуальный UX/UI prototype V1 закрыт.
 
 Фактически выполнено:
 - UX screen architecture;
@@ -60,31 +60,17 @@ B05 = **50%**.
 - responsive layout rules;
 - interaction rules;
 - конкурентный UX review 2026-09-24;
-- первый coded Dashboard prototype в `app/index.html`;
-- рабочая навигация между Dashboard / Leads / Clients / Proposals / Projects / Invoices / Payments / Expenses / Profit / Cashflow;
-- Kanban-style Leads view;
-- Clients table;
-- Projects profitability/health view;
-- Invoices financial status view;
-- Proposals workflow view;
-- Payments view;
-- Expenses view;
-- Profitability view;
-- Cashflow view;
-- переключатель EN/RU/ES/DE/FR с сохранением языка локально.
+- coded Dashboard;
+- навигация Dashboard / Leads / Clients / Proposals / Projects / Invoices / Payments / Expenses / Profit / Cashflow;
+- Kanban Leads;
+- Clients / Projects / Invoices / Payments / Expenses / Profit / Cashflow screens;
+- entity 360° detail view;
+- create/detail drawer;
+- EN/RU/ES/DE/FR переключатель;
+- responsive desktop/mobile shell;
+- mobile bottom navigation.
 
-Это всё ещё prototype: production data model integration, полноценные остальные экраны, полноценная локализация всех новых экранов и QA не завершены.
-
-Есть утверждённое направление визуального прототипа:
-- premium business software;
-- тёмная навигация;
-- светлая рабочая область;
-- KPI и financial dashboard;
-- CRM / pipeline / projects;
-- desktop + mobile;
-- 5 языков.
-
-Это визуальное направление является концептом, а не утверждением о завершённой реализации.
+B05 закрыт именно как **дизайн и UI prototype**. Это не означает, что все экраны уже работают на реальных данных.
 
 ## B08 — финансовый движок
 
@@ -94,7 +80,17 @@ B08 = **70%**. Финансовая модель V1 зафиксирована �
 
 ## B07 — core-функциональность
 
-B07 = **10%**. Начат реальный core-код: финансовый engine является первой общей доменной библиотекой, на которую будут опираться Dashboard, Projects, Invoices и Cashflow. Полная core-модель и persistence ещё не реализованы.
+B07 = **20%**.
+
+Выполнено:
+- финансовый engine как общая доменная библиотека;
+- автоматические тесты engine;
+- единая схема Client / Lead / Proposal / Project / Invoice / Payment / Expense;
+- правила derived metrics;
+- связи между сущностями;
+- зафиксирована стратегия перехода к local-first persistence.
+
+Следующий шаг: B07.2 — реальный local-first store и подключение UI к данным.
 
 ## B06 — локализация
 
