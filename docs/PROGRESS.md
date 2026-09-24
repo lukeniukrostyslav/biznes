@@ -21,7 +21,7 @@
 | B02 | Анализ рынка и конкурентов | 100% |
 | B03 | Клиент и позиционирование | 100% |
 | B04 | Архитектура продукта | 100% |
-| B05 | UX/UI дизайн | 20% |
+| B05 | UX/UI дизайн | 50% |
 | B06 | Система локализации | 100% |
 | B07 | Core-функциональность | 0% |
 | B08 | Расчёты денег и прибыли | 0% |
@@ -51,6 +51,19 @@ ICP, не-ICP, jobs-to-be-done, основная боль, позиционир�
 Архитектура V1 зафиксирована в `docs/ARCHITECTURE_V1.md`: единая модель Client/Lead/Proposal/Project/Invoice/Payment/Expense, денежные derived metrics, pricing engine, local-first persistence, localization, responsive и коммерческие границы.
 
 ## B05 — дизайн
+
+B05 = **50%**.
+
+Фактически выполнено:
+- UX screen architecture;
+- design system V1;
+- responsive layout rules;
+- interaction rules;
+- конкурентный UX review 2026-09-24;
+- первый coded Dashboard prototype в `app/index.html`;
+- переключатель EN/RU/ES/DE/FR с сохранением языка локально.
+
+Это всё ещё prototype: production data model integration, полноценные остальные экраны и QA не завершены.
 
 Есть утверждённое направление визуального прототипа:
 - premium business software;
