@@ -238,10 +238,26 @@ function renderStoredRecords(){
 function validateStoredRelationships(store){
   const rules={leads:{clientId:'clients'},proposals:{clientId:'clients',leadId:'leads'},projects:{clientId:'clients',proposalId:'proposals'},invoices:{clientId:'clients',projectId:'projects'},payments:{invoiceId:'invoices',clientId:'clients'},expenses:{projectId:'projects',clientId:'clients'}};
   const errors=[];
+  const find=(type,id)=>(store[type]||[]).find(x=>x.id===id);
   Object.entries(rules).forEach(([type,fields])=>{
     (store[type]||[]).forEach(record=>Object.entries(fields).forEach(([field,target])=>{
-      if(record[field]&&!((store[target]||[]).some(x=>x.id===record[field])))errors.push(type+'.'+field);
+      if(record[field]&&!find(target,record[field]))errors.push(type+'.'+field);
     }));
+  });
+  const consistency=[
+    ['proposals','leadId','leads'],
+    ['projects','proposalId','proposals'],
+    ['invoices','projectId','projects'],
+    ['payments','invoiceId','invoices'],
+    ['expenses','projectId','projects']
+  ];
+  consistency.forEach(([type,field,targetType])=>{
+    (store[type]||[]).forEach(record=>{
+      const target=record[field]&&find(targetType,record[field]);
+      if(target&&record.clientId&&target.clientId&&record.clientId!==target.clientId){
+        errors.push(type+'.'+field+'.clientMismatch');
+      }
+    });
   });
   return errors;
 }
