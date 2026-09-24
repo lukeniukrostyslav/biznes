@@ -190,3 +190,22 @@ B13 остаётся 22% до фактической browser/mobile QA и зак
 - полный npm test не запускался.
 
 B13 остаётся 22% до фактической browser/mobile QA и закрытия оставшихся UI inconsistencies.
+
+
+## B13.13 — Drawer/action localization cleanup
+
+Дата: 2026-09-25
+
+Исправлено:
+- заголовки Create/Edit drawer локализуются EN/RU/ES/DE/FR;
+- подтверждение Archive и сообщения Archive blocked/archived локализуются;
+- пустые relation options (Client/Lead/Proposal/Project/Invoice) локализуются;
+- удалён лишний статический demo follow-up render из `render()`: источник Follow-ups теперь только local-first store;
+- сохранена единая type localization для сущностей.
+
+Проверка:
+- source-level verification выполнена;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22% до фактической browser/mobile QA.
