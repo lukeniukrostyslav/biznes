@@ -31,3 +31,27 @@ test('validateStore rejects duplicate ids and malformed money fields', () => {
   assert.ok(result.errors.some(error => error.includes('invoices.invoice-1.amount')));
   assert.ok(result.errors.some(error => error.includes('lineItems.unitPrice')));
 });
+
+test('blocks archiving a record that still has active dependents',()=>{
+  let store=createEmptyStore();
+  store.clients.push({id:'c1'});
+  store.projects.push({id:'p1',clientId:'c1'});
+  assert.throws(()=>archiveRecord(store,'clients','c1'),/active dependents/);
+  assert.equal(store.clients.length,1);
+});
+
+test('allows archiving a leaf record and restores it safely',()=>{
+  let store=createEmptyStore();
+  store.clients.push({id:'c1'});
+  store.projects.push({id:'p1',clientId:'c1'});
+  store=archiveRecord(store,'projects','p1');
+  assert.equal(store.projects.length,0);
+  store=restoreRecord(store,'p1');
+  assert.equal(store.projects.length,1);
+});
+
+test('blocks restoring a record when its required relationship is missing',()=>{
+  let store=createEmptyStore();
+  store.archivedRecords=[{id:'p1',name:'Website',collection:'projects',clientId:'missing'}];
+  assert.throws(()=>restoreRecord(store,'p1'),/Cannot restore record/);
+});
