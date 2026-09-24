@@ -97,9 +97,9 @@
 <div class="entity-section"><h3>Timeline</h3><div class="timeline"><div class="event"><span class="event-dot"></span><div><strong>Proposal accepted</strong><small>Sep 22 · Website Redesign · $12,000</small></div></div><div class="event"><span class="event-dot"></span><div><strong>Invoice sent</strong><small>Sep 21 · INV-0018 · $4,800</small></div></div><div class="event"><span class="event-dot"></span><div><strong>Payment received</strong><small>Sep 18 · $4,800</small></div></div></div></div></div>
 <div class="card entity-card"><div class="card-title"><h2>Next actions</h2></div><div class="action-list"><div class="action-item"><div><strong>Follow up on invoice</strong><small>Due Sep 27</small></div><span class="badge red">$2,400</span></div><div class="action-item"><div><strong>Project check-in</strong><small>Tomorrow · Website Redesign</small></div><span class="badge">Today</span></div><div class="action-item"><div><strong>Review margin</strong><small>Before next milestone</small></div><span class="badge green">73%</span></div></div></div></div>
 </div></section>
-</main><div id="detailDrawer" class="drawer" aria-hidden="true"><aside class="drawer-panel"><div class="drawer-head"><div><div class="muted" id="drawerEyebrow">Business OS</div><h2 id="drawerTitle">New record</h2></div><button class="close" id="drawerClose">×</button></div><div class="form-grid"><div class="field"><label>Client</label><input id="fClient" placeholder="Client name"></div><div class="field"><label>Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Awaiting</option><option>Paid</option><option>Overdue</option></select></div><div class="field"><label>Value</label><input id="fValue" placeholder="$0"></div><div class="field"><label>Next action</label><input id="fAction" placeholder="Follow up"></div><div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div></div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div>
-</div>
-<script>
+</main><div id="detailDrawer" class="drawer" aria-hidden="true"><aside class="drawer-panel"><div class="drawer-head"><div><div class="muted" id="drawerEyebrow">Business OS</div><h2 id="drawerTitle">New record</h2></div><button class="close" id="drawerClose">×</button></div><div class="form-grid"><div class="field"><label>Client</label><input id="fClient" placeholder="Client name"></div><div class="field"><label>Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Awaiting</option><option>Paid</option><option>Overdue</option></select></div><div class="field"><label>Value</label><input id="fValue" placeholder="$0"></div><div class="field"><label>Next action</label><input id="fAction" placeholder="Follow up"></div><div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div></div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
+<script type="module">
+import { calculateBusinessMetrics } from "../src/core/financial-engine.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings'],f:['Client call — Nova Studio','Send proposal — GreenTech','Follow up — Alex Rivera','Meeting — Bright Media','Send invoice — Luna Agency']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки'],f:['Звонок клиенту — Nova Studio','Отправить предложение — GreenTech','Связаться — Alex Rivera','Встреча — Bright Media','Отправить счёт — Luna Agency']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes'],f:['Llamada con cliente — Nova Studio','Enviar propuesta — GreenTech','Seguimiento — Alex Rivera','Reunión — Bright Media','Enviar factura — Luna Agency']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen'],f:['Kundengespräch — Nova Studio','Angebot senden — GreenTech','Nachfassen — Alex Rivera','Meeting — Bright Media','Rechnung senden — Luna Agency']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres'],f:['Appel client — Nova Studio','Envoyer proposition — GreenTech','Relancer — Alex Rivera','Réunion — Bright Media','Envoyer facture — Luna Agency']}};
 
 const screenCopy={
@@ -113,7 +113,7 @@ function render(lang){const c=copy[lang];const sc=screenCopy[lang];document.quer
 function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
 const bars=[42,58,50,72,65,83,96,105,74,88,112,125];document.getElementById('chart').innerHTML=bars.map(x=>'<div class="bar" style="height:'+x+'px"></div>').join('');
 const STORE_KEY='business-os-store-v1';
-const defaultStore={schemaVersion:1,clients:[],leads:[],proposals:[],projects:[],invoices:[],payments:[],expenses:[]};
+const defaultStore={schemaVersion:2,clients:[],leads:[],proposals:[],projects:[],invoices:[],payments:[],expenses:[],archivedRecords:[]};
 function loadStore(){try{return {...defaultStore,...JSON.parse(localStorage.getItem(STORE_KEY)||'{}')}}catch(e){return {...defaultStore}}}
 function saveStore(store){localStorage.setItem(STORE_KEY,JSON.stringify(store));return store}
 function uid(prefix){return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
@@ -197,8 +197,7 @@ function renderStoredRecords(){
       });
       row.querySelector('.row-edit')?.addEventListener('click',()=>openEditDrawer(type,rec));
       row.querySelector('.row-delete')?.addEventListener('click',()=>deleteRecord(type,rec.id));
-    });
-  });
+    });  });
   renderLeads();
 }
 function validateStoredRelationships(store){
@@ -224,17 +223,11 @@ function deleteRecord(type,id){
   renderStoredRecords();
 }
 function refreshDashboardMetrics(){
-  const invoices=businessStore.invoices||[], payments=businessStore.payments||[], leads=businessStore.leads||[], expenses=businessStore.expenses||[];
-  const paid=payments.reduce((sum,x)=>sum+Number(x.amount||x.total||0),0);
-  const invoiced=invoices.reduce((sum,x)=>sum+Number(x.total||x.amount||x.value||0),0);
-  const pipeline=leads.reduce((sum,x)=>sum+Number(x.value||x.amount||0),0);
-  const costs=expenses.reduce((sum,x)=>sum+Number(x.amount||x.total||0),0);
-  const outstanding=Math.max(0,invoiced-paid);
-  const profit=paid-costs;
-  document.getElementById('metricRevenue').textContent=money(paid);
-  document.getElementById('metricOutstanding').textContent=money(outstanding);
-  document.getElementById('metricPipeline').textContent=money(pipeline);
-  document.getElementById('metricProfit').textContent=money(profit);
+  const metrics=calculateBusinessMetrics(businessStore);
+  document.getElementById('metricRevenue').textContent=money(metrics.paid);
+  document.getElementById('metricOutstanding').textContent=money(metrics.outstanding);
+  document.getElementById('metricPipeline').textContent=money(metrics.pipeline);
+  document.getElementById('metricProfit').textContent=money(metrics.actualProfit);
 }
 function exportBusinessData(){
   const blob=new Blob([JSON.stringify(businessStore,null,2)],{type:'application/json'});
@@ -245,8 +238,10 @@ function importBusinessData(file){
   const reader=new FileReader();
   reader.onload=()=>{try{
     const data=JSON.parse(reader.result);
-    if(data.schemaVersion && Number(data.schemaVersion)>1) throw new Error('Unsupported schema');
-    businessStore=saveStore(data); toast('Данные импортированы');
+    if(data.schemaVersion && Number(data.schemaVersion)>2) throw new Error('Unsupported schema');
+    const relationshipErrors=validateStoredRelationships(data);
+    if(relationshipErrors.length) throw new Error('Invalid relationships');
+    businessStore=saveStore({...defaultStore,...data,schemaVersion:2,archivedRecords:Array.isArray(data.archivedRecords)?data.archivedRecords:[]}); toast('Данные импортированы');
   }catch(e){toast('Ошибка импорта');}};
   reader.readAsText(file);
 }
@@ -297,8 +292,7 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   const patch={name:document.getElementById('fClient').value.trim()||'Untitled',status:document.getElementById('fStatus').value,value,amount:value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),updatedAt:new Date().toISOString()};
   if(editingId){
     businessStore=saveStore({...businessStore,[pendingType]:(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x)});
-    toast('Record updated locally');
-  }else{
+    toast('Record updated locally');  }else{
     addRecord(pendingType,patch);
   }
   refreshDashboardMetrics();
