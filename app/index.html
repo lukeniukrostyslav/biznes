@@ -105,7 +105,12 @@
 <div class="field relation-field" data-relation="proposal"><label>Proposal</label><select id="fProposalId"><option value="">— No proposal —</option></select></div>
 <div class="field relation-field" data-relation="project"><label>Project</label><select id="fProjectId"><option value="">— No project —</option></select></div>
 <div class="field relation-field" data-relation="invoice"><label>Invoice</label><select id="fInvoiceId"><option value="">— No invoice —</option></select></div>
-<div class="field"><label>Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
+<div class="field value-field"><label>Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
+<div class="field invoice-field" style="display:none"><label>Item description</label><input id="fInvoiceDescription" placeholder="Service or deliverable"></div>
+<div class="field invoice-field" style="display:none"><label>Quantity</label><input id="fInvoiceQuantity" type="number" min="0" step="0.01" value="1"></div>
+<div class="field invoice-field" style="display:none"><label>Unit price</label><input id="fInvoiceUnitPrice" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field invoice-field" style="display:none"><label>Tax rate %</label><input id="fInvoiceTaxRate" type="number" min="0" step="0.01" value="0"></div>
+<div class="field invoice-field" style="display:none"><label>Due date</label><input id="fInvoiceDueDate" type="date"></div>
 <div class="field"><label>Next action</label><input id="fAction" placeholder="Follow up"></div>
 <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
@@ -300,13 +305,17 @@ function visibleRelations(type){
 function prepareDrawerRelations(type,record={}){
   document.querySelectorAll('.relation-field').forEach(el=>el.style.display='none');
   visibleRelations(type).forEach(key=>document.querySelector('[data-relation="'+key+'"]').style.display='grid');
+  document.querySelectorAll('.invoice-field').forEach(el=>el.style.display=type==='invoices'?'grid':'none');
+  document.querySelector('.value-field').style.display=type==='invoices'?'none':'grid';
   relationOptions(type,record);
 }
 function openCreateDrawer(type){
   pendingType=type; editingId=null;
   document.getElementById('drawerTitle').textContent='New '+type.replace(/s$/,'');
   document.getElementById('fName').value='';
-  ['fValue','fAction','fNotes'].forEach(id=>document.getElementById(id).value='');
+  ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fInvoiceQuantity').value='1';
+  document.getElementById('fInvoiceTaxRate').value='0';
   document.getElementById('fStatus').value=type==='payments'?'Paid':'New';
   prepareDrawerRelations(type,{});
   document.getElementById('detailDrawer').classList.add('open');
@@ -317,6 +326,12 @@ function openEditDrawer(type,record){
   document.getElementById('drawerTitle').textContent='Edit '+type.replace(/s$/,'');
   document.getElementById('fName').value=record.name||record.client||record.title||'';
   document.getElementById('fValue').value=record.amount??record.total??record.value??0;
+  const invoiceItem=Array.isArray(record.lineItems)&&record.lineItems[0]?record.lineItems[0]:{};
+  document.getElementById('fInvoiceDescription').value=invoiceItem.description||'';
+  document.getElementById('fInvoiceQuantity').value=invoiceItem.quantity??1;
+  document.getElementById('fInvoiceUnitPrice').value=invoiceItem.unitPrice??record.value??record.amount??0;
+  document.getElementById('fInvoiceTaxRate').value=record.taxRate??0;
+  document.getElementById('fInvoiceDueDate').value=record.dueDate||'';
   document.getElementById('fAction').value=record.nextAction||'';
   document.getElementById('fNotes').value=record.notes||'';
   document.getElementById('fStatus').value=record.status||'New';
@@ -340,7 +355,17 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   (relationFields[pendingType]||[]).forEach(field=>{relations[field]=document.getElementById('f'+field.charAt(0).toUpperCase()+field.slice(1)).value||null;});
   const name=document.getElementById('fName').value.trim()||'Untitled';
   const value=Number(document.getElementById('fValue').value)||0;
-  const patch={name,status:document.getElementById('fStatus').value,value,amount:value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...relations,updatedAt:new Date().toISOString()};
+  const isInvoice=pendingType==='invoices';
+  const invoiceQuantity=Number(document.getElementById('fInvoiceQuantity').value)||0;
+  const invoiceUnitPrice=Number(document.getElementById('fInvoiceUnitPrice').value)||0;
+  const invoicePatch=isInvoice?{
+    lineItems:[{description:document.getElementById('fInvoiceDescription').value.trim(),quantity:invoiceQuantity,unitPrice:invoiceUnitPrice}],
+    taxRate:Number(document.getElementById('fInvoiceTaxRate').value)||0,
+    dueDate:document.getElementById('fInvoiceDueDate').value||null,
+    value:invoiceQuantity*invoiceUnitPrice,
+    amount:invoiceQuantity*invoiceUnitPrice
+  }:{value,amount:value};
+  const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...relations,updatedAt:new Date().toISOString()};
   const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
   const errors=validateStoredRelationships(candidate);
   if(errors.length){toast('Ошибка: проверьте связанные записи');return;}
