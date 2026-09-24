@@ -209,9 +209,17 @@ function saveStore(store){localStorage.setItem(STORE_KEY,JSON.stringify(store));
 function uid(prefix){return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
 let businessStore=loadStore();
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1800)}
+const toastCopy={
+  en:{saved:'Record saved locally',updated:'Record updated locally',proposalNotFound:'Proposal not found',proposalAccepted:'Proposal must be accepted first',projectExists:'Project already exists for this proposal',proposalClient:'Proposal needs a client before conversion',conversionBlocked:'Conversion blocked: check linked records',projectCreated:'Project created from proposal',projectNotFound:'Project not found',nonBillable:'Non-billable projects cannot be invoiced',invoiceExists:'An invoice already exists for this project',projectClient:'Project needs a client',projectAmount:'Project has no billable amount',invoiceBlocked:'Invoice creation blocked: check linked records',invoiceCreated:'Invoice created from project',imported:'Data imported',importError:'Import error',invoiceLine:'Invoice needs at least one line',paymentInput:'Error: select an invoice and enter a payment amount',invoiceMissing:'Error: invoice not found',paymentClient:'Error: payment client must match invoice client',paymentInvoiceAmount:'Error: payment exceeds invoice outstanding',installmentMissing:'Error: selected installment not found',paymentInstallmentAmount:'Error: payment exceeds selected installment outstanding',invoiceLines:'Error: check invoice lines',taxRate:'Error: tax rate must be between 0 and 100%',discount:'Error: check discount',paymentPlan:'Error: payment plan does not match invoice total',relations:'Error: check linked records',entityReady:'Entity details ready to connect to store'},
+  ru:{saved:'Запись сохранена локально',updated:'Запись обновлена локально',proposalNotFound:'Предложение не найдено',proposalAccepted:'Сначала примите предложение',projectExists:'Проект для этого предложения уже существует',proposalClient:'Для конвертации предложению нужен клиент',conversionBlocked:'Конвертация заблокирована: проверьте связанные записи',projectCreated:'Проект создан из предложения',projectNotFound:'Проект не найден',nonBillable:'Небиллабельный проект нельзя выставить в счёт',invoiceExists:'Для этого проекта уже есть счёт',projectClient:'Проекту нужен клиент',projectAmount:'У проекта нет суммы для счёта',invoiceBlocked:'Создание счёта заблокировано: проверьте связи',invoiceCreated:'Счёт создан из проекта',imported:'Данные импортированы',importError:'Ошибка импорта',invoiceLine:'В счёте должна быть хотя бы одна позиция',paymentInput:'Ошибка: выберите счёт и укажите сумму платежа',invoiceMissing:'Ошибка: счёт не найден',paymentClient:'Ошибка: клиент платежа должен совпадать с клиентом счёта',paymentInvoiceAmount:'Ошибка: платёж превышает остаток счёта',installmentMissing:'Ошибка: выбранный платёж по плану не найден',paymentInstallmentAmount:'Ошибка: платёж превышает остаток выбранного платежа',invoiceLines:'Ошибка: проверьте позиции счёта',taxRate:'Ошибка: налоговая ставка должна быть от 0 до 100%',discount:'Ошибка: проверьте скидку',paymentPlan:'Ошибка: план платежей не сходится с итогом счёта',relations:'Ошибка: проверьте связанные записи',entityReady:'Данные объекта готовы для подключения к store'},
+  es:{saved:'Registro guardado localmente',updated:'Registro actualizado localmente',proposalNotFound:'Propuesta no encontrada',proposalAccepted:'La propuesta debe aceptarse primero',projectExists:'Ya existe un proyecto para esta propuesta',proposalClient:'La propuesta necesita un cliente',conversionBlocked:'Conversión bloqueada: revisa los registros vinculados',projectCreated:'Proyecto creado desde la propuesta',projectNotFound:'Proyecto no encontrado',nonBillable:'Los proyectos no facturables no pueden facturarse',invoiceExists:'Ya existe una factura para este proyecto',projectClient:'El proyecto necesita un cliente',projectAmount:'El proyecto no tiene importe facturable',invoiceBlocked:'Creación de factura bloqueada: revisa los vínculos',invoiceCreated:'Factura creada desde el proyecto',imported:'Datos importados',importError:'Error de importación',invoiceLine:'La factura necesita al menos una línea',paymentInput:'Error: selecciona una factura e indica un importe',invoiceMissing:'Error: factura no encontrada',paymentClient:'Error: el cliente del pago debe coincidir con el de la factura',paymentInvoiceAmount:'Error: el pago supera el saldo de la factura',installmentMissing:'Error: cuota seleccionada no encontrada',paymentInstallmentAmount:'Error: el pago supera el saldo de la cuota',invoiceLines:'Error: revisa las líneas de la factura',taxRate:'Error: el impuesto debe estar entre 0 y 100%',discount:'Error: revisa el descuento',paymentPlan:'Error: el plan no coincide con el total de la factura',relations:'Error: revisa los registros vinculados',entityReady:'Detalles del registro listos para conectar al store'},
+  de:{saved:'Datensatz lokal gespeichert',updated:'Datensatz lokal aktualisiert',proposalNotFound:'Angebot nicht gefunden',proposalAccepted:'Das Angebot muss zuerst angenommen werden',projectExists:'Für dieses Angebot existiert bereits ein Projekt',proposalClient:'Das Angebot benötigt einen Kunden',conversionBlocked:'Konvertierung blockiert: verknüpfte Datensätze prüfen',projectCreated:'Projekt aus Angebot erstellt',projectNotFound:'Projekt nicht gefunden',nonBillable:'Nicht abrechenbare Projekte können nicht fakturiert werden',invoiceExists:'Für dieses Projekt existiert bereits eine Rechnung',projectClient:'Projekt benötigt einen Kunden',projectAmount:'Projekt hat keinen abrechenbaren Betrag',invoiceBlocked:'Rechnungserstellung blockiert: Verknüpfungen prüfen',invoiceCreated:'Rechnung aus Projekt erstellt',imported:'Daten importiert',importError:'Importfehler',invoiceLine:'Rechnung benötigt mindestens eine Position',paymentInput:'Fehler: Rechnung auswählen und Zahlungsbetrag eingeben',invoiceMissing:'Fehler: Rechnung nicht gefunden',paymentClient:'Fehler: Zahlungskunde muss dem Rechnungskunden entsprechen',paymentInvoiceAmount:'Fehler: Zahlung übersteigt offenen Rechnungsbetrag',installmentMissing:'Fehler: ausgewählte Rate nicht gefunden',paymentInstallmentAmount:'Fehler: Zahlung übersteigt den offenen Ratenbetrag',invoiceLines:'Fehler: Rechnungspositionen prüfen',taxRate:'Fehler: Steuersatz muss zwischen 0 und 100% liegen',discount:'Fehler: Rabatt prüfen',paymentPlan:'Fehler: Zahlungsplan stimmt nicht mit dem Rechnungsbetrag überein',relations:'Fehler: Verknüpfungen prüfen',entityReady:'Datensatzdetails sind für die Store-Anbindung bereit'},
+  fr:{saved:'Enregistrement sauvegardé localement',updated:'Enregistrement mis à jour localement',proposalNotFound:'Proposition introuvable',proposalAccepted:'La proposition doit d’abord être acceptée',projectExists:'Un projet existe déjà pour cette proposition',proposalClient:'La proposition doit avoir un client',conversionBlocked:'Conversion bloquée : vérifiez les enregistrements liés',projectCreated:'Projet créé depuis la proposition',projectNotFound:'Projet introuvable',nonBillable:'Les projets non facturables ne peuvent pas être facturés',invoiceExists:'Une facture existe déjà pour ce projet',projectClient:'Le projet doit avoir un client',projectAmount:'Le projet n’a aucun montant facturable',invoiceBlocked:'Création de facture bloquée : vérifiez les liens',invoiceCreated:'Facture créée depuis le projet',imported:'Données importées',importError:'Erreur d’importation',invoiceLine:'La facture doit contenir au moins une ligne',paymentInput:'Erreur : sélectionnez une facture et indiquez un montant',invoiceMissing:'Erreur : facture introuvable',paymentClient:'Erreur : le client du paiement doit correspondre à celui de la facture',paymentInvoiceAmount:'Erreur : le paiement dépasse le solde de la facture',installmentMissing:'Erreur : échéance sélectionnée introuvable',paymentInstallmentAmount:'Erreur : le paiement dépasse le solde de l’échéance',invoiceLines:'Erreur : vérifiez les lignes de facture',taxRate:'Erreur : le taux de taxe doit être entre 0 et 100%',discount:'Erreur : vérifiez la remise',paymentPlan:'Erreur : le plan de paiement ne correspond pas au total de la facture',relations:'Erreur : vérifiez les enregistrements liés',entityReady:'Les détails de l’entité sont prêts pour la connexion au store'}
+};
+function t(key){return (toastCopy[activeLanguage]||toastCopy.en)[key]||toastCopy.en[key]||key}
 function addRecord(type,record){
   businessStore=saveStore({...businessStore,[type]:[...(businessStore[type]||[]),{id:uid(type.slice(0,-1)),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),...record}]});
-  toast('Запись сохранена локально');
+  toast(t('saved'));
   refreshDashboardMetrics();
   renderStoredRecords();
 }
@@ -411,12 +419,12 @@ function renderStoredRecords(){
 }
 function convertProposalToProject(proposalId){
   const proposal=(businessStore.proposals||[]).find(x=>x.id===proposalId);
-  if(!proposal){toast('Proposal not found');return;}
+  if(!proposal){toast(t('proposalNotFound'));return;}
   const status=String(proposal.status||'').toLowerCase();
-  if(!['won','accepted'].includes(status)){toast('Proposal must be accepted first');return;}
+  if(!['won','accepted'].includes(status)){toast(t('proposalAccepted'));return;}
   const existing=(businessStore.projects||[]).find(x=>x.proposalId===proposal.id);
-  if(existing){toast('Project already exists for this proposal');return;}
-  if(!proposal.clientId){toast('Proposal needs a client before conversion');return;}
+  if(existing){toast(t('projectExists'));return;}
+  if(!proposal.clientId){toast(t('proposalClient'));return;}
 
   const value=Number(proposal.value||proposal.amount||0);
   const now=new Date().toISOString();
@@ -440,23 +448,23 @@ function convertProposalToProject(proposalId){
   };
   const candidate={...businessStore,projects:[...(businessStore.projects||[]),project]};
   const errors=validateStoredRelationships(candidate);
-  if(errors.length){toast('Conversion blocked: check linked records');return;}
+  if(errors.length){toast(t('conversionBlocked'));return;}
   businessStore=saveStore(candidate);
-  toast(activeLanguage==='ru'?'Проект создан из предложения':'Project created from proposal');
+  toast(t('projectCreated'));
   refreshDashboardMetrics();
   renderStoredRecords();
 }
 function createInvoiceFromProject(projectId){
   const project=(businessStore.projects||[]).find(x=>x.id===projectId);
-  if(!project){toast(activeLanguage==='ru'?'Проект не найден':'Project not found');return;}
+  if(!project){toast(t('projectNotFound'));return;}
   if(String(project.billingType||'').toLowerCase()==='non-billable'){
-    toast(activeLanguage==='ru'?'Небиллабельный проект нельзя выставить в счёт':'Non-billable projects cannot be invoiced');return;
+    toast(t('nonBillable'));return;
   }
   const existing=(businessStore.invoices||[]).find(x=>x.projectId===project.id);
-  if(existing){toast(activeLanguage==='ru'?'Для проекта уже есть счёт':'An invoice already exists for this project');return;}
-  if(!project.clientId){toast(activeLanguage==='ru'?'Проекту нужен клиент':'Project needs a client');return;}
+  if(existing){toast(t('invoiceExists'));return;}
+  if(!project.clientId){toast(t('projectClient'));return;}
   const amount=Number(project.revenue||project.budget||0);
-  if(amount<=0){toast(activeLanguage==='ru'?'У проекта нет суммы для счёта':'Project has no billable amount');return;}
+  if(amount<=0){toast(t('projectAmount'));return;}
   const now=new Date().toISOString();
   const invoice={
     id:uid('invoice'),
@@ -476,9 +484,9 @@ function createInvoiceFromProject(projectId){
   };
   const candidate={...businessStore,invoices:[...(businessStore.invoices||[]),invoice]};
   const errors=validateStoredRelationships(candidate);
-  if(errors.length){toast(activeLanguage==='ru'?'Создание счёта заблокировано: проверьте связи':'Invoice creation blocked: check linked records');return;}
+  if(errors.length){toast(t('invoiceBlocked'));return;}
   businessStore=saveStore(candidate);
-  toast(activeLanguage==='ru'?'Счёт создан из проекта':'Invoice created from project');
+  toast(t('invoiceCreated'));
   refreshDashboardMetrics();
   renderStoredRecords();
 }
@@ -696,8 +704,8 @@ function importBusinessData(file){
     if(data.schemaVersion && Number(data.schemaVersion)>2) throw new Error('Unsupported schema');
     const relationshipErrors=validateStoredRelationships(data);
     if(relationshipErrors.length) throw new Error('Invalid relationships');
-    businessStore=saveStore({...defaultStore,...data,schemaVersion:2,archivedRecords:Array.isArray(data.archivedRecords)?data.archivedRecords:[]}); toast('Данные импортированы');
-  }catch(e){toast('Ошибка импорта');}};
+    businessStore=saveStore({...defaultStore,...data,schemaVersion:2,archivedRecords:Array.isArray(data.archivedRecords)?data.archivedRecords:[]}); toast(t('imported'));
+  }catch(e){toast(t('importError'));}};
   reader.readAsText(file);
 }
 refreshDashboardMetrics();
@@ -709,7 +717,7 @@ document.getElementById('importData').addEventListener('click',()=>document.getE
 document.getElementById('importDataInput').addEventListener('change',e=>{if(e.target.files[0])importBusinessData(e.target.files[0]);e.target.value='';});
 
 // UI currency is intentionally aligned with the financial engine's EUR default; business data remains portable under STORE_KEY.
-document.querySelectorAll('.data-table tbody tr').forEach(row=>row.addEventListener('click',()=>toast('Детали объекта готовы для подключения к store')));
+document.querySelectorAll('.data-table tbody tr').forEach(row=>row.addEventListener('click',()=>toast(t('entityReady'))));
 // Typed create flow: every business action opens the same reusable editor.
 let pendingType=null;
 let editingId=null;
@@ -764,7 +772,7 @@ function addInvoiceLine(item={description:'',quantity:1,unitPrice:0}){
   row.querySelector('[data-line="description"]').value=item.description||'';
   row.querySelector('[data-line="quantity"]').value=item.quantity??1;
   row.querySelector('[data-line="unitPrice"]').value=item.unitPrice??0;
-  row.querySelector('.invoice-line-remove').addEventListener('click',()=>{if(container.children.length>1)row.remove();else toast('Invoice needs at least one line');});
+  row.querySelector('.invoice-line-remove').addEventListener('click',()=>{if(container.children.length>1)row.remove();else toast(t('invoiceLine'));});
   container.appendChild(row);
 }
 function getInvoiceLines(){
@@ -897,24 +905,24 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   const selectedInvoiceId=relations.invoiceId;
   if(isPayment) populatePaymentInstallments(selectedInvoiceId, document.getElementById('fPaymentInstallment').value===''?null:Number(document.getElementById('fPaymentInstallment').value));
   if(isPayment){
-    if(!selectedInvoiceId || paymentAmount<=0){toast('Ошибка: выберите счёт и укажите сумму платежа');return;}
+    if(!selectedInvoiceId || paymentAmount<=0){toast(t('paymentInput'));return;}
     const invoice=businessStore.invoices.find(x=>x.id===selectedInvoiceId);
-    if(!invoice){toast('Ошибка: счёт не найден');return;}
-    if(invoice.clientId && relations.clientId && invoice.clientId!==relations.clientId){toast('Ошибка: клиент платежа должен совпадать с клиентом счёта');return;}
+    if(!invoice){toast(t('invoiceMissing'));return;}
+    if(invoice.clientId && relations.clientId && invoice.clientId!==relations.clientId){toast(t('paymentClient'));return;}
     relations.clientId=invoice.clientId||relations.clientId;
     const linkedPaid=(businessStore.payments||[]).filter(p=>p.invoiceId===selectedInvoiceId && p.id!==editingId).reduce((sum,p)=>sum+Number(p.amount||0),0);
     const items=Array.isArray(invoice.lineItems)?invoice.lineItems:[];
     const subtotal=items.reduce((sum,item)=>sum+(Number(item.quantity||0)*Number(item.unitPrice||0)),0);
     const total=subtotal+(subtotal*(Number(invoice.taxRate||0)/100));
     const outstanding=Math.max(total-linkedPaid,0);
-    if(paymentAmount>outstanding+0.0001){toast('Ошибка: платёж превышает остаток счёта');return;}
+    if(paymentAmount>outstanding+0.0001){toast(t('paymentInvoiceAmount'));return;}
     const installmentRaw=document.getElementById('fPaymentInstallment').value;
     const installmentIndex=installmentRaw===''?null:Number(installmentRaw);
     if(installmentIndex!==null){
       const allocation=allocatePaymentPlan(invoice,(businessStore.payments||[]).filter(p=>p.id!==editingId),new Date());
       const target=allocation.installments[installmentIndex];
-      if(!target){toast('Ошибка: выбранный installment не найден');return;}
-      if(paymentAmount>target.outstanding+0.0001){toast('Ошибка: платёж превышает остаток выбранного installment');return;}
+      if(!target){toast(t('installmentMissing'));return;}
+      if(paymentAmount>target.outstanding+0.0001){toast(t('paymentInstallmentAmount'));return;}
     }
   }
   const invoiceLines=isInvoice?getInvoiceLines():[];
@@ -923,17 +931,17 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     const discountType=document.getElementById('fInvoiceDiscountType').value;
     const discountValue=Number(document.getElementById('fInvoiceDiscountValue').value)||0;
     if(!invoiceLines.length || invoiceLines.some(line=>!Number.isFinite(line.quantity)||line.quantity<=0||!Number.isFinite(line.unitPrice)||line.unitPrice<0)){
-      toast('Ошибка: проверьте позиции счёта');return;
+      toast(t('invoiceLines'));return;
     }
-    if(!Number.isFinite(taxRate)||taxRate<0||taxRate>100){toast('Ошибка: налоговая ставка должна быть от 0 до 100%');return;}
-    if(!Number.isFinite(discountValue)||discountValue<0 || (discountType==='percent' && discountValue>100)){toast('Ошибка: проверьте скидку');return;}
+    if(!Number.isFinite(taxRate)||taxRate<0||taxRate>100){toast(t('taxRate'));return;}
+    if(!Number.isFinite(discountValue)||discountValue<0 || (discountType==='percent' && discountValue>100)){toast(t('discount'));return;}
     const subtotal=invoiceLines.reduce((sum,line)=>sum+(line.quantity*line.unitPrice),0);
     const discount=discountType==='percent'?Math.min(subtotal,subtotal*(discountValue/100)):discountType==='fixed'?Math.min(subtotal,discountValue):0;
     const taxableSubtotal=Math.max(subtotal-discount,0);
     const total=taxableSubtotal+(taxableSubtotal*(taxRate/100));
     const planLines=getInvoicePlanLines();
     const paymentPlan=planLines.length?calculatePaymentPlan(total,planLines):null;
-    if(paymentPlan && !paymentPlan.valid){toast('Ошибка: payment plan не сходится с итогом счёта');return;}
+    if(paymentPlan && !paymentPlan.valid){toast(t('paymentPlan'));return;}
     const invoicePatch={lineItems:invoiceLines,discountType,discountValue,taxRate,dueDate:document.getElementById('fInvoiceDueDate').value||null,value:total,amount:total,paymentPlan};
   }else{
     var invoicePatch={value,amount:value};
@@ -964,9 +972,9 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...projectPatch,...expensePatch,...relations,updatedAt:new Date().toISOString()};
   const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
   const errors=validateStoredRelationships(candidate);
-  if(errors.length){toast('Ошибка: проверьте связанные записи');return;}
+  if(errors.length){toast(t('relations'));return;}
   businessStore=saveStore(candidate);
-  toast(editingId?'Record updated locally':'Record saved locally');
+  toast(t(editingId?'updated':'saved'));
   refreshDashboardMetrics();
   renderStoredRecords();
   closeCreateDrawer();
