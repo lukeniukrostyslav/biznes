@@ -398,7 +398,8 @@ function refreshDashboardMetrics(){
   document.getElementById('metricRevenue').textContent=money(metrics.paid);
   document.getElementById('metricOutstanding').textContent=money(metrics.outstanding);
   document.getElementById('metricPipeline').textContent=money(metrics.pipeline);
-  document.getElementById('metricProfit').textContent=money(metrics.actualProfit);\n  renderCashflow();
+  document.getElementById('metricProfit').textContent=money(metrics.actualProfit);
+  renderCashflow();
 }
 function exportBusinessData(){
   const blob=new Blob([JSON.stringify(businessStore,null,2)],{type:'application/json'});
@@ -615,7 +616,15 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     const subtotal=items.reduce((sum,item)=>sum+(Number(item.quantity||0)*Number(item.unitPrice||0)),0);
     const total=subtotal+(subtotal*(Number(invoice.taxRate||0)/100));
     const outstanding=Math.max(total-linkedPaid,0);
-    if(paymentAmount>outstanding+0.0001){toast('Ошибка: платёж превышает остаток счёта');return;}\n    const installmentRaw=document.getElementById('fPaymentInstallment').value;\n    const installmentIndex=installmentRaw===''?null:Number(installmentRaw);\n    if(installmentIndex!==null){\n      const allocation=allocatePaymentPlan(invoice,(businessStore.payments||[]).filter(p=>p.id!==editingId),new Date());\n      const target=allocation.installments[installmentIndex];\n      if(!target){toast('Ошибка: выбранный installment не найден');return;}\n      if(paymentAmount>target.outstanding+0.0001){toast('Ошибка: платёж превышает остаток выбранного installment');return;}\n    }
+    if(paymentAmount>outstanding+0.0001){toast('Ошибка: платёж превышает остаток счёта');return;}
+    const installmentRaw=document.getElementById('fPaymentInstallment').value;
+    const installmentIndex=installmentRaw===''?null:Number(installmentRaw);
+    if(installmentIndex!==null){
+      const allocation=allocatePaymentPlan(invoice,(businessStore.payments||[]).filter(p=>p.id!==editingId),new Date());
+      const target=allocation.installments[installmentIndex];
+      if(!target){toast('Ошибка: выбранный installment не найден');return;}
+      if(paymentAmount>target.outstanding+0.0001){toast('Ошибка: платёж превышает остаток выбранного installment');return;}
+    }
   }
   const invoiceLines=isInvoice?getInvoiceLines():[];
   if(isInvoice){
@@ -658,7 +667,8 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     amount:paymentAmount,
     paymentDate:document.getElementById('fPaymentDate').value||null,
     paymentMethod:document.getElementById('fPaymentMethod').value,
-    reference:document.getElementById('fPaymentReference').value.trim(),\n    installmentIndex:(document.getElementById('fPaymentInstallment').value===''?null:Number(document.getElementById('fPaymentInstallment').value))
+    reference:document.getElementById('fPaymentReference').value.trim(),
+    installmentIndex:(document.getElementById('fPaymentInstallment').value===''?null:Number(document.getElementById('fPaymentInstallment').value))
   }:{};
   const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...projectPatch,...expensePatch,...relations,updatedAt:new Date().toISOString()};
   const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
