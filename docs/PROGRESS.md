@@ -267,3 +267,20 @@ Core и UI integration теперь значительно ближе к цел�
 HoneyBook сейчас объединяет CRM, leads, clients, projects, proposals, contracts, invoices, payments, scheduling, automations и client portal; опубликованный Starter стоит $29/месяц при годовой оплате. citeturn0search0turn0search2 Bonsai в Essentials/Premium также объединяет CRM, проекты, invoices/payments, proposals/contracts, expenses, pipeline и profit/productivity reporting. citeturn0search1
 
 Следствие для BUSINESS OS: наша цель — не максимальное число функций, а цельный lifecycle с сильными связями данных, финансовой достоверностью и local-first простотой. Коммерческая модель остаётся **one-time purchase на внешних площадках**, а не recurring SaaS.
+
+
+## B08.2 — financial relationship integrity — 2026-09-24
+
+Усилен financial engine:
+
+- invoice balance в business metrics теперь рассчитывается по реальным связанным Payment records через invoiceId;
+- поле invoice.paid больше не является единственным источником истины для dashboard/forecast;
+- outstanding считается как сумма реальных остатков по счетам;
+- добавлены тесты на stale invoice.paid, linked payments, planned expenses и overdue с фиксированной датой;
+- B08 остаётся **70%**, потому что тесты добавлены, но полный execution QA в окружении проекта ещё не выполнен.
+
+### Рыночный контроль — 24.09.2026
+
+Свежие официальные страницы конкурентов показывают, что HoneyBook включает invoices/payments, proposals/contracts, CRM и client/project management, а Bonsai объединяет CRM, pipeline, projects, invoices/payments, expenses и profit/productivity reports. citeturn0search0turn0search2turn0search7 Dubsado также включает invoicing, payment plans, client portals и financial reporting, а более высокий уровень добавляет public proposals и automation. citeturn0search3turn0search4
+
+Для BUSINESS OS это подтверждает приоритет: финансовые связи должны быть настоящими, а не просто визуальными KPI. Мы продолжаем строить единый graph Lead → Client → Proposal → Project → Invoice → Payment → Expense, сохраняя standalone/local-first и one-time purchase модель.
