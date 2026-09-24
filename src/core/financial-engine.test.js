@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, lineTotal } from './financial-engine.js';
+
+test('line total', () => assert.equal(lineTotal({ quantity: 3, unitPrice: 120 }), 360));
+
+test('invoice subtotal, tax and outstanding', () => {
+  const result = calculateInvoice({ lineItems: [{ quantity: 2, unitPrice: 500 }, { quantity: 1, unitPrice: 250 }], taxRate: 20, paid: 600, status: 'Sent' });
+  assert.equal(result.subtotal, 1250);
+  assert.equal(result.tax, 250);
+  assert.equal(result.total, 1500);
+  assert.equal(result.outstanding, 900);
+  assert.equal(result.status, 'Partially Paid');
+});
+
+test('project profit and margin', () => {
+  const result = calculateProjectProfit({ revenue: 10000, actualCosts: 1800, actualHours: 60, labourRate: 35 });
+  assert.equal(result.labourCost, 2100);
+  assert.equal(result.profit, 6100);
+  assert.equal(result.margin, 61);
+});
+
+test('zero revenue has no margin', () => {
+  assert.equal(calculateProjectProfit({ revenue: 0, actualCosts: 100 }).margin, null);
+});
+
+test('weighted pipeline', () => {
+  const result = calculatePipeline([{ value: 10000, probability: 60 }, { value: 5000, probability: 20 }]);
+  assert.equal(result.pipeline, 15000);
+  assert.equal(result.weightedPipeline, 7000);
+});
+
+test('cashflow separates paid and outstanding', () => {
+  const result = calculateCashflow([{ total: 1500 }, { total: 500 }], [{ amount: 1200 }], [{ amount: 300 }]);
+  assert.equal(result.invoiced, 2000);
+  assert.equal(result.paid, 1200);
+  assert.equal(result.outstanding, 800);
+  assert.equal(result.expenses, 300);
+  assert.equal(result.profit, 900);
+});
