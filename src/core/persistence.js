@@ -175,17 +175,48 @@ function saveStore(storage, store) {
 }
 
 function archiveRecord(store, collection, id) {
-  const list = Array.isArray(store[collection]) ? store[collection] : [];
+  const normalized = normalizeStore(store);
+  const list = Array.isArray(normalized[collection]) ? normalized[collection] : [];
   const record = list.find(item => item.id === id);
-  if (!record) return normalizeStore(store);
-  return normalizeStore({ ...store, [collection]: list.filter(item => item.id !== id), archivedRecords: [...(store.archivedRecords || []), { ...record, collection, archivedAt: new Date().toISOString() }] });
+  if (!record) return normalized;
+
+  const dependents = [];
+  for (const [childCollection, relations] of Object.entries(RELATION_FIELDS)) {
+    for (const [field, targetCollection] of Object.entries(relations)) {
+      if (targetCollection === collection) {
+        for (const child of normalized[childCollection] || []) {
+          if (child?.[field] === id) dependents.push(childCollection + '.' + child.id);
+        }
+      }
+    }
+  }
+  if (dependents.length) {
+    throw new Error('Cannot archive record with active dependents: ' + dependents.join(', '));
+  }
+
+  return normalizeStore({
+    ...normalized,
+    [collection]: list.filter(item => item.id !== id),
+    archivedRecords: [...(normalized.archivedRecords || []), { ...record, collection, archivedAt: new Date().toISOString() }]
+  });
 }
 
 function restoreRecord(store, archivedId) {
-  const archived = (store.archivedRecords || []).find(item => item.id === archivedId);
-  if (!archived || !COLLECTIONS.includes(archived.collection)) return normalizeStore(store);
+  const normalized = normalizeStore(store);
+  const archived = (normalized.archivedRecords || []).find(item => item.id === archivedId);
+  if (!archived || !COLLECTIONS.includes(archived.collection)) return normalized;
+
   const { collection, archivedAt, ...record } = archived;
-  return normalizeStore({ ...store, [collection]: [...(store[collection] || []), record], archivedRecords: (store.archivedRecords || []).filter(item => !(item.id === archivedId && item.collection === collection)) });
+  const candidate = normalizeStore({
+    ...normalized,
+    [collection]: [...(normalized[collection] || []), record],
+    archivedRecords: (normalized.archivedRecords || []).filter(item => !(item.id === archivedId && item.collection === collection))
+  });
+  const validation = validateStore(candidate);
+  if (!validation.valid) {
+    throw new Error('Cannot restore record: ' + validation.errors.join(', '));
+  }
+  return candidate;
 }
 
 function upsertRecord(store, collection, record) {
