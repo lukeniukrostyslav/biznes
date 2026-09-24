@@ -56,3 +56,52 @@ test('business metrics use invoice engine and separate actual from forecast',()=
   assert.equal(result.forecastCash,850);
   assert.equal(result.weightedPipeline,5000);
 });
+
+
+test('business metrics derive invoice balance from linked payments', () => {
+  const result = calculateBusinessMetrics({
+    invoices: [
+      { id: 'inv-1', lineItems: [{ quantity: 1, unitPrice: 1000 }], status: 'Sent', paid: 999 },
+      { id: 'inv-2', lineItems: [{ quantity: 1, unitPrice: 500 }], status: 'Sent', paid: 500 }
+    ],
+    payments: [
+      { id: 'pay-1', invoiceId: 'inv-1', amount: 250 },
+      { id: 'pay-2', invoiceId: 'inv-2', amount: 100 }
+    ],
+    expenses: [
+      { amount: 100, status: 'Paid' },
+      { amount: 50, status: 'Planned' }
+    ]
+  }, new Date('2026-01-01'));
+
+  assert.equal(result.invoiced, 1500);
+  assert.equal(result.paid, 350);
+  assert.equal(result.outstanding, 1150);
+  assert.equal(result.expectedPayments, 1150);
+  assert.equal(result.actualProfit, 250);
+  assert.equal(result.forecastCash, 1150);
+});
+
+test('planned expenses are not double-counted in actual profit', () => {
+  const result = calculateBusinessMetrics({
+    payments: [{ amount: 1000 }],
+    expenses: [{ amount: 200, status: 'Paid' }, { amount: 300, status: 'Planned' }]
+  }, new Date('2026-01-01'));
+
+  assert.equal(result.actualProfit, 800);
+  assert.equal(result.plannedExpenses, 300);
+  assert.equal(result.forecastCash, 500);
+});
+
+test('overdue metric uses supplied current date', () => {
+  const result = calculateBusinessMetrics({
+    invoices: [{
+      id: 'inv-overdue',
+      lineItems: [{ quantity: 1, unitPrice: 1000 }],
+      status: 'Sent',
+      dueDate: '2026-01-10'
+    }]
+  }, new Date('2026-02-01'));
+
+  assert.equal(result.overdue, 1000);
+});
