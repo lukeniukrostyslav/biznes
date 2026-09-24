@@ -239,3 +239,31 @@ UI пока не считается закрывшим B07.4: формы дол�
 Свежий review рынка подтверждает, что HoneyBook, Dubsado и Bonsai продолжают продавать recurring SaaS вокруг CRM, proposals/contracts, invoicing/payments и project/workflow management. HoneyBook публикует $29/$49/$109 в месяц при годовой оплате; Dubsado — $35/$55 в месяц или $335/$525 в год; Bonsai — от $9/user/month при годовой оплате. citeturn0search0turn0search1turn0search4
 
 BUSINESS OS сохраняет другую коммерческую модель: **standalone + one-time purchase на внешних площадках**, без обязательной ежемесячной подписки. Это не основание для копирования функций конкурентов; приоритет остаётся на качестве lifecycle, финансовой достоверности, local-first данных и простоте продукта.
+
+
+## B07.5 — entity-specific relationship forms — 2026-09-24
+
+Реализован UI-слой реальных связей без повышения общего процента B07 до прохождения QA:
+
+- общий демонстрационный Client text input заменён на entity-aware поля;
+- Lead может быть связан с Client;
+- Proposal — с Client и Lead;
+- Project — с Client и Proposal;
+- Invoice — с Client и Project;
+- Payment — с Client и Invoice;
+- Expense — с Client и Project;
+- формы автоматически показывают только допустимые связи для текущей сущности;
+- перед сохранением candidate store проходит validateStoredRelationships();
+- при нарушении foreign-key связи запись не сохраняется;
+- существующие записи открываются с восстановленными связями;
+- после сохранения Dashboard и таблицы обновляются.
+
+### Почему процент B07 пока не меняется
+
+Core и UI integration теперь значительно ближе к целевой модели, но production-ready статус требует отдельного тестирования create/edit всех семи сущностей, relationship edge cases, archive/restore и мобильного сценария. Поэтому **B07 остаётся 82%**, пока эти проверки не пройдены.
+
+### Свежий конкурентный контроль — 24.09.2026
+
+HoneyBook сейчас объединяет CRM, leads, clients, projects, proposals, contracts, invoices, payments, scheduling, automations и client portal; опубликованный Starter стоит $29/месяц при годовой оплате. citeturn0search0turn0search2 Bonsai в Essentials/Premium также объединяет CRM, проекты, invoices/payments, proposals/contracts, expenses, pipeline и profit/productivity reporting. citeturn0search1
+
+Следствие для BUSINESS OS: наша цель — не максимальное число функций, а цельный lifecycle с сильными связями данных, финансовой достоверностью и local-first простотой. Коммерческая модель остаётся **one-time purchase на внешних площадках**, а не recurring SaaS.
