@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEmptyStore, normalizeStore, loadStore, saveStore, upsertRecord, removeRecord, exportStore, importStore, clearStore } from './persistence.js';
+import { createEmptyStore, normalizeStore, loadStore, saveStore, upsertRecord, removeRecord, exportStore, importStore, clearStore, validateStore, archiveRecord, restoreRecord } from './persistence.js';
 
 function memoryStorage() {
   const data = new Map();
@@ -16,4 +16,7 @@ test('exports and imports portable JSON',()=>{let store=createEmptyStore(); stor
 
 
 test('rejects future schema versions',()=>assert.throws(()=>importStore({schemaVersion:99}),/Unsupported/));
+test('validates entity relationships',()=>{const store=createEmptyStore();store.clients.push({id:'c1'});store.projects.push({id:'p1',clientId:'c1'});assert.equal(validateStore(store).valid,true);store.projects[0].clientId='missing';assert.equal(validateStore(store).valid,false);});
+test('rejects invalid relationship import',()=>assert.throws(()=>importStore({schemaVersion:2,projects:[{id:'p1',clientId:'missing'}]}),/relationships/));
+test('archives and restores',()=>{let store=upsertRecord(createEmptyStore(),'clients',{id:'c1',name:'Nova'});store=archiveRecord(store,'clients','c1');assert.equal(store.clients.length,0);store=restoreRecord(store,'c1');assert.equal(store.clients[0].name,'Nova');});
 test('clears persisted store',()=>{const s=memoryStorage(); saveStore(s,upsertRecord(createEmptyStore(),'clients',{name:'Nova'})); clearStore(s); assert.equal(loadStore(s).clients.length,0);});
