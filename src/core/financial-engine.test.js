@@ -245,3 +245,49 @@ test('payment plan rejects percentages above 100%', () => {
   const result = calculatePaymentPlan(1000, [{ amountType: 'percent', amount: 110 }]);
   assert.equal(result.valid, false);
 });
+
+
+test('allocatePaymentPlan derives FIFO installment status and remaining balance', () => {
+  const invoice = {
+    id: 'inv_1',
+    lineItems: [{ description: 'Project', quantity: 1, unitPrice: 1000 }],
+    taxRate: 0,
+    paymentPlan: {
+      installments: [
+        { amountType: 'equal', amount: 0, dueDate: '2026-09-20' },
+        { amountType: 'equal', amount: 0, dueDate: '2026-10-20' }
+      ]
+    }
+  };
+  const result = allocatePaymentPlan(invoice, [
+    { id: 'p1', invoiceId: 'inv_1', amount: 600, paymentDate: '2026-09-21' }
+  ], new Date('2026-09-24T00:00:00Z'));
+  assert.equal(result.installments[0].paid, 500);
+  assert.equal(result.installments[0].status, 'Paid');
+  assert.equal(result.installments[1].paid, 100);
+  assert.equal(result.installments[1].status, 'Partially Paid');
+  assert.equal(result.installments[1].outstanding, 400);
+  assert.equal(result.unallocatedPayments, 0);
+});
+
+test('allocatePaymentPlan respects explicit installment and reports overflow as unallocated', () => {
+  const invoice = {
+    id: 'inv_2',
+    lineItems: [{ description: 'Project', quantity: 1, unitPrice: 1000 }],
+    paymentPlan: {
+      installments: [
+        { amountType: 'fixed', amount: 300, dueDate: '2026-09-20' },
+        { amountType: 'fixed', amount: 700, dueDate: '2026-10-20' }
+      ]
+    }
+  };
+  const result = allocatePaymentPlan(invoice, [
+    { id: 'p1', invoiceId: 'inv_2', amount: 350, installmentIndex: 0, paymentDate: '2026-09-24' },
+    { id: 'p2', invoiceId: 'inv_2', amount: 800, installmentIndex: 1, paymentDate: '2026-09-24' }
+  ], new Date('2026-09-24T00:00:00Z'));
+  assert.equal(result.installments[0].paid, 300);
+  assert.equal(result.installments[0].status, 'Paid');
+  assert.equal(result.installments[1].paid, 700);
+  assert.equal(result.installments[1].status, 'Paid');
+  assert.equal(result.unallocatedPayments, 150);
+});
