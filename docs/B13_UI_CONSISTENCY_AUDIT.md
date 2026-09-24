@@ -316,3 +316,26 @@ GitHub commit кода: f6c4ee2fff54c50b8e452e5ca7c338b2ac06d251.
 B13 остаётся 22% до browser/mobile QA.
 
 GitHub commit кода: dc73666dc3cd9a8a4633ea38ba4fd40838201b89.
+
+
+## B13.19 — Projects demo-data removal + explicit empty states
+
+Дата: 2026-09-25
+
+Исправлено:
+- статическая таблица Projects (Website Redesign, Brand Identity, Mobile App Design, Marketing Website) удалена как источник demo-данных;
+- Project health больше не показывает статические demo-риски/метрики;
+- Projects table и Project health теперь строятся из local-first Projects + financial engine;
+- Project health показывает только реальные сигналы: маржа, превышение бюджета и просроченные связанные счета;
+- при отсутствии проектов показывается локализованный empty state;
+- для Clients / Proposals / Projects / Invoices / Payments / Expenses добавлен явный локализованный empty state вместо пустой таблицы;
+- локализация Project health добавлена для EN/RU/ES/DE/FR.
+
+Проверка:
+- source-level verification выполнена после GitHub commit;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22%: source cleanup продолжен, но процент не повышен до фактической browser/mobile QA.
+
+GitHub commit кода: 7bdbfb3e8caad14d0e5eca366c93b56925aa1fc0.
