@@ -549,18 +549,25 @@ let pendingType=null;
 let editingId=null;
 const createMap={newLead:'leads',newClient:'clients',newProposal:'proposals',newProject:'projects',newInvoice:'invoices',recordPayment:'payments',addExpense:'expenses'};
 function relationOptions(type, selected=''){
+  const relationText={
+    en:{client:'Client',lead:'Lead',proposal:'Proposal',project:'Project',invoice:'Invoice',none:'No'},
+    ru:{client:'Клиент',lead:'Лид',proposal:'Предложение',project:'Проект',invoice:'Счёт',none:'Нет'},
+    es:{client:'Cliente',lead:'Lead',proposal:'Propuesta',project:'Proyecto',invoice:'Factura',none:'Sin'},
+    de:{client:'Kunde',lead:'Lead',proposal:'Angebot',project:'Projekt',invoice:'Rechnung',none:'Kein'},
+    fr:{client:'Client',lead:'Prospect',proposal:'Proposition',project:'Projet',invoice:'Facture',none:'Aucun'}
+  }[activeLanguage]||{client:'Client',lead:'Lead',proposal:'Proposal',project:'Project',invoice:'Invoice',none:'No'};
   const map={
-    client:['clients','fClientId','Client'],
-    lead:['leads','fLeadId','Lead'],
-    proposal:['proposals','fProposalId','Proposal'],
-    project:['projects','fProjectId','Project'],
-    invoice:['invoices','fInvoiceId','Invoice']
+    client:['clients','fClientId',relationText.client],
+    lead:['leads','fLeadId',relationText.lead],
+    proposal:['proposals','fProposalId',relationText.proposal],
+    project:['projects','fProjectId',relationText.project],
+    invoice:['invoices','fInvoiceId',relationText.invoice]
   };
   Object.entries(map).forEach(([key,[collection,id,label]])=>{
     const el=document.getElementById(id); if(!el)return;
     const records=businessStore[collection]||[];
     const labelFor=r=>escapeHtml(r.name||r.title||r.client||label+' '+String(r.id||'').slice(-5));
-    el.innerHTML='<option value="">— No '+label.toLowerCase()+' —</option>'+records.map(r=>'<option value="'+escapeHtml(r.id)+'">'+labelFor(r)+'</option>').join('');
+    el.innerHTML='<option value="">— '+relationText.none+' '+label.toLowerCase()+' —</option>'+records.map(r=>'<option value="'+escapeHtml(r.id)+'">'+labelFor(r)+'</option>').join('');
     el.value=selected[key+'Id']||'';
   });
 }
