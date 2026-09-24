@@ -131,3 +131,21 @@ QA status: выполнена source-level проверка изменения. 
 GitHub commit: `c9411001c4e8bdc1618f74ad1ee1cc2ba68f6176`.
 
 QA status: source-level проверка выполнена. Browser/mobile visual QA и полный npm test execution ещё не подтверждены; B13 остаётся 22%.
+
+
+## B13.10 — Localization scope + mobile navigation consistency
+
+Дата: 2026-09-25
+
+Исправлено:
+- устранён scope-bug после локализации stored tables: общий словарь переименован в `recordUiCopy` и используется и таблицами, и Leads pipeline;
+- mobile bottom navigation больше не содержит постоянно зашитые русские подписи;
+- добавлена локализация mobile navigation для EN/RU/ES/DE/FR;
+- подписи mobile navigation обновляются при смене языка через общий UI-copy refresh.
+
+Проверка:
+- source-level verification выполнена;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался из-за отсутствия подтверждённого network/runtime доступа к clone окружению.
+
+B13 остаётся 22% до фактической browser/mobile QA и закрытия остальных UI inconsistencies.
