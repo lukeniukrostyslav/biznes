@@ -56,8 +56,36 @@ function calculateCashflow(invoices, payments, expenses) {
   return { invoiced, paid, outstanding, expenses: expensesTotal, profit };
 }
 
+function calculateBusinessMetrics(store, now = new Date()) {
+  const source = store && typeof store === 'object' ? store : {};
+  const invoices = Array.isArray(source.invoices) ? source.invoices : [];
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const expenses = Array.isArray(source.expenses) ? source.expenses : [];
+  const leads = Array.isArray(source.leads) ? source.leads : [];
+  const invoiced = roundMoney(invoices.reduce((sum, invoice) => sum + calculateInvoice(invoice).total, 0));
+  const paid = roundMoney(payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0));
+  const expensesTotal = roundMoney(expenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
+  const pipeline = calculatePipeline(leads);
+  const outstanding = roundMoney(Math.max(invoiced - paid, 0));
+  const actualProfit = roundMoney(paid - expensesTotal);
+  const expectedPayments = roundMoney(invoices.filter(invoice => {
+    const status = String(invoice.status || '').toLowerCase();
+    return !['paid', 'cancelled'].includes(status) && calculateInvoice(invoice).outstanding > 0;
+  }).reduce((sum, invoice) => sum + calculateInvoice(invoice).outstanding, 0));
+  const plannedExpenses = roundMoney(expenses.filter(expense => expense.status === 'Planned' || expense.planned === true)
+    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
+  const forecastCash = roundMoney(paid + expectedPayments - expensesTotal - plannedExpenses);
+  const overdue = roundMoney(invoices.filter(invoice => invoice.dueDate && new Date(invoice.dueDate) < now && calculateInvoice(invoice).outstanding > 0)
+    .reduce((sum, invoice) => sum + calculateInvoice(invoice).outstanding, 0));
+  return {
+    invoiced, paid, outstanding, expenses: expensesTotal, actualProfit,
+    pipeline: pipeline.pipeline, weightedPipeline: pipeline.weightedPipeline,
+    expectedPayments, plannedExpenses, forecastCash, overdue
+  };
+}
+
 function formatMoney(value, currency = 'EUR', locale = 'en-US') {
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(Number(value || 0));
 }
 
-export { roundMoney, lineTotal, calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney };
+export { roundMoney, lineTotal, calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney, calculateBusinessMetrics };
