@@ -162,7 +162,34 @@ document.getElementById('importDataInput').addEventListener('change',e=>{if(e.ta
 
 // Persist language separately; business data remains portable under STORE_KEY.
 document.querySelectorAll('.data-table tbody tr').forEach(row=>row.addEventListener('click',()=>toast('Детали объекта готовы для подключения к store')));
-// New buttons now create typed local records instead of being visual-only.
-document.querySelectorAll('[data-i18n]').forEach(el=>{el.addEventListener('click',()=>{const key=el.dataset.i18n;const map={newLead:'leads',newClient:'clients',newProposal:'proposals',newProject:'projects',newInvoice:'invoices',recordPayment:'payments',addExpense:'expenses'};if(map[key])addRecord(map[key],{name:'New '+key.replace(/^new|^add/i,''),status:'New'});});});
+// Typed create flow: every business action opens the same reusable editor.
+let pendingType=null;
+const createMap={newLead:'leads',newClient:'clients',newProposal:'proposals',newProject:'projects',newInvoice:'invoices',recordPayment:'payments',addExpense:'expenses'};
+function openCreateDrawer(type){
+  pendingType=type;
+  document.getElementById('drawerTitle').textContent='New '+type.replace(/s$/,'');
+  ['fClient','fValue','fAction','fNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fStatus').value='New';
+  document.getElementById('detailDrawer').classList.add('open');
+  document.getElementById('detailDrawer').setAttribute('aria-hidden','false');
+}
+function closeCreateDrawer(){
+  document.getElementById('detailDrawer').classList.remove('open');
+  document.getElementById('detailDrawer').setAttribute('aria-hidden','true');
+  pendingType=null;
+}
+document.querySelectorAll('[data-i18n]').forEach(el=>el.addEventListener('click',()=>{
+  const key=el.dataset.i18n;
+  if(createMap[key]) openCreateDrawer(createMap[key]);
+}));
+document.getElementById('drawerSave').addEventListener('click',()=>{
+  if(!pendingType)return;
+  const value=Number(String(document.getElementById('fValue').value).replace(/[^0-9.-]/g,''))||0;
+  addRecord(pendingType,{name:document.getElementById('fClient').value.trim()||'Untitled',status:document.getElementById('fStatus').value,value,amount:value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim()});
+  closeCreateDrawer();
+});
+document.getElementById('drawerClose').addEventListener('click',closeCreateDrawer);
+document.getElementById('drawerCancel').addEventListener('click',closeCreateDrawer);
+document.getElementById('detailDrawer').addEventListener('click',e=>{if(e.target.id==='detailDrawer')closeCreateDrawer();});
 </script><nav class="mobile-nav" id="mobileNav"><button data-mobile="0" class="active"><span>⌂</span>Обзор</button><button data-mobile="1"><span>↗</span>Лиды</button><button data-mobile="2"><span>◎</span>Клиенты</button><button data-mobile="4"><span>▣</span>Проекты</button><button data-mobile="5"><span>▤</span>Счета</button></nav><script>document.querySelectorAll('#mobileNav button').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.mobile),map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]).classList.add('active');document.querySelectorAll('#mobileNav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.nav button').forEach((x,j)=>x.classList.toggle('active',j===i));});</script></body>
 </html>
