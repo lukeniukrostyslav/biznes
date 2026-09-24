@@ -217,7 +217,7 @@ function renderLeads(){
   pipeline.innerHTML=stages.map(stage=>{
     const items=leads.filter(x=>String(x.status||'New').toLowerCase()===stage.toLowerCase());
     return '<div class="stage"><div class="stage-head"><span>'+escapeHtml(stage)+'</span><span>'+items.length+'</span></div>'+
-      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.notes||(tableCopy[activeLanguage]||tableCopy.en).opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+(tableCopy[activeLanguage]||tableCopy.en).nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div></div>').join(''):'<div class="empty" style="padding:22px 8px">'+((tableCopy[activeLanguage]||tableCopy.en).noLeads)+'</div>')+
+      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.notes||(recordUiCopy[activeLanguage]||recordUiCopy.en).opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+(recordUiCopy[activeLanguage]||recordUiCopy.en).nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div></div>').join(''):'<div class="empty" style="padding:22px 8px">'+((recordUiCopy[activeLanguage]||recordUiCopy.en).noLeads)+'</div>')+
       '</div>';
   }).join('');
   pipeline.querySelectorAll('.deal').forEach(el=>el.addEventListener('click',()=>{
@@ -226,14 +226,14 @@ function renderLeads(){
   }));
 }
 function renderStoredRecords(){
-  const tableCopy={
+  const recordUiCopy={
     en:{headers:{clients:['Client','Projects','Revenue','Outstanding','Status'],proposals:['Proposal','Status','Value','Next action','Action','Record'],projects:['Project','Status','Revenue','Profit / Margin','Forecast / Budget','Action'],invoices:['Invoice','Status','Amount','Next action','Record'],payments:['Payment','Status','Amount','Next action','Record'],expenses:['Expense','Status','Amount','Next action','Record']},forecast:'Forecast',budgetLeft:'Budget left',edit:'Edit',delete:'Delete',noLeads:'No leads',opportunity:'Opportunity',nextAction:'Next action'},
     ru:{headers:{clients:['Клиент','Проекты','Выручка','К оплате','Статус'],proposals:['Предложение','Статус','Сумма','Следующее действие','Действие','Запись'],projects:['Проект','Статус','Выручка','Прибыль / Маржа','Прогноз / Бюджет','Действие'],invoices:['Счёт','Статус','Сумма','Следующее действие','Запись'],payments:['Платёж','Статус','Сумма','Следующее действие','Запись'],expenses:['Расход','Статус','Сумма','Следующее действие','Запись']},forecast:'Прогноз',budgetLeft:'Бюджет осталось',edit:'Изменить',delete:'Удалить',noLeads:'Нет лидов',opportunity:'Возможность',nextAction:'Следующее действие'},
     es:{headers:{clients:['Cliente','Proyectos','Ingresos','Pendiente','Estado'],proposals:['Propuesta','Estado','Valor','Próxima acción','Acción','Registro'],projects:['Proyecto','Estado','Ingresos','Beneficio / Margen','Previsión / Presupuesto','Acción'],invoices:['Factura','Estado','Importe','Próxima acción','Registro'],payments:['Pago','Estado','Importe','Próxima acción','Registro'],expenses:['Gasto','Estado','Importe','Próxima acción','Registro']},forecast:'Previsión',budgetLeft:'Presupuesto restante',edit:'Editar',delete:'Eliminar',noLeads:'No hay leads',opportunity:'Oportunidad',nextAction:'Próxima acción'},
     de:{headers:{clients:['Kunde','Projekte','Umsatz','Offen','Status'],proposals:['Angebot','Status','Wert','Nächste Aktion','Aktion','Datensatz'],projects:['Projekt','Status','Umsatz','Gewinn / Marge','Prognose / Budget','Aktion'],invoices:['Rechnung','Status','Betrag','Nächste Aktion','Datensatz'],payments:['Zahlung','Status','Betrag','Nächste Aktion','Datensatz'],expenses:['Ausgabe','Status','Betrag','Nächste Aktion','Datensatz']},forecast:'Prognose',budgetLeft:'Budget übrig',edit:'Bearbeiten',delete:'Löschen',noLeads:'Keine Leads',opportunity:'Chance',nextAction:'Nächste Aktion'},
     fr:{headers:{clients:['Client','Projets','Chiffre d’affaires','À encaisser','Statut'],proposals:['Proposition','Statut','Valeur','Prochaine action','Action','Enregistrement'],projects:['Projet','Statut','Chiffre d’affaires','Profit / Marge','Prévision / Budget','Action'],invoices:['Facture','Statut','Montant','Prochaine action','Enregistrement'],payments:['Paiement','Statut','Montant','Prochaine action','Enregistrement'],expenses:['Dépense','Statut','Montant','Prochaine action','Enregistrement']},forecast:'Prévision',budgetLeft:'Budget restant',edit:'Modifier',delete:'Supprimer',noLeads:'Aucun prospect',opportunity:'Opportunité',nextAction:'Prochaine action'}
   };
-  const tc=tableCopy[activeLanguage]||tableCopy.en;
+  const tc=recordUiCopy[activeLanguage]||recordUiCopy.en;
   const configs=[['clientsScreen','clients'],['proposalsScreen','proposals'],['projectsScreen','projects'],['invoicesScreen','invoices'],['paymentsScreen','payments'],['expensesScreen','expenses']];
   configs.forEach(([screenId,type])=>{
     const screen=document.getElementById(screenId),table=screen?.querySelector('table'),tbody=table?.querySelector('tbody'),thead=table?.querySelector('thead tr');
@@ -785,5 +785,20 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
 document.getElementById('drawerClose').addEventListener('click',closeCreateDrawer);
 document.getElementById('drawerCancel').addEventListener('click',closeCreateDrawer);
 document.getElementById('detailDrawer').addEventListener('click',e=>{if(e.target.id==='detailDrawer')closeCreateDrawer();});
-</script><nav class="mobile-nav" id="mobileNav"><button data-mobile="0" class="active"><span>⌂</span>Обзор</button><button data-mobile="1"><span>↗</span>Лиды</button><button data-mobile="2"><span>◎</span>Клиенты</button><button data-mobile="4"><span>▣</span>Проекты</button><button data-mobile="5"><span>▤</span>Счета</button></nav><script>document.querySelectorAll('#mobileNav button').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.mobile),map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]).classList.add('active');document.querySelectorAll('#mobileNav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.nav button').forEach((x,j)=>x.classList.toggle('active',j===i));});</script></body>
+</script><nav class="mobile-nav" id="mobileNav"><button data-mobile="0" class="active"><span>⌂</span><span data-mobile-label="dashboard">Обзор</span></button><button data-mobile="1"><span>↗</span><span data-mobile-label="leads">Лиды</span></button><button data-mobile="2"><span>◎</span><span data-mobile-label="clients">Клиенты</span></button><button data-mobile="4"><span>▣</span><span data-mobile-label="projects">Проекты</span></button><button data-mobile="5"><span>▤</span><span data-mobile-label="invoices">Счета</span></button></nav><script>document.querySelectorAll('#mobileNav button').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.mobile),map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]).classList.add('active');document.querySelectorAll('#mobileNav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.nav button').forEach((x,j)=>x.classList.toggle('active',j===i));});</script><script>
+const mobileNavCopy={
+ en:{dashboard:'Overview',leads:'Leads',clients:'Clients',projects:'Projects',invoices:'Invoices'},
+ ru:{dashboard:'Обзор',leads:'Лиды',clients:'Клиенты',projects:'Проекты',invoices:'Счета'},
+ es:{dashboard:'Resumen',leads:'Leads',clients:'Clientes',projects:'Proyectos',invoices:'Facturas'},
+ de:{dashboard:'Übersicht',leads:'Leads',clients:'Kunden',projects:'Projekte',invoices:'Rechnungen'},
+ fr:{dashboard:'Aperçu',leads:'Prospects',clients:'Clients',projects:'Projets',invoices:'Factures'}
+};
+function refreshMobileNavLabels(){
+ const copy=mobileNavCopy[activeLanguage]||mobileNavCopy.en;
+ document.querySelectorAll('[data-mobile-label]').forEach(el=>{const key=el.dataset.mobileLabel;if(copy[key])el.textContent=copy[key];});
+}
+const _applyUiCopy=applyUiCopy;
+applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();};
+refreshMobileNavLabels();
+</script></body>
 </html>
