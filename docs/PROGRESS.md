@@ -182,3 +182,12 @@ B07.3 = **82%**.
 B12 = **70%**.
 
 Local-first store, schema versioning, save/load, upsert/remove, reset, JSON export/import и защита от будущей schemaVersion уже реализованы и протестированы. Оставшиеся 30% — миграции схемы, более строгая валидация импортируемых данных, relationship integrity и QA portable data.
+
+
+## B07.4 — execution checkpoint зафиксирован
+
+Рабочая цель: довести core-фундамент до production-ready состояния без искусственного повышения процента.
+
+Порядок реализации: entity relationships → entity-specific forms/validation → archive/restore → financial engine as single source of truth → relationship/edge-case tests → пересчёт процента только после проверки.
+
+**Правило проекта:** перед существенными продуктовыми решениями повторно проверять актуальный рынок и конкурентов; не копировать функции механически. В обзорах 2026 конкуренты закрывают широкий client lifecycle, включая CRM, proposals, contracts, invoicing, payments, projects и automation. Для BUSINESS OS сохраняется ставка на standalone local-first продукт, единый финансовый граф и profit-first workflow. citeturn0search0turn0search1turn0search2
