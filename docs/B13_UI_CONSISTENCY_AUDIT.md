@@ -360,3 +360,25 @@ GitHub commit кода: 7bdbfb3e8caad14d0e5eca366c93b56925aa1fc0.
 B13 остаётся 22% до фактической browser/mobile QA.
 
 GitHub commit кода: 72126366cedbacccdad7cc6d196a6036ec9b9c22.
+
+
+## B13.21 — User-facing toast localization
+
+Дата: 2026-09-25
+
+Исправлено:
+- оставшиеся user-facing toast messages переведены в единый localization layer EN/RU/ES/DE/FR;
+- локализованы ошибки конвертации Proposal → Project;
+- локализованы ошибки Project → Invoice;
+- локализованы ошибки Invoice / Payment / Payment Plan / validation;
+- локализованы сообщения Import и Save/Update;
+- бизнес-логика и внутренние значения данных не изменялись.
+
+Проверка:
+- source-level verification выполнена после GitHub commit;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22% до фактической browser/mobile QA.
+
+GitHub commit кода: aa892a7da23d357ca980413ccb5f32d2f191622e.
