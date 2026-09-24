@@ -37,8 +37,8 @@
 </div>
 <div class="lower">
 <div class="card wide"><div class="card-title"><h2 data-ui="followupsToday">Follow-ups Today</h2><span class="muted">5</span></div><div class="list" id="followups"></div></div>
-<div class="card wide"><div class="card-title"><h2 data-ui="overdueInvoices">Overdue Invoices</h2><span class="danger">3</span></div><div class="list"><div class="row"><span class="dot" style="background:#dc3c4c"></span><div><strong>Design Studio</strong><small>INV-0017 · 12 days</small></div><span class="amount">$2,400</span></div><div class="row"><span class="dot" style="background:#dc3c4c"></span><div><strong>Nova Studio</strong><small>INV-0014 · 5 days</small></div><span class="amount">$1,850</span></div><div class="row"><span class="dot" style="background:#dc3c4c"></span><div><strong>Bright Media</strong><small>INV-0011 · 3 days</small></div><span class="amount">$980</span></div></div></div>
-<div class="card wide"><div class="card-title"><h2 data-ui="projectProfitability">Project Profitability</h2><span class="muted">View all →</span></div><table class="profit-table"><thead><tr><th data-ui-label="project">Project</th><th data-ui-label="revenue">Revenue</th><th data-ui-label="profit">Profit</th><th data-ui-label="margin">Margin</th></tr></thead><tbody><tr><td>Website Redesign</td><td>$12k</td><td class="green">$8.8k</td><td>73%</td></tr><tr><td>Brand Identity</td><td>$5.5k</td><td class="green">$3.55k</td><td>65%</td></tr><tr><td>Mobile App Design</td><td>$18k</td><td class="green">$10.6k</td><td>59%</td></tr><tr><td>Marketing Website</td><td>$8.75k</td><td class="green">$5.9k</td><td>67%</td></tr></tbody></table></div>
+<div class="card wide"><div class="card-title"><h2 data-ui="overdueInvoices">Overdue Invoices</h2><span class="danger" id="overdueCount">0</span></div><div class="list" id="overdueList"></div></div>
+<div class="card wide"><div class="card-title"><h2 data-ui="projectProfitability">Project Profitability</h2><span class="muted" data-ui="viewAll">View all →</span></div><table class="profit-table"><thead><tr><th data-ui-label="project">Project</th><th data-ui-label="revenue">Revenue</th><th data-ui-label="profit">Profit</th><th data-ui-label="margin">Margin</th></tr></thead><tbody id="projectProfitabilityBody"></tbody></table></div>
 </div>
 </div>
 <div id="leadsScreen" class="screen">
@@ -414,6 +414,29 @@ function renderCashflow(){
   }).join(''):'<div class="empty">No scheduled cash movements in the next 30 days.</div>';
 }
 function renderDashboardRealData(){
+  const overdueList=document.getElementById('overdueList');
+  const overdueCount=document.getElementById('overdueCount');
+  const profitBody=document.getElementById('projectProfitabilityBody');
+  if(!overdueList||!profitBody)return;
+  const now=new Date();
+  const invoices=businessStore.invoices||[];
+  const payments=businessStore.payments||[];
+  const overdue=invoices.map(invoice=>({invoice,status:calculateInvoicePaymentStatus(invoice,payments,now)}))
+    .filter(x=>x.status.status==='Overdue')
+    .sort((a,b)=>String(a.invoice.dueDate||'').localeCompare(String(b.invoice.dueDate||'')));
+  overdueCount.textContent=overdue.length;
+  overdueList.innerHTML=overdue.length?overdue.slice(0,5).map(({invoice,status})=>{
+    const client=(businessStore.clients||[]).find(c=>c.id===invoice.clientId);
+    const days=invoice.dueDate?Math.max(1,Math.floor((now-new Date(invoice.dueDate))/(86400000))):0;
+    return '<div class="row"><span class="dot" style="background:#dc3c4c"></span><div><strong>'+escapeHtml(client?.name||invoice.name||'Invoice')+'</strong><small>'+escapeHtml(invoice.id||'Invoice')+' · '+days+' days</small></div><span class="amount danger">'+money(status.outstanding||0)+'</span></div>';
+  }).join(''):'<div class="empty" data-ui="noOverdueInvoices">No overdue invoices</div>';
+  const projects=businessStore.projects||[];
+  profitBody.innerHTML=projects.slice(0,5).map(project=>{
+    const result=calculateProjectProfit(project,{invoices:businessStore.invoices||[],payments:businessStore.payments||[],expenses:businessStore.expenses||[]});
+    return '<tr><td>'+escapeHtml(project.name||project.title||'Project')+'</td><td>'+money(result.revenue||0)+'</td><td class="green">'+money(result.actualProfit||0)+'</td><td>'+Number(result.actualMargin||0).toFixed(0)+'%</td></tr>';
+  }).join('')||'<tr><td colspan="4" class="empty" data-ui="noProjects">No projects</td></tr>';
+}
+
   const metrics=calculateBusinessMetrics(businessStore);
   const paid=Number(metrics.paid||0), expenses=Number(metrics.actualExpenses||0), profit=Number(metrics.actualProfit||0);
   const incomeEl=document.getElementById('dashIncome'), expEl=document.getElementById('dashExpenses'), profitEl=document.getElementById('dashNetProfit');
