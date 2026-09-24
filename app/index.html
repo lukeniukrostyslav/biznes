@@ -126,7 +126,7 @@
 <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
 <script type="module">
-import { calculateBusinessMetrics } from "../src/core/financial-engine.js";
+import { calculateBusinessMetrics, calculateProjectProfit } from "../src/core/financial-engine.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings'],f:['Client call — Nova Studio','Send proposal — GreenTech','Follow up — Alex Rivera','Meeting — Bright Media','Send invoice — Luna Agency']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки'],f:['Звонок клиенту — Nova Studio','Отправить предложение — GreenTech','Связаться — Alex Rivera','Встреча — Bright Media','Отправить счёт — Luna Agency']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes'],f:['Llamada con cliente — Nova Studio','Enviar propuesta — GreenTech','Seguimiento — Alex Rivera','Reunión — Bright Media','Enviar factura — Luna Agency']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen'],f:['Kundengespräch — Nova Studio','Angebot senden — GreenTech','Nachfassen — Alex Rivera','Meeting — Bright Media','Rechnung senden — Luna Agency']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres'],f:['Appel client — Nova Studio','Envoyer proposition — GreenTech','Relancer — Alex Rivera','Réunion — Bright Media','Envoyer facture — Luna Agency']}};
 
 const screenCopy={
@@ -191,7 +191,7 @@ function renderStoredRecords(){
   const configs=[
     ['clientsScreen','clients',['Client','Projects','Revenue','Outstanding','Status']],
     ['proposalsScreen','proposals',['Proposal','Status','Value','Next action','Record']],
-    ['projectsScreen','projects',['Project','Status','Revenue','Next action','Margin']],
+    ['projectsScreen','projects',['Project','Status','Revenue','Profit / Margin','Forecast / Budget','Action']],
     ['invoicesScreen','invoices',['Invoice','Status','Amount','Next action','Record']],
     ['paymentsScreen','payments',['Payment','Status','Amount','Next action','Record']],
     ['expensesScreen','expenses',['Expense','Status','Amount','Next action','Record']]
@@ -210,7 +210,12 @@ function renderStoredRecords(){
         const outstanding=(businessStore.invoices||[]).filter(i=>i.clientId===record.id||i.client===record.name).reduce((s,i)=>s+Number(i.amount||i.total||0),0)-revenue;
         cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+projectCount+'</td><td>'+money(revenue)+'</td><td>'+money(Math.max(0,outstanding))+'</td><td>'+statusBadge(record.status||'Active')+'</td>';
       }else if(type==='projects'){
-        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+recordAmount(record)+'</td><td>'+escapeHtml(record.margin!=null?record.margin+'%':'—')+'</td><td><button class="secondary row-edit">Edit</button></td>';
+        const profit=calculateProjectProfit(record,{expenses:businessStore.expenses||[]});
+        const revenue=profit.revenue;
+        const margin=profit.margin;
+        const forecastMargin=profit.forecastMargin;
+        const budget=profit.budgetRemaining==null?'—':money(profit.budgetRemaining);
+        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+money(revenue)+'</td><td>'+money(profit.profit)+' / '+escapeHtml(margin!=null?margin+'%':'—')+'</td><td><small>Forecast '+money(profit.forecastProfit)+' · Budget left '+budget+'</small></td><td><button class="secondary row-edit">Edit</button></td>';
       }else{
         cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+recordAmount(record)+'</td><td>'+escapeHtml(record.nextAction||'—')+'</td><td><button class="secondary row-edit">Edit</button> <button class="secondary row-delete">Delete</button></td>';
       }
