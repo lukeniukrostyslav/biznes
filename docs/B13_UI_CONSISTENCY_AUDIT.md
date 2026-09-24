@@ -98,3 +98,20 @@ Browser/mobile visual QA и npm test execution всё ещё не подтвер
 Commit: `bb1f1e4b5ee608615638de18fa59be43a449a75d`.
 
 Browser/mobile visual QA и test execution по-прежнему не подтверждены; B13 процент не повышен.
+
+
+## B13 — stored tables localization checkpoint — 2026-09-24
+
+Выполнен следующий узкий consistency pass без добавления новых бизнес-функций.
+
+Сделано:
+- заголовки таблиц Clients / Proposals / Projects / Invoices / Payments / Expenses локализуются для EN/RU/ES/DE/FR;
+- действия Edit / Delete локализуются;
+- подписи Forecast / Budget left локализуются;
+- остаточные строки Leads: No leads / Opportunity / Next action локализуются;
+- существующие Create invoice / Create project сохраняют локализацию;
+- при смене языка таблицы перерисовываются через `renderStoredRecords()`.
+
+GitHub commit: `bea6a9412cbddea57206747a81e87a6733922c9d`.
+
+QA status: выполнена source-level проверка изменения. Browser/mobile visual QA и полный npm test execution по-прежнему не подтверждены; процент B13 не повышается.
