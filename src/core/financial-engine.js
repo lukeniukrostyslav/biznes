@@ -26,6 +26,13 @@ function calculateInvoice(invoice, now = new Date()) {
   return { subtotal, tax, total, paid, outstanding, status };
 }
 
+function calculateInvoicePaymentStatus(invoice, payments = [], now = new Date()) {
+  const linkedPayments = (Array.isArray(payments) ? payments : [])
+    .filter(payment => payment.invoiceId === invoice.id);
+  const linkedPaid = roundMoney(linkedPayments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0));
+  return calculateInvoice({ ...invoice, paid: linkedPaid }, now);
+}
+
 function calculateProjectProfit(project, related = {}) {
   const revenue = Number(project.revenue || 0);
   const directCosts = Number(project.actualCosts || 0);
@@ -139,4 +146,4 @@ function formatMoney(value, currency = 'EUR', locale = 'en-US') {
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(Number(value || 0));
 }
 
-export { roundMoney, lineTotal, calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney, calculateBusinessMetrics };
+export { roundMoney, lineTotal, calculateInvoice, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney, calculateBusinessMetrics };
