@@ -29,7 +29,7 @@
 | B08 | Расчёты денег и прибыли | 70% |
 | B09 | CRM / Leads / Pipeline | 0% |
 | B10 | Projects / Proposals / Invoices | 0% |
-| B11 | Cashflow / Dashboard / Analytics | 0% |
+| B11 | Cashflow / Dashboard / Analytics | 5% |
 | B12 | Persistence / Export / Import | 0% |
 | B13 | Responsive / Mobile QA | 0% |
 | B14 | Functional QA | 0% |
@@ -82,7 +82,7 @@ B08 = **70%**. Финансовая модель V1 зафиксирована �
 
 ## B07 — core-функциональность
 
-B07 = **55%**.
+B07 = **60%**.
 
 Выполнено:
 - финансовый engine как общая доменная библиотека;
@@ -92,7 +92,7 @@ B07 = **55%**.
 - связи между сущностями;
 - зафиксирована стратегия перехода к local-first persistence.
 
-Выполнено B07.2 (первый слой): schemaVersioned local-first store на localStorage, стабильные локальные ID, сохранение новых записей из UI и toast-подтверждение. Реализовано: schemaVersioned local-first store в UI и отдельный `src/core/persistence.js` с create/load/save/upsert/remove/export/import. Добавлены автоматические тесты persistence. Дополнительно выполнено: защита импорта от будущих schemaVersion, безопасный reset persisted store с тестами, пользовательские Export/Import JSON прямо из интерфейса. Следующий шаг: полноценное подключение всех экранов к store, валидация полей, миграции и пользовательский экспорт/импорт.
+Выполнено B07.2 (первый слой): schemaVersioned local-first store на localStorage, стабильные локальные ID, сохранение новых записей из UI и toast-подтверждение. Реализовано: schemaVersioned local-first store в UI и отдельный `src/core/persistence.js` с create/load/save/upsert/remove/export/import. Добавлены автоматические тесты persistence. Дополнительно выполнено: защита импорта от будущих schemaVersion, безопасный reset persisted store с тестами, пользовательские Export/Import JSON прямо из интерфейса. Следующий шаг: полноценное подключение всех экранов к store, валидация полей и миграции.
 
 ## Конкурентный контроль — 2026-09-24
 
@@ -120,3 +120,10 @@ B07 = **55%**.
 ## Правило процентов
 
 Процент повышается только после фактического выполнения и проверки блока. Концепт, идея или план не считаются реализованными функциями.
+
+
+## B07/B11 обновление — 2026-09-24
+
+Dashboard KPI теперь читаются из local-first store: Revenue = полученные платежи, Outstanding = выставлено минус получено, Pipeline = сумма value/amount лидов, Profit = получено минус расходы. Это первый шаг отказа от демонстрационных финансовых значений. Пока UI не предоставляет полноценное редактирование всех полей и связей, поэтому процент не повышается выше 60%.
+
+Конкурентный контроль продолжается: зрелые продукты категории уже связывают CRM, pipeline, proposals, projects и invoicing в единую цепочку; Bonsai отдельно документирует передачу клиента из CRM в проекты/документы/счета. citeturn1search4turn1search11 BUSINESS OS должен отвечать на тот же workflow без копирования SaaS-модели подписки и с local-first моделью данных.
