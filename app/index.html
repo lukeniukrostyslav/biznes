@@ -507,6 +507,8 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     if(!selectedInvoiceId || paymentAmount<=0){toast('Ошибка: выберите счёт и укажите сумму платежа');return;}
     const invoice=businessStore.invoices.find(x=>x.id===selectedInvoiceId);
     if(!invoice){toast('Ошибка: счёт не найден');return;}
+    if(invoice.clientId && relations.clientId && invoice.clientId!==relations.clientId){toast('Ошибка: клиент платежа должен совпадать с клиентом счёта');return;}
+    relations.clientId=invoice.clientId||relations.clientId;
     const linkedPaid=(businessStore.payments||[]).filter(p=>p.invoiceId===selectedInvoiceId && p.id!==editingId).reduce((sum,p)=>sum+Number(p.amount||0),0);
     const items=Array.isArray(invoice.lineItems)?invoice.lineItems:[];
     const subtotal=items.reduce((sum,item)=>sum+(Number(item.quantity||0)*Number(item.unitPrice||0)),0);
