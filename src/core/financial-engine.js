@@ -26,15 +26,44 @@ function calculateInvoice(invoice, now = new Date()) {
   return { subtotal, tax, total, paid, outstanding, status };
 }
 
-function calculateProjectProfit(project) {
+function calculateProjectProfit(project, related = {}) {
   const revenue = Number(project.revenue || 0);
-  const actualCosts = Number(project.actualCosts || 0);
+  const directCosts = Number(project.actualCosts || 0);
   const actualHours = Number(project.actualHours || 0);
   const labourRate = Number(project.labourRate || 0);
   const labourCost = roundMoney(actualHours * labourRate);
-  const profit = roundMoney(revenue - actualCosts - labourCost);
+  const expenses = Array.isArray(related.expenses) ? related.expenses : [];
+  const projectExpenses = expenses
+    .filter(expense => expense.projectId === project.id && expense.status !== 'Planned' && expense.planned !== true)
+    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+  const plannedExpenses = expenses
+    .filter(expense => expense.projectId === project.id && (expense.status === 'Planned' || expense.planned === true))
+    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+  const totalActualCosts = roundMoney(directCosts + projectExpenses + labourCost);
+  const profit = roundMoney(revenue - totalActualCosts);
   const margin = revenue > 0 ? roundMoney((profit / revenue) * 100) : null;
-  return { revenue: roundMoney(revenue), actualCosts: roundMoney(actualCosts), labourCost, profit, margin };
+  const budget = Number(project.budget || 0);
+  const budgetUsed = project.budgetType === 'Time' ? actualHours : totalActualCosts;
+  const budgetRemaining = budget > 0 ? roundMoney(Math.max(budget - budgetUsed, 0)) : null;
+  const forecastCosts = roundMoney(totalActualCosts + plannedExpenses);
+  const forecastProfit = roundMoney(revenue - forecastCosts);
+  const forecastMargin = revenue > 0 ? roundMoney((forecastProfit / revenue) * 100) : null;
+  return {
+    revenue: roundMoney(revenue),
+    actualCosts: totalActualCosts,
+    directCosts: roundMoney(directCosts),
+    projectExpenses: roundMoney(projectExpenses),
+    plannedExpenses: roundMoney(plannedExpenses),
+    labourCost,
+    budget: roundMoney(budget),
+    budgetUsed: roundMoney(budgetUsed),
+    budgetRemaining,
+    forecastCosts,
+    forecastProfit,
+    forecastMargin,
+    profit,
+    margin
+  };
 }
 
 function calculatePipeline(opportunities) {
