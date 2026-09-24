@@ -449,3 +449,10 @@ Dashboard больше не использует фиктивные финанс
 ## B13 — localization consistency pass
 
 Добавлен общий слой локализации для dashboard metric labels (Actual/Факт и заголовки Project/Revenue/Profit/Margin) на EN/RU/ES/DE/FR. Остаточные hardcoded labels в отдельных таблицах/вторичных областях будут проверены на browser/mobile QA. Процент увеличен только на фактически выполненный consistency pass.
+
+
+## B07.7 — Persistence validation — 2026-09-24
+
+Усилена validateStore: проверяются обязательные ID, дубли ID внутри коллекций, типы записей, основные неотрицательные денежные поля и quantity/unitPrice invoice line items. Добавлен regression test. Полный npm test в текущей execution environment не запускался из-за отсутствия сетевого доступа для клонирования репозитория, поэтому **B07 остаётся 89%** до фактической test verification.
+
+Checkpoint: `docs/B07.7_PERSISTENCE_VALIDATION.md`.
