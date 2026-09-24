@@ -2,7 +2,7 @@
 
 **Постоянное правило проекта:** перед существенными продуктовыми решениями проверять актуальный интернет и конкурентов; результаты учитывать в архитектуре и сохранять в GitHub.
 
-Последнее обновление: 2026-09-24 — B13 dashboard data consistency pass
+Последнее обновление: 2026-09-24 — B13 localization consistency pass
 
 ## Текущая стадия
 
@@ -31,7 +31,7 @@
 | B10 | Projects / Proposals / Invoices / Payments | 44% |
 | B11 | Cashflow / Dashboard / Analytics | 35% |
 | B12 | Persistence / Export / Import | 74% |
-| B13 | Responsive / Mobile QA | 20% |
+| B13 | Responsive / Mobile QA | 22% |
 | B14 | Functional / E2E QA | 0% |
 | B15 | Commercial Packaging | 0% |
 | B16 | Продажи / площадки | 0% |
@@ -445,3 +445,7 @@ B13 повышен только частично: выполнен и зафик
 ## B13 — dashboard data consistency pass
 
 Dashboard больше не использует фиктивные финансовые значения в ключевых блоках. KPI уже были подключены к financial engine; теперь Revenue & Profit history, Cashflow Overview, Follow-ups Today, Overdue Invoices и Project Profitability строятся из local-first store/financial engine. При отсутствии данных показывается empty state, а не выдуманная история. Browser/mobile visual QA всё ещё не выполнен, поэтому B13 не считается закрытым.
+
+## B13 — localization consistency pass
+
+Добавлен общий слой локализации для dashboard metric labels (Actual/Факт и заголовки Project/Revenue/Profit/Margin) на EN/RU/ES/DE/FR. Остаточные hardcoded labels в отдельных таблицах/вторичных областях будут проверены на browser/mobile QA. Процент увеличен только на фактически выполненный consistency pass.
