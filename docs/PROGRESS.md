@@ -463,3 +463,12 @@ Checkpoint: `docs/B07.7_PERSISTENCE_VALIDATION.md`.
 Исправлен важный UI consistency edge case: после переключения языка Dashboard повторно строится из local-first данных; Project Profitability headers локализуются; dynamic status badges используют текущий язык. Новых бизнес-функций не добавлялось. Browser/mobile visual QA и полный npm test execution ещё не выполнены, поэтому проценты не повышаются.
 
 Commits: `f754e10ad8b1896be22e11611c715a2915938fe6`, `7a1b1d7cdca74c8d2fc59b213f5aff6547d83266`, checkpoint `80a9bea0e7ee98bd79f5c70e1da8a1a2b3780250`.
+
+
+## B07/B12 — relationship-safe archive/restore checkpoint — 2026-09-24
+
+Обнаружена и исправлена критическая целостность данных: прежний core archive мог архивировать родительскую сущность, оставляя активные записи с битой foreign-key ссылкой; restore мог вернуть запись с отсутствующей связью. Теперь archive блокируется, если у записи есть активные dependents, а restore предварительно прогоняет candidate store через validateStore(). Добавлены regression tests для обоих сценариев.
+
+GitHub commits: `fc753550d96126fb44c5232d06c96e611709fb46`, `60f95c71a5b22b86d56ebe6888cb1b3d5e2b898c`.
+
+QA: source-level verification выполнена. GitHub Actions в репозитории сейчас не имеет workflow runs (0 runs), поэтому автоматический CI execution не подтверждён. Проценты B07/B12 не повышаются до фактического test execution.
