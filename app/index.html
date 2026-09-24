@@ -162,13 +162,12 @@ fr:{export:'Exporter',import:'Importer',newTop:'＋ Nouveau',thisMonth:'Ce mois-
 };
 function applyUiCopy(lang){
   const c=uiCopy[lang]||uiCopy.en;
-  const textMap={exportData:'export',importData:'import',newTopAction:'newTop',dashboardPeriod:'thisMonth',};
+  const textMap={exportData:'export',importData:'import',newTopAction:'newTop',dashboardPeriod:'thisMonth'};
   Object.entries(textMap).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.textContent=c[key];});
   document.querySelectorAll('[data-ui]').forEach(el=>{const key=el.dataset.ui;if(c[key])el.textContent=c[key];});
   document.querySelectorAll('[data-ui-label]').forEach(el=>{const key=el.dataset.uiLabel;if(uiLabels[lang]?.[key])el.textContent=uiLabels[lang][key];});
   const statusLabels={en:['New','Active','Qualified','Proposal','Negotiation','Won','Awaiting','Sent','Paid','Overdue','Planned','Cancelled'],ru:['Новый','Активный','Квалифицирован','Предложение','Переговоры','Выигран','Ожидание','Отправлен','Оплачен','Просрочен','Запланирован','Отменён'],es:['Nuevo','Activo','Cualificado','Propuesta','Negociación','Ganado','En espera','Enviado','Pagado','Vencido','Planificado','Cancelado'],de:['Neu','Aktiv','Qualifiziert','Angebot','Verhandlung','Gewonnen','Wartend','Gesendet','Bezahlt','Überfällig','Geplant','Storniert'],fr:['Nouveau','Actif','Qualifié','Proposition','Négociation','Gagné','En attente','Envoyé','Payé','En retard','Planifié','Annulé']}[lang]||[];
   const status=document.getElementById('fStatus'); if(status)Array.from(status.options).forEach((o,i)=>{if(statusLabels[i])o.textContent=statusLabels[i];});
-};
   document.querySelectorAll('[data-status-value]').forEach(el=>{const value=el.dataset.statusValue;const index=['New','Active','Qualified','Proposal','Negotiation','Won','Awaiting','Sent','Paid','Overdue','Planned','Cancelled'].indexOf(value);if(index>=0&&statusLabels[index])el.textContent=statusLabels[index];});
 }
 let activeLanguage='en';
