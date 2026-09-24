@@ -362,3 +362,18 @@ Project list теперь использует единый financial engine и 
 - Remaining Budget.
 
 Это убирает отдельные UI-формулы и связывает Project UI с реальными Expenses. Процент B11 пока не повышен: Dashboard/Cashflow ещё содержит demo/static areas и требует полного QA.
+
+
+## B07.6 — typed expense tracking — 2026-09-24
+
+Expense drawer усилен:
+
+- категория расхода;
+- дата расхода;
+- признак billable to client;
+- отдельный статус Planned для планируемых расходов;
+- UI теперь передаёт эти поля в local-first store.
+
+Рыночный контроль показал, что зрелые продукты связывают расходы с проектами и используют их для project profitability/cashflow; HoneyBook требует привязки расхода к проекту для точной project profit аналитики, а Bonsai разделяет billable/non-billable расходы в profitability calculations. citeturn0search0turn0search5turn0search7
+
+Проценты не повышены до QA.
