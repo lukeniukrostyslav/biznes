@@ -82,7 +82,13 @@ function exportStore(store) {
 function importStore(json) {
   const parsed = typeof json === 'string' ? JSON.parse(json) : json;
   if (!parsed || typeof parsed !== 'object') throw new Error('Invalid BUSINESS OS export');
+  if (parsed.schemaVersion && Number(parsed.schemaVersion) > CURRENT_SCHEMA_VERSION) throw new Error('Unsupported BUSINESS OS schema version');
   return normalizeStore(parsed);
+}
+
+function clearStore(storage) {
+  storage.removeItem(STORAGE_KEY);
+  return createEmptyStore();
 }
 
 export {
@@ -96,5 +102,6 @@ export {
   upsertRecord,
   removeRecord,
   exportStore,
-  importStore
+  importStore,
+  clearStore
 };
