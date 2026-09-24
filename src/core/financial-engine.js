@@ -66,18 +66,24 @@ function calculateBusinessMetrics(store, now = new Date()) {
   const actualExpenses = expenses.filter(expense => expense.status !== 'Planned' && expense.planned !== true);
   const plannedExpensesList = expenses.filter(expense => expense.status === 'Planned' || expense.planned === true);
 
-  const invoiced = roundMoney(invoices.reduce((sum, invoice) => sum + calculateInvoice(invoice, now).total, 0));
+  const invoiceMetrics = invoices.map(invoice => {
+    const linkedPaid = payments
+      .filter(payment => payment.invoiceId === invoice.id)
+      .reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+    return calculateInvoice({ ...invoice, paid: linkedPaid }, now);
+  });
+  const invoiced = roundMoney(invoiceMetrics.reduce((sum, metric) => sum + metric.total, 0));
   const paid = roundMoney(payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0));
   const actualExpensesTotal = roundMoney(actualExpenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
   const plannedExpenses = roundMoney(plannedExpensesList.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
   const pipeline = calculatePipeline(leads);
-  const outstanding = roundMoney(Math.max(invoiced - paid, 0));
+  const outstanding = roundMoney(invoiceMetrics.reduce((sum, metric) => sum + metric.outstanding, 0));
   const actualProfit = roundMoney(paid - actualExpensesTotal);
 
-  const expectedPayments = roundMoney(invoices.filter(invoice => {
-    const status = String(invoice.status || '').toLowerCase();
-    return !['paid', 'cancelled'].includes(status) && calculateInvoice(invoice, now).outstanding > 0;
-  }).reduce((sum, invoice) => sum + calculateInvoice(invoice, now).outstanding, 0));
+  const expectedPayments = roundMoney(invoiceMetrics.reduce((sum, metric, index) => {
+    const originalStatus = String(invoices[index].status || '').toLowerCase();
+    return sum + (!['paid', 'cancelled'].includes(originalStatus) ? metric.outstanding : 0);
+  }, 0));
 
   const forecastCash = roundMoney(paid + expectedPayments - actualExpensesTotal - plannedExpenses);
   const overdue = roundMoney(invoices.filter(invoice => calculateInvoice(invoice, now).outstanding > 0 && invoice.dueDate && new Date(invoice.dueDate) < now)
