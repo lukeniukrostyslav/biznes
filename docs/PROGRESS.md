@@ -2,7 +2,7 @@
 
 **Постоянное правило проекта:** перед существенными продуктовыми решениями проверять актуальный интернет и конкурентов; результаты учитывать в архитектуре и сохранять в GitHub.
 
-Последнее обновление: 2026-09-24
+Последнее обновление: 2026-09-24 — B07.3
 
 ## Текущая стадия
 
@@ -25,12 +25,12 @@
 | B04 | Архитектура продукта | 100% |
 | B05 | UX/UI дизайн | 100% |
 | B06 | Система локализации | 100% |
-| B07 | Core-функциональность | 10% |
+| B07 | Core-функциональность | 82% |
 | B08 | Расчёты денег и прибыли | 70% |
 | B09 | CRM / Leads / Pipeline | 0% |
 | B10 | Projects / Proposals / Invoices | 0% |
 | B11 | Cashflow / Dashboard / Analytics | 10% |
-| B12 | Persistence / Export / Import | 0% |
+| B12 | Persistence / Export / Import | 70% |
 | B13 | Responsive / Mobile QA | 0% |
 | B14 | Functional QA | 0% |
 | B15 | Commercial Packaging | 0% |
@@ -155,3 +155,30 @@ Dashboard KPI теперь читаются из local-first store: Revenue = п
 ## Конкурентный контроль — 2026-09-24
 
 Проверка рынка подтверждает, что зрелые продукты уже оцениваются по полному client lifecycle, а не отдельным функциям. HoneyBook предоставляет отчёты по leads, projects, clients, bookings и collected/outstanding payments. citeturn0search10 North при проверке цен 11 августа 2026 фиксирует HoneyBook $29/$49/$109, Dubsado $335/$525 в год и Bonsai $19/$29/$49 за более полные уровни, а также подчёркивает важность сравнения именно tier, включающего proposals/contracts/invoicing. citeturn0search0 BUSINESS OS поэтому продолжает строить единый local-first lifecycle вместо копирования отдельных экранов конкурентов.
+
+
+## B07.3 — entity-aware CRUD и реальные store-строки
+
+B07.3 = **82%**.
+
+Выполнено:
+- таблицы Clients / Proposals / Projects / Invoices / Payments / Expenses теперь строятся из local-first store;
+- добавлены entity-aware колонки вместо общего demo-формата;
+- Leads Kanban теперь строится из реальных lead-записей store;
+- реализовано редактирование существующих записей через общий drawer;
+- реализовано локальное удаление записей;
+- после CRUD автоматически обновляются dashboard metrics и списки;
+- добавлена базовая статусная индикация.
+
+Ограничения, поэтому B07 ещё не 100%:
+- связи Client/Lead/Proposal/Project/Invoice/Payment/Expense пока не являются полноценными foreign-key отношениями во всех формах;
+- валидация entity-specific полей ещё недостаточная;
+- финансовый engine пока не является единственным источником dashboard calculations;
+- нет полноценного archive/restore;
+- нужны relationship tests и edge-case QA.
+
+## B12 — persistence
+
+B12 = **70%**.
+
+Local-first store, schema versioning, save/load, upsert/remove, reset, JSON export/import и защита от будущей schemaVersion уже реализованы и протестированы. Оставшиеся 30% — миграции схемы, более строгая валидация импортируемых данных, relationship integrity и QA portable data.
