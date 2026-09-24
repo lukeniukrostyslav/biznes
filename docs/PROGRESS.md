@@ -82,7 +82,7 @@ B08 = **70%**. Финансовая модель V1 зафиксирована �
 
 ## B07 — core-функциональность
 
-B07 = **65%**.
+B07 = **70%**.
 
 Выполнено:
 - финансовый engine как общая доменная библиотека;
@@ -139,3 +139,10 @@ Dashboard KPI подключены к local store и больше не испо�
 Dashboard KPI теперь читаются из local-first store: Revenue = полученные платежи, Outstanding = выставлено минус получено, Pipeline = сумма value/amount лидов, Profit = получено минус расходы. Это первый шаг отказа от демонстрационных финансовых значений. Пока UI не предоставляет полноценное редактирование всех полей и связей, поэтому процент не повышается выше 60%.
 
 Конкурентный контроль продолжается: зрелые продукты категории уже связывают CRM, pipeline, proposals, projects и invoicing в единую цепочку; Bonsai отдельно документирует передачу клиента из CRM в проекты/документы/счета. citeturn1search4turn1search11 BUSINESS OS должен отвечать на тот же workflow без копирования SaaS-модели подписки и с local-first моделью данных.
+
+
+## B07 обновление — 2026-09-24 (ночной checkpoint)
+
+Реализован единый typed create flow для Lead / Client / Proposal / Project / Invoice / Payment / Expense: кнопки создания теперь открывают общий drawer, принимают клиент/название, статус, сумму, следующее действие и заметки и сохраняют запись в local-first store. Это заменяет предыдущий упрощённый instant-create placeholder. Следующий шаг — отображение сохранённых записей в соответствующих таблицах/Kanban и полноценное редактирование/удаление.
+
+Конкурентный контроль: Bonsai объединяет CRM, pipeline, proposals, projects и invoices, а принятые proposals могут автоматически создавать invoice. citeturn0search2turn0search4 HoneyBook отдельно показывает actual cashflow/project profit и projections, поэтому BUSINESS OS продолжает развивать единый local-first граф данных и прозрачное разделение actual/forecast.
