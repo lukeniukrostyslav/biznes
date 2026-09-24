@@ -172,3 +172,21 @@ B13 остаётся 22% до фактической browser/mobile QA и зак
 - полный npm test не запускался.
 
 B13 остаётся 22% до фактической browser/mobile QA и закрытия остальных UI inconsistencies.
+
+
+## B13.12 — Dashboard Profit integration + Cashflow localization
+
+Дата: 2026-09-25
+
+Исправлено:
+- Dashboard Project Profitability теперь использует фактические поля financial engine `profit` и `margin`, вместо несуществующих `actualProfit` / `actualMargin`;
+- Cashflow UI переведён с hardcoded English на локализуемые подписи EN/RU/ES/DE/FR;
+- timeline Cashflow использует локализованные типы событий и подписи installment;
+- Cashflow labels обновляются при смене языка.
+
+Проверка:
+- source-level verification выполнена;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22% до фактической browser/mobile QA и закрытия оставшихся UI inconsistencies.
