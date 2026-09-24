@@ -75,8 +75,12 @@ function calculateProjectProfit(project, related = {}) {
 
 function calculatePipeline(opportunities) {
   const list = Array.isArray(opportunities) ? opportunities : [];
-  const pipeline = roundMoney(list.reduce((sum, item) => sum + Number(item.value || 0), 0));
-  const weightedPipeline = roundMoney(list.reduce((sum, item) => sum + Number(item.value || 0) * (Number(item.probability || 0) / 100), 0));
+  const active = list.filter(item => {
+    const status = String(item.status || '').toLowerCase();
+    return !['won', 'lost', 'closed', 'cancelled'].includes(status);
+  });
+  const pipeline = roundMoney(active.reduce((sum, item) => sum + Number(item.value || 0), 0));
+  const weightedPipeline = roundMoney(active.reduce((sum, item) => sum + Number(item.value || 0) * (Number(item.probability || 0) / 100), 0));
   return { pipeline, weightedPipeline };
 }
 
