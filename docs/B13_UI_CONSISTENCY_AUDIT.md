@@ -209,3 +209,25 @@ B13 остаётся 22% до фактической browser/mobile QA и зак
 - полный npm test не запускался.
 
 B13 остаётся 22% до фактической browser/mobile QA.
+
+
+## B13.14 — Invoice/Proposal KPI demo-data removal
+
+Дата: 2026-09-25
+
+Исправлено:
+- устранён scope-bug: recordUiCopy вынесен из renderStoredRecords() в общий scope, поэтому Leads pipeline может безопасно использовать тот же словарь локализации;
+- Invoices KPI теперь считаются из local-first invoices/payments и financial engine: Invoiced, Paid, Outstanding, Overdue;
+- Proposals KPI теперь считаются из local-first proposals: Drafts, Sent, Awaiting decision и Win rate;
+- для Win rate используется только решённый набор статусов (Won/Accepted против Lost/Cancelled/Closed), при отсутствии решённых предложений показывается 0%;
+- добавлена локализация KPI-подписей EN/RU/ES/DE/FR;
+- статические demo-значения $62,400, $53,980, $8,420, $3,980, 3, 7, $31,250, 64% больше не являются источником данных.
+
+Проверка:
+- source-level verification выполнена после GitHub commit;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался из-за отсутствия подтверждённого network/runtime доступа к clone окружению.
+
+B13 остаётся 22% до фактической browser/mobile QA и закрытия оставшихся UI inconsistencies.
+
+GitHub commit кода: 06c9d90bf0bac8106b49e4352ded6f11905794a2.
