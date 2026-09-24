@@ -58,6 +58,51 @@ function calculatePaymentPlan(invoiceTotal, installments = [], now = new Date())
   };
 }
 
+function allocatePaymentPlan(invoice, payments = [], now = new Date()) {
+  const plan = calculatePaymentPlan(
+    calculateInvoice(invoice, now).total,
+    invoice && invoice.paymentPlan && Array.isArray(invoice.paymentPlan.installments) ? invoice.paymentPlan.installments : [],
+    now
+  );
+  if (!plan.installments.length) return { ...plan, installments: [], allocatedPayments: 0, unallocatedPayments: 0 };
+  const linked = (Array.isArray(payments) ? payments : [])
+    .filter(payment => payment.invoiceId === invoice.id)
+    .map(payment => ({ ...payment, amount: roundMoney(Math.max(Number(payment.amount || 0), 0)) }))
+    .filter(payment => payment.amount > 0)
+    .sort((a, b) => new Date(a.paymentDate || a.date || a.createdAt || 0) - new Date(b.paymentDate || b.date || b.createdAt || 0));
+
+  const remaining = plan.installments.map(item => item.calculatedAmount);
+  let allocatedPayments = 0;
+  let unallocatedPayments = 0;
+  const allocations = [];
+
+  for (const payment of linked) {
+    let amountLeft = payment.amount;
+    const explicit = Number.isInteger(payment.installmentIndex) ? payment.installmentIndex : null;
+    const order = explicit !== null ? [explicit, ...remaining.map((_, i) => i).filter(i => i !== explicit)] : remaining.map((_, i) => i);
+    for (const index of order) {
+      if (amountLeft <= 0.01 || index < 0 || index >= remaining.length) break;
+      const applied = roundMoney(Math.min(amountLeft, Math.max(remaining[index], 0)));
+      if (applied <= 0) continue;
+      remaining[index] = roundMoney(Math.max(remaining[index] - applied, 0));
+      amountLeft = roundMoney(amountLeft - applied);
+      allocatedPayments = roundMoney(allocatedPayments + applied);
+      allocations.push({ paymentId: payment.id, installmentIndex: index, amount: applied, explicit: explicit !== null });
+    }
+    if (amountLeft > 0.01) unallocatedPayments = roundMoney(unallocatedPayments + amountLeft);
+  }
+
+  const installments = plan.installments.map((item, index) => {
+    const paid = roundMoney(item.calculatedAmount - remaining[index]);
+    const outstanding = roundMoney(Math.max(item.calculatedAmount - paid, 0));
+    const dueDate = item.dueDate ? new Date(item.dueDate) : null;
+    let status = paid >= item.calculatedAmount - 0.01 ? 'Paid' : paid > 0 ? 'Partially Paid' : dueDate && dueDate < now ? 'Overdue' : dueDate && dueDate <= now ? 'Due' : 'Upcoming';
+    if (status === 'Overdue' && paid > 0) status = 'Partially Paid';
+    return { ...item, paid, outstanding, status };
+  });
+  return { ...plan, installments, allocations, allocatedPayments, unallocatedPayments };
+}
+
 function calculateInvoicePaymentStatus(invoice, payments = [], now = new Date()) {
   const linkedPayments = (Array.isArray(payments) ? payments : [])
     .filter(payment => payment.invoiceId === invoice.id);
@@ -182,4 +227,4 @@ function formatMoney(value, currency = 'EUR', locale = 'en-US') {
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(Number(value || 0));
 }
 
-export { roundMoney, lineTotal, calculateInvoice, calculatePaymentPlan, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney, calculateBusinessMetrics };
+export { roundMoney, lineTotal, calculateInvoice, calculatePaymentPlan, allocatePaymentPlan, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney, calculateBusinessMetrics };
