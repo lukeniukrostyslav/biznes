@@ -278,3 +278,22 @@ GitHub commit кода: be2a7d983e9932ea7bf395dfb46367568518828f.
 B13 остаётся 22%: этот checkpoint закрывает ещё один слой source-level consistency, но не заменяет browser/mobile QA.
 
 GitHub commit кода: 55e112cf2969c7659a90a1967fb9c2391cf45055.
+
+
+## B13.17 — Invoice Paid KPI relationship integrity
+
+Дата: 2026-09-25
+
+Исправлено:
+- Invoices KPI Paid больше не суммирует несвязанные payments;
+- в Paid учитываются только платежи с invoiceId, соответствующие модели «invoice → payment»;
+- это предотвращает завышение оплаченной суммы за счёт standalone/unlinked payments.
+
+Проверка:
+- source-level verification выполнена;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22% до фактической browser/mobile QA.
+
+GitHub commit кода: f6c4ee2fff54c50b8e452e5ca7c338b2ac06d251.
