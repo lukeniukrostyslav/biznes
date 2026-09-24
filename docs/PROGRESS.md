@@ -29,7 +29,7 @@
 | B08 | Расчёты денег и прибыли | 70% |
 | B09 | CRM / Leads / Pipeline | 0% |
 | B10 | Projects / Proposals / Invoices | 0% |
-| B11 | Cashflow / Dashboard / Analytics | 5% |
+| B11 | Cashflow / Dashboard / Analytics | 10% |
 | B12 | Persistence / Export / Import | 0% |
 | B13 | Responsive / Mobile QA | 0% |
 | B14 | Functional QA | 0% |
@@ -82,7 +82,7 @@ B08 = **70%**. Финансовая модель V1 зафиксирована �
 
 ## B07 — core-функциональность
 
-B07 = **60%**.
+B07 = **65%**.
 
 Выполнено:
 - финансовый engine как общая доменная библиотека;
@@ -116,6 +116,18 @@ B07 = **60%**.
 - Russian
 
 Русский обязателен. Английский — основной коммерческий язык.
+
+## Конкурентный контроль — 2026-09-24 (вечер)
+
+Свежая проверка показала, что HoneyBook уже имеет cashflow planner, project profitability и financial reports; опубликованные материалы также указывают, что текущий Cash Flow & Project Profit показывает paid payments, а отдельный cashflow planner умеет показывать будущие booked payments и projected expenses. citeturn0search2turn0search3
+
+Следствие для BUSINESS OS: недостаточно иметь просто KPI Revenue/Profit. Нужно разделить **Actual Cashflow** и **Forecast Cashflow**, связать прогноз с due dates счетов, ожидаемыми платежами и плановыми расходами, а также показывать источник каждого показателя. Это улучшает прозрачность и делает финансовый dashboard проверяемым.
+
+HoneyBook также публикует pricing от $29/$49/$109 в месяц при годовой оплате, а независимая проверка North от августа 2026 фиксирует Bonsai $19/$25 за tier с proposals/contracts/invoicing и другие подписные варианты. citeturn0search0turn0search1 Поэтому наше local-first/one-time позиционирование сохраняется, но ценность должна исходить из глубины workflow, а не только отсутствия подписки.
+
+## B07/B11 — текущий технический результат
+
+Dashboard KPI подключены к local store и больше не используют исходные статические финансовые значения. Добавлена базовая денежная агрегация Revenue, Outstanding, Pipeline и Profit. Следующий шаг — сделать эти расчёты типизированными через общий financial engine и затем разделить actual/forecast cashflow.
 
 ## Правило процентов
 
