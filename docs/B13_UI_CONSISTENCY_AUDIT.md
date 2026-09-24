@@ -255,3 +255,26 @@ GitHub commit кода: 06c9d90bf0bac8106b49e4352ded6f11905794a2.
 B13 остаётся 22% до фактической browser/mobile QA и проверки оставшихся UI inconsistencies.
 
 GitHub commit кода: be2a7d983e9932ea7bf395dfb46367568518828f.
+
+
+## B13.16 — Projects KPI demo-data removal + shell localization
+
+Дата: 2026-09-25
+
+Исправлено:
+- Projects KPI strip больше не использует статические 8 / $86,400 / $49,180 / 61%;
+- Active projects, Contracted, Expected profit и Avg. margin теперь рассчитываются из local-first Projects + financial engine;
+- Project KPI labels локализованы EN/RU/ES/DE/FR;
+- удалена лишняя статическая инициализация Dashboard chart, которая могла создавать demo-bars до реального render;
+- sidebar brand tagline, workspace label и Local-first mode получили единый localization pass;
+- основные drawer placeholders (Record name, Follow up, Notes) теперь локализуются EN/RU/ES/DE/FR;
+- Value label drawer переведён в общий UI-copy layer.
+
+Проверка:
+- source-level verification выполнена после GitHub commit;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22%: этот checkpoint закрывает ещё один слой source-level consistency, но не заменяет browser/mobile QA.
+
+GitHub commit кода: 55e112cf2969c7659a90a1967fb9c2391cf45055.
