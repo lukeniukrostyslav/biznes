@@ -86,8 +86,10 @@ function calculateBusinessMetrics(store, now = new Date()) {
   }, 0));
 
   const forecastCash = roundMoney(paid + expectedPayments - actualExpensesTotal - plannedExpenses);
-  const overdue = roundMoney(invoices.filter(invoice => calculateInvoice(invoice, now).outstanding > 0 && invoice.dueDate && new Date(invoice.dueDate) < now)
-    .reduce((sum, invoice) => sum + calculateInvoice(invoice, now).outstanding, 0));
+  const overdue = roundMoney(invoiceMetrics.reduce((sum, metric, index) => {
+    const invoice = invoices[index];
+    return sum + (metric.outstanding > 0 && invoice.dueDate && new Date(invoice.dueDate) < now ? metric.outstanding : 0);
+  }, 0));
 
   return {
     invoiced,
