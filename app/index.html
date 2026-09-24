@@ -61,12 +61,12 @@
 </div>
 <div id="invoicesScreen" class="screen">
 <div class="page-title"><div><h1 data-i18n="invoicesTitle">Invoices</h1><p data-i18n="invoicesSub">See what was billed, paid and still needs attention.</p></div><button class="primary" data-i18n="newInvoice">＋ New invoice</button></div>
-<div class="stat-strip"><div class="card mini"><span class="muted">Invoiced</span><strong>$62,400</strong></div><div class="card mini"><span class="muted">Paid</span><strong>$53,980</strong></div><div class="card mini"><span class="muted">Outstanding</span><strong>$8,420</strong></div><div class="card mini"><span class="muted">Overdue</span><strong class="danger">$3,980</strong></div></div>
+<div class="stat-strip"><div class="card mini"><span class="muted" data-ui="invoiced">Invoiced</span><strong id="invoicesInvoiced">€0</strong></div><div class="card mini"><span class="muted" data-ui="paid">Paid</span><strong id="invoicesPaid">€0</strong></div><div class="card mini"><span class="muted" data-ui="outstanding">Outstanding</span><strong id="invoicesOutstanding">€0</strong></div><div class="card mini"><span class="muted" data-ui="overdue">Overdue</span><strong class="danger" id="invoicesOverdue">€0</strong></div></div>
 <div class="card table-card"><table class="data-table"><thead><tr><th>Invoice</th><th>Client</th><th>Due</th><th>Total</th><th>Status</th></tr></thead><tbody><tr><td><strong>INV-0017</strong></td><td>Design Studio</td><td>12 days ago</td><td>$2,400</td><td><span class="badge red">Overdue</span></td></tr><tr><td><strong>INV-0018</strong></td><td>Nova Studio</td><td>Sep 27</td><td>$4,800</td><td><span class="badge ">Sent</span></td></tr><tr><td><strong>INV-0019</strong></td><td>GreenTech</td><td>Oct 03</td><td>$2,750</td><td><span class="badge green">Paid</span></td></tr><tr><td><strong>INV-0020</strong></td><td>Bright Media</td><td>Sep 29</td><td>$980</td><td><span class="badge ">Sent</span></td></tr></tbody></table></div>
 </div>
 <div id="proposalsScreen" class="screen">
 <div class="page-title"><div><h1 data-i18n="proposalsTitle">Proposals</h1><p data-i18n="proposalsSub">Turn qualified leads into clear offers with price, scope and next action in one place.</p></div><button class="primary" data-i18n="newProposal">＋ New proposal</button></div>
-<div class="stat-strip"><div class="card mini"><span class="muted">Drafts</span><strong>3</strong></div><div class="card mini"><span class="muted">Sent</span><strong>7</strong></div><div class="card mini"><span class="muted">Awaiting decision</span><strong>$31,250</strong></div><div class="card mini"><span class="muted">Win rate</span><strong>64%</strong></div></div>
+<div class="stat-strip"><div class="card mini"><span class="muted" data-ui="drafts">Drafts</span><strong id="proposalsDrafts">0</strong></div><div class="card mini"><span class="muted" data-ui="sent">Sent</span><strong id="proposalsSent">0</strong></div><div class="card mini"><span class="muted" data-ui="awaitingDecision">Awaiting decision</span><strong id="proposalsAwaiting">€0</strong></div><div class="card mini"><span class="muted" data-ui="winRate">Win rate</span><strong id="proposalsWinRate">0%</strong></div></div>
 <div class="card table-card"><table class="data-table"><thead><tr><th>Proposal</th><th>Client</th><th>Value</th><th>Sent</th><th>Next action</th><th>Status</th></tr></thead><tbody><tr><td><strong>Website Redesign</strong></td><td>Nova Studio</td><td>$12,000</td><td>Sep 22</td><td>Follow up today</td><td><span class="badge">Awaiting</span></td></tr><tr><td><strong>SEO Retainer</strong></td><td>Bright Media</td><td>$8,750</td><td>Sep 20</td><td>Review Friday</td><td><span class="badge">Viewed</span></td></tr><tr><td><strong>Brand Identity</strong></td><td>GreenTech</td><td>$5,500</td><td>Sep 18</td><td>Follow up tomorrow</td><td><span class="badge">Awaiting</span></td></tr><tr><td><strong>Consulting Sprint</strong></td><td>Luna Agency</td><td>$5,000</td><td>Sep 16</td><td>Call today</td><td><span class="badge">Negotiation</span></td></tr></tbody></table></div>
 </div>
 <div id="paymentsScreen" class="screen">
@@ -208,6 +208,13 @@ function recordLabel(record){
 function recordAmount(record){
   return money(record.amount??record.total??record.value??0);
 }
+const recordUiCopy={
+    en:{headers:{clients:['Client','Projects','Revenue','Outstanding','Status'],proposals:['Proposal','Status','Value','Next action','Action','Record'],projects:['Project','Status','Revenue','Profit / Margin','Forecast / Budget','Action'],invoices:['Invoice','Status','Amount','Next action','Record'],payments:['Payment','Status','Amount','Next action','Record'],expenses:['Expense','Status','Amount','Next action','Record']},forecast:'Forecast',budgetLeft:'Budget left',edit:'Edit',delete:'Delete',noLeads:'No leads',opportunity:'Opportunity',nextAction:'Next action'},
+    ru:{headers:{clients:['Клиент','Проекты','Выручка','К оплате','Статус'],proposals:['Предложение','Статус','Сумма','Следующее действие','Действие','Запись'],projects:['Проект','Статус','Выручка','Прибыль / Маржа','Прогноз / Бюджет','Действие'],invoices:['Счёт','Статус','Сумма','Следующее действие','Запись'],payments:['Платёж','Статус','Сумма','Следующее действие','Запись'],expenses:['Расход','Статус','Сумма','Следующее действие','Запись']},forecast:'Прогноз',budgetLeft:'Бюджет осталось',edit:'Изменить',delete:'Удалить',noLeads:'Нет лидов',opportunity:'Возможность',nextAction:'Следующее действие'},
+    es:{headers:{clients:['Cliente','Proyectos','Ingresos','Pendiente','Estado'],proposals:['Propuesta','Estado','Valor','Próxima acción','Acción','Registro'],projects:['Proyecto','Estado','Ingresos','Beneficio / Margen','Previsión / Presupuesto','Acción'],invoices:['Factura','Estado','Importe','Próxima acción','Registro'],payments:['Pago','Estado','Importe','Próxima acción','Registro'],expenses:['Gasto','Estado','Importe','Próxima acción','Registro']},forecast:'Previsión',budgetLeft:'Presupuesto restante',edit:'Editar',delete:'Eliminar',noLeads:'No hay leads',opportunity:'Oportunidad',nextAction:'Próxima acción'},
+    de:{headers:{clients:['Kunde','Projekte','Umsatz','Offen','Status'],proposals:['Angebot','Status','Wert','Nächste Aktion','Aktion','Datensatz'],projects:['Projekt','Status','Umsatz','Gewinn / Marge','Prognose / Budget','Aktion'],invoices:['Rechnung','Status','Betrag','Nächste Aktion','Datensatz'],payments:['Zahlung','Status','Betrag','Nächste Aktion','Datensatz'],expenses:['Ausgabe','Status','Betrag','Nächste Aktion','Datensatz']},forecast:'Prognose',budgetLeft:'Budget übrig',edit:'Bearbeiten',delete:'Löschen',noLeads:'Keine Leads',opportunity:'Chance',nextAction:'Nächste Aktion'},
+    fr:{headers:{clients:['Client','Projets','Chiffre d’affaires','À encaisser','Statut'],proposals:['Proposition','Statut','Valeur','Prochaine action','Action','Enregistrement'],projects:['Projet','Statut','Chiffre d’affaires','Profit / Marge','Prévision / Budget','Action'],invoices:['Facture','Statut','Montant','Prochaine action','Enregistrement'],payments:['Paiement','Statut','Montant','Prochaine action','Enregistrement'],expenses:['Dépense','Statut','Montant','Prochaine action','Enregistrement']},forecast:'Prévision',budgetLeft:'Budget restant',edit:'Modifier',delete:'Supprimer',noLeads:'Aucun prospect',opportunity:'Opportunité',nextAction:'Prochaine action'}
+  };
 function renderLeads(){
   const screen=document.getElementById('leadsScreen');
   const pipeline=screen?.querySelector('.pipeline');
@@ -226,13 +233,7 @@ function renderLeads(){
   }));
 }
 function renderStoredRecords(){
-  const recordUiCopy={
-    en:{headers:{clients:['Client','Projects','Revenue','Outstanding','Status'],proposals:['Proposal','Status','Value','Next action','Action','Record'],projects:['Project','Status','Revenue','Profit / Margin','Forecast / Budget','Action'],invoices:['Invoice','Status','Amount','Next action','Record'],payments:['Payment','Status','Amount','Next action','Record'],expenses:['Expense','Status','Amount','Next action','Record']},forecast:'Forecast',budgetLeft:'Budget left',edit:'Edit',delete:'Delete',noLeads:'No leads',opportunity:'Opportunity',nextAction:'Next action'},
-    ru:{headers:{clients:['Клиент','Проекты','Выручка','К оплате','Статус'],proposals:['Предложение','Статус','Сумма','Следующее действие','Действие','Запись'],projects:['Проект','Статус','Выручка','Прибыль / Маржа','Прогноз / Бюджет','Действие'],invoices:['Счёт','Статус','Сумма','Следующее действие','Запись'],payments:['Платёж','Статус','Сумма','Следующее действие','Запись'],expenses:['Расход','Статус','Сумма','Следующее действие','Запись']},forecast:'Прогноз',budgetLeft:'Бюджет осталось',edit:'Изменить',delete:'Удалить',noLeads:'Нет лидов',opportunity:'Возможность',nextAction:'Следующее действие'},
-    es:{headers:{clients:['Cliente','Proyectos','Ingresos','Pendiente','Estado'],proposals:['Propuesta','Estado','Valor','Próxima acción','Acción','Registro'],projects:['Proyecto','Estado','Ingresos','Beneficio / Margen','Previsión / Presupuesto','Acción'],invoices:['Factura','Estado','Importe','Próxima acción','Registro'],payments:['Pago','Estado','Importe','Próxima acción','Registro'],expenses:['Gasto','Estado','Importe','Próxima acción','Registro']},forecast:'Previsión',budgetLeft:'Presupuesto restante',edit:'Editar',delete:'Eliminar',noLeads:'No hay leads',opportunity:'Oportunidad',nextAction:'Próxima acción'},
-    de:{headers:{clients:['Kunde','Projekte','Umsatz','Offen','Status'],proposals:['Angebot','Status','Wert','Nächste Aktion','Aktion','Datensatz'],projects:['Projekt','Status','Umsatz','Gewinn / Marge','Prognose / Budget','Aktion'],invoices:['Rechnung','Status','Betrag','Nächste Aktion','Datensatz'],payments:['Zahlung','Status','Betrag','Nächste Aktion','Datensatz'],expenses:['Ausgabe','Status','Betrag','Nächste Aktion','Datensatz']},forecast:'Prognose',budgetLeft:'Budget übrig',edit:'Bearbeiten',delete:'Löschen',noLeads:'Keine Leads',opportunity:'Chance',nextAction:'Nächste Aktion'},
-    fr:{headers:{clients:['Client','Projets','Chiffre d’affaires','À encaisser','Statut'],proposals:['Proposition','Statut','Valeur','Prochaine action','Action','Enregistrement'],projects:['Projet','Statut','Chiffre d’affaires','Profit / Marge','Prévision / Budget','Action'],invoices:['Facture','Statut','Montant','Prochaine action','Enregistrement'],payments:['Paiement','Statut','Montant','Prochaine action','Enregistrement'],expenses:['Dépense','Statut','Montant','Prochaine action','Enregistrement']},forecast:'Prévision',budgetLeft:'Budget restant',edit:'Modifier',delete:'Supprimer',noLeads:'Aucun prospect',opportunity:'Opportunité',nextAction:'Prochaine action'}
-  };
+  
   const tc=recordUiCopy[activeLanguage]||recordUiCopy.en;
   const configs=[['clientsScreen','clients'],['proposalsScreen','proposals'],['projectsScreen','projects'],['invoicesScreen','invoices'],['paymentsScreen','payments'],['expensesScreen','expenses']];
   configs.forEach(([screenId,type])=>{
@@ -478,6 +479,38 @@ function renderDashboardRealData(){
   if(cols[1])cols[1].innerHTML='<div class="card-title"><h2>'+t.overdue+'</h2><span class="danger">'+overdue.length+'</span></div><div class="list">'+overdueHtml+'</div>';
   if(cols[2])cols[2].innerHTML='<div class="card-title"><h2>'+t.profit+'</h2><span class="muted">'+t.view+'</span></div><table class="profit-table"><thead><tr><th>Project</th><th>Revenue</th><th>Profit</th><th>Margin</th></tr></thead><tbody>'+projectHtml+'</tbody></table>';
 }
+const invoiceProposalUiCopy={
+ en:{invoiced:'Invoiced',paid:'Paid',outstanding:'Outstanding',overdue:'Overdue',drafts:'Drafts',sent:'Sent',awaitingDecision:'Awaiting decision',winRate:'Win rate'},
+ ru:{invoiced:'Выставлено',paid:'Оплачено',outstanding:'К оплате',overdue:'Просрочено',drafts:'Черновики',sent:'Отправлено',awaitingDecision:'Ожидают решения',winRate:'Конверсия в выигрыш'},
+ es:{invoiced:'Facturado',paid:'Cobrado',outstanding:'Pendiente',overdue:'Vencido',drafts:'Borradores',sent:'Enviadas',awaitingDecision:'Esperando decisión',winRate:'Tasa de éxito'},
+ de:{invoiced:'In Rechnung gestellt',paid:'Bezahlt',outstanding:'Offen',overdue:'Überfällig',drafts:'Entwürfe',sent:'Gesendet',awaitingDecision:'Entscheidung ausstehend',winRate:'Erfolgsquote'},
+ fr:{invoiced:'Facturé',paid:'Payé',outstanding:'À encaisser',overdue:'En retard',drafts:'Brouillons',sent:'Envoyées',awaitingDecision:'En attente de décision',winRate:'Taux de réussite'}
+};
+function refreshInvoiceProposalLabels(){
+ const copy=invoiceProposalUiCopy[activeLanguage]||invoiceProposalUiCopy.en;
+ document.querySelectorAll('#invoicesScreen [data-ui],#proposalsScreen [data-ui]').forEach(el=>{const key=el.dataset.ui;if(copy[key])el.textContent=copy[key];});
+}
+function refreshInvoiceProposalMetrics(){
+ const invoices=businessStore.invoices||[], payments=businessStore.payments||[], now=new Date();
+ const invoiced=invoices.reduce((sum,i)=>sum+Number(i.amount??i.total??i.value??0),0);
+ const paid=payments.reduce((sum,p)=>sum+Number(p.amount||0),0);
+ const outstanding=invoices.reduce((sum,invoice)=>sum+Number(calculateInvoicePaymentStatus(invoice,payments,now).outstanding||0),0);
+ const overdue=invoices.reduce((sum,invoice)=>{const state=calculateInvoicePaymentStatus(invoice,payments,now);return sum+(state.status==='Overdue'?Number(state.outstanding||0):0);},0);
+ [['invoicesInvoiced',invoiced],['invoicesPaid',paid],['invoicesOutstanding',outstanding],['invoicesOverdue',overdue]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=money(value);});
+ const proposals=businessStore.proposals||[];
+ const statusOf=p=>String(p.status||'').trim().toLowerCase();
+ const drafts=proposals.filter(p=>['draft'].includes(statusOf(p))).length;
+ const sentStatuses=['sent','viewed','awaiting','negotiation'];
+ const sent=proposals.filter(p=>sentStatuses.includes(statusOf(p))).length;
+ const awaiting=proposals.filter(p=>['sent','viewed','awaiting','negotiation'].includes(statusOf(p))).reduce((sum,p)=>sum+Number(p.amount??p.total??p.value??0),0);
+ const decided=proposals.filter(p=>['won','accepted','lost','cancelled','closed'].includes(statusOf(p)));
+ const won=decided.filter(p=>['won','accepted'].includes(statusOf(p))).length;
+ const winRate=decided.length?Math.round(won/decided.length*100):0;
+ [['proposalsDrafts',drafts],['proposalsSent',sent]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=String(value);});
+ const awaitingEl=document.getElementById('proposalsAwaiting');if(awaitingEl)awaitingEl.textContent=money(awaiting);
+ const winEl=document.getElementById('proposalsWinRate');if(winEl)winEl.textContent=String(winRate)+'%';
+ refreshInvoiceProposalLabels();
+}
 function refreshOperationalMetrics(){
   const now=new Date(), payments=businessStore.payments||[], invoices=businessStore.invoices||[], expenses=businessStore.expenses||[];
   const month=now.getMonth(), year=now.getFullYear();
@@ -515,6 +548,7 @@ function refreshDashboardMetrics(){
   document.getElementById('metricProfit').textContent=money(metrics.actualProfit);
   renderCashflow();
   refreshOperationalMetrics();
+  refreshInvoiceProposalMetrics();
   renderProfitRealData();
   renderDashboardRealData();
 }
@@ -852,7 +886,7 @@ function refreshMobileNavLabels(){
  document.querySelectorAll('[data-mobile-label]').forEach(el=>{const key=el.dataset.mobileLabel;if(copy[key])el.textContent=copy[key];});
 }
 const _applyUiCopy=applyUiCopy;
-applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();refreshCashflowLabels();};
+applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();refreshCashflowLabels();refreshInvoiceProposalLabels();};
 refreshMobileNavLabels();
 refreshProfitLabels();
 refreshCashflowLabels();
