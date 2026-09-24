@@ -217,7 +217,7 @@ function renderLeads(){
   pipeline.innerHTML=stages.map(stage=>{
     const items=leads.filter(x=>String(x.status||'New').toLowerCase()===stage.toLowerCase());
     return '<div class="stage"><div class="stage-head"><span>'+escapeHtml(stage)+'</span><span>'+items.length+'</span></div>'+
-      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.notes||'Opportunity')+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>Next action · '+escapeHtml(x.nextAction||'—')+'</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div></div>').join(''):'<div class="empty" style="padding:22px 8px">No leads</div>')+
+      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.notes||(tableCopy[activeLanguage]||tableCopy.en).opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+(tableCopy[activeLanguage]||tableCopy.en).nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div></div>').join(''):'<div class="empty" style="padding:22px 8px">'+((tableCopy[activeLanguage]||tableCopy.en).noLeads)+'</div>')+
       '</div>';
   }).join('');
   pipeline.querySelectorAll('.deal').forEach(el=>el.addEventListener('click',()=>{
@@ -226,20 +226,21 @@ function renderLeads(){
   }));
 }
 function renderStoredRecords(){
-  const configs=[
-    ['clientsScreen','clients',['Client','Projects','Revenue','Outstanding','Status']],
-    ['proposalsScreen','proposals',['Proposal','Status','Value','Next action','Action','Record']],
-    ['projectsScreen','projects',['Project','Status','Revenue','Profit / Margin','Forecast / Budget','Action']],
-    ['invoicesScreen','invoices',['Invoice','Status','Amount','Next action','Record']],
-    ['paymentsScreen','payments',['Payment','Status','Amount','Next action','Record']],
-    ['expensesScreen','expenses',['Expense','Status','Amount','Next action','Record']]
-  ];
-  configs.forEach(([screenId,type,headers])=>{
-    const screen=document.getElementById(screenId), table=screen?.querySelector('table'), tbody=table?.querySelector('tbody'), thead=table?.querySelector('thead tr');
+  const tableCopy={
+    en:{headers:{clients:['Client','Projects','Revenue','Outstanding','Status'],proposals:['Proposal','Status','Value','Next action','Action','Record'],projects:['Project','Status','Revenue','Profit / Margin','Forecast / Budget','Action'],invoices:['Invoice','Status','Amount','Next action','Record'],payments:['Payment','Status','Amount','Next action','Record'],expenses:['Expense','Status','Amount','Next action','Record']},forecast:'Forecast',budgetLeft:'Budget left',edit:'Edit',delete:'Delete',noLeads:'No leads',opportunity:'Opportunity',nextAction:'Next action'},
+    ru:{headers:{clients:['Клиент','Проекты','Выручка','К оплате','Статус'],proposals:['Предложение','Статус','Сумма','Следующее действие','Действие','Запись'],projects:['Проект','Статус','Выручка','Прибыль / Маржа','Прогноз / Бюджет','Действие'],invoices:['Счёт','Статус','Сумма','Следующее действие','Запись'],payments:['Платёж','Статус','Сумма','Следующее действие','Запись'],expenses:['Расход','Статус','Сумма','Следующее действие','Запись']},forecast:'Прогноз',budgetLeft:'Бюджет осталось',edit:'Изменить',delete:'Удалить',noLeads:'Нет лидов',opportunity:'Возможность',nextAction:'Следующее действие'},
+    es:{headers:{clients:['Cliente','Proyectos','Ingresos','Pendiente','Estado'],proposals:['Propuesta','Estado','Valor','Próxima acción','Acción','Registro'],projects:['Proyecto','Estado','Ingresos','Beneficio / Margen','Previsión / Presupuesto','Acción'],invoices:['Factura','Estado','Importe','Próxima acción','Registro'],payments:['Pago','Estado','Importe','Próxima acción','Registro'],expenses:['Gasto','Estado','Importe','Próxima acción','Registro']},forecast:'Previsión',budgetLeft:'Presupuesto restante',edit:'Editar',delete:'Eliminar',noLeads:'No hay leads',opportunity:'Oportunidad',nextAction:'Próxima acción'},
+    de:{headers:{clients:['Kunde','Projekte','Umsatz','Offen','Status'],proposals:['Angebot','Status','Wert','Nächste Aktion','Aktion','Datensatz'],projects:['Projekt','Status','Umsatz','Gewinn / Marge','Prognose / Budget','Aktion'],invoices:['Rechnung','Status','Betrag','Nächste Aktion','Datensatz'],payments:['Zahlung','Status','Betrag','Nächste Aktion','Datensatz'],expenses:['Ausgabe','Status','Betrag','Nächste Aktion','Datensatz']},forecast:'Prognose',budgetLeft:'Budget übrig',edit:'Bearbeiten',delete:'Löschen',noLeads:'Keine Leads',opportunity:'Chance',nextAction:'Nächste Aktion'},
+    fr:{headers:{clients:['Client','Projets','Chiffre d’affaires','À encaisser','Statut'],proposals:['Proposition','Statut','Valeur','Prochaine action','Action','Enregistrement'],projects:['Projet','Statut','Chiffre d’affaires','Profit / Marge','Prévision / Budget','Action'],invoices:['Facture','Statut','Montant','Prochaine action','Enregistrement'],payments:['Paiement','Statut','Montant','Prochaine action','Enregistrement'],expenses:['Dépense','Statut','Montant','Prochaine action','Enregistrement']},forecast:'Prévision',budgetLeft:'Budget restant',edit:'Modifier',delete:'Supprimer',noLeads:'Aucun prospect',opportunity:'Opportunité',nextAction:'Prochaine action'}
+  };
+  const tc=tableCopy[activeLanguage]||tableCopy.en;
+  const configs=[['clientsScreen','clients'],['proposalsScreen','proposals'],['projectsScreen','projects'],['invoicesScreen','invoices'],['paymentsScreen','payments'],['expensesScreen','expenses']];
+  configs.forEach(([screenId,type])=>{
+    const screen=document.getElementById(screenId),table=screen?.querySelector('table'),tbody=table?.querySelector('tbody'),thead=table?.querySelector('thead tr');
     if(!tbody||!thead)return;
-    thead.innerHTML=headers.map(h=>'<th>'+h+'</th>').join('');
+    thead.innerHTML=tc.headers[type].map(h=>'<th>'+h+'</th>').join('');
     const records=businessStore[type]||[];
-    if(!records.length)return;
+    if(!records.length){tbody.innerHTML='';return;}
     tbody.innerHTML=records.map(record=>{
       let cells;
       if(type==='clients'){
@@ -249,38 +250,30 @@ function renderStoredRecords(){
         cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+projectCount+'</td><td>'+money(revenue)+'</td><td>'+money(Math.max(0,outstanding))+'</td><td>'+statusBadge(record.status||'Active')+'</td>';
       }else if(type==='projects'){
         const profit=calculateProjectProfit(record,{expenses:businessStore.expenses||[]});
-        const revenue=profit.revenue;
-        const margin=profit.margin;
-        const budget=profit.budgetRemaining==null?'—':money(profit.budgetRemaining);
         const hasInvoice=(businessStore.invoices||[]).some(invoice=>invoice.projectId===record.id);
         const invoiceLabel={en:'Create invoice',ru:'Создать счёт',es:'Crear factura',de:'Rechnung erstellen',fr:'Créer une facture'}[activeLanguage]||'Create invoice';
-        const invoiceAction=!hasInvoice && String(record.billingType||'').toLowerCase()!=='non-billable'
-          ? '<button class="secondary row-invoice">'+invoiceLabel+'</button>'
-          : '';
-        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+money(revenue)+'</td><td>'+money(profit.profit)+' / '+escapeHtml(margin!=null?margin+'%':'—')+'</td><td><small>Forecast '+money(profit.forecastProfit)+' · Budget left '+budget+'</small></td><td>'+invoiceAction+' <button class="secondary row-edit">Edit</button></td>';
+        const invoiceAction=!hasInvoice&&String(record.billingType||'').toLowerCase()!=='non-billable'?'<button class="secondary row-invoice">'+invoiceLabel+'</button>':'';
+        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+money(profit.revenue)+'</td><td>'+money(profit.profit)+' / '+escapeHtml(profit.margin!=null?profit.margin+'%':'—')+'</td><td><small>'+tc.forecast+' '+money(profit.forecastProfit)+' · '+tc.budgetLeft+' '+(profit.budgetRemaining==null?'—':money(profit.budgetRemaining))+'</small></td><td>'+invoiceAction+' <button class="secondary row-edit">'+tc.edit+'</button></td>';
       }else if(type==='proposals'){
-        const status=String(record.status||'').toLowerCase();
-        const alreadyLinked=(businessStore.projects||[]).some(project=>project.proposalId===record.id);
-        const canConvert=['won','accepted'].includes(status) && !alreadyLinked;
+        const status=String(record.status||'').toLowerCase(),alreadyLinked=(businessStore.projects||[]).some(project=>project.proposalId===record.id);
+        const canConvert=['won','accepted'].includes(status)&&!alreadyLinked;
         const convertLabel={en:'Create project',ru:'Создать проект',es:'Crear proyecto',de:'Projekt erstellen',fr:'Créer un projet'}[activeLanguage]||'Create project';
         const action=canConvert?'<button class="secondary row-convert">'+convertLabel+'</button>':'';
-        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+recordAmount(record)+'</td><td>'+escapeHtml(record.nextAction||'—')+'</td><td>'+action+'</td><td><button class="secondary row-edit">Edit</button> <button class="secondary row-delete">Delete</button></td>';
+        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+recordAmount(record)+'</td><td>'+escapeHtml(record.nextAction||'—')+'</td><td>'+action+'</td><td><button class="secondary row-edit">'+tc.edit+'</button> <button class="secondary row-delete">'+tc.delete+'</button></td>';
       }else{
-        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+recordAmount(record)+'</td><td>'+escapeHtml(record.nextAction||'—')+'</td><td><button class="secondary row-edit">Edit</button> <button class="secondary row-delete">Delete</button></td>';
+        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+recordAmount(record)+'</td><td>'+escapeHtml(record.nextAction||'—')+'</td><td><button class="secondary row-edit">'+tc.edit+'</button> <button class="secondary row-delete">'+tc.delete+'</button></td>';
       }
       return '<tr data-record-type="'+type+'" data-record-id="'+escapeHtml(record.id)+'">'+cells+'</tr>';
     }).join('');
     tbody.querySelectorAll('tr').forEach(row=>{
       const rec=records.find(x=>x.id===row.dataset.recordId);
-      row.addEventListener('click',e=>{
-        if(e.target.closest('button'))return;
-        if(rec)openEditDrawer(type,rec);
-      });
+      row.addEventListener('click',e=>{if(e.target.closest('button'))return;if(rec)openEditDrawer(type,rec);});
       row.querySelector('.row-edit')?.addEventListener('click',()=>openEditDrawer(type,rec));
       row.querySelector('.row-convert')?.addEventListener('click',()=>convertProposalToProject(rec.id));
       row.querySelector('.row-invoice')?.addEventListener('click',()=>createInvoiceFromProject(rec.id));
       row.querySelector('.row-delete')?.addEventListener('click',()=>deleteRecord(type,rec.id));
-    });  });
+    });
+  });
   renderLeads();
 }
 function convertProposalToProject(proposalId){
