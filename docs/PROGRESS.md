@@ -284,3 +284,19 @@ HoneyBook сейчас объединяет CRM, leads, clients, projects, propo
 Свежие официальные страницы конкурентов показывают, что HoneyBook включает invoices/payments, proposals/contracts, CRM и client/project management, а Bonsai объединяет CRM, pipeline, projects, invoices/payments, expenses и profit/productivity reports. citeturn0search0turn0search2turn0search7 Dubsado также включает invoicing, payment plans, client portals и financial reporting, а более высокий уровень добавляет public proposals и automation. citeturn0search3turn0search4
 
 Для BUSINESS OS это подтверждает приоритет: финансовые связи должны быть настоящими, а не просто визуальными KPI. Мы продолжаем строить единый graph Lead → Client → Proposal → Project → Invoice → Payment → Expense, сохраняя standalone/local-first и one-time purchase модель.
+
+
+## B10.1 — typed invoice form — 2026-09-24
+
+UI drawer для Invoice усилен:
+
+- описание позиции;
+- количество;
+- цена за единицу;
+- налоговая ставка;
+- срок оплаты;
+- сохранение lineItems, taxRate и dueDate вместо generic-only Value;
+- при редактировании Invoice существующие line item/tax/due date восстанавливаются;
+- generic Value скрывается для Invoice, чтобы не было двух конкурирующих источников суммы.
+
+B10 остаётся **0%** до полного функционального QA всего Invoice lifecycle. B07 остаётся **82%**, B08 — **70%**.
