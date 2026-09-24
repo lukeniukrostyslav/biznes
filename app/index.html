@@ -822,6 +822,10 @@ const mobileNavCopy={
  de:{dashboard:'Übersicht',leads:'Leads',clients:'Kunden',projects:'Projekte',invoices:'Rechnungen'},
  fr:{dashboard:'Aperçu',leads:'Prospects',clients:'Clients',projects:'Projets',invoices:'Factures'}
 };
+function refreshCashflowLabels(){
+ const copy=cashflowUiCopy[activeLanguage]||cashflowUiCopy.en;
+ document.querySelectorAll('#cashflowScreen [data-ui]').forEach(el=>{const key=el.dataset.ui;if(copy[key])el.textContent=copy[key];});
+}
 function refreshProfitLabels(){
  const copy=profitUiCopy[activeLanguage]||profitUiCopy.en;
  document.querySelectorAll('[data-ui]').forEach(el=>{const key=el.dataset.ui;if(copy[key])el.textContent=copy[key];});
@@ -833,8 +837,9 @@ function refreshMobileNavLabels(){
  document.querySelectorAll('[data-mobile-label]').forEach(el=>{const key=el.dataset.mobileLabel;if(copy[key])el.textContent=copy[key];});
 }
 const _applyUiCopy=applyUiCopy;
-applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();};
+applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();refreshCashflowLabels();};
 refreshMobileNavLabels();
 refreshProfitLabels();
+refreshCashflowLabels();
 </script></body>
 </html>
