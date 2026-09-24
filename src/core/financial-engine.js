@@ -173,6 +173,83 @@ function calculateCashflow(invoices, payments, expenses) {
   return { invoiced, paid, outstanding, expenses: expensesTotal, profit };
 }
 
+function calculateCashflowForecast(store, now = new Date(), horizonDays = 30) {
+  const source = store && typeof store === 'object' ? store : {};
+  const invoices = Array.isArray(source.invoices) ? source.invoices : [];
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const expenses = Array.isArray(source.expenses) ? source.expenses : [];
+  const horizon = new Date(now);
+  horizon.setDate(horizon.getDate() + Math.max(Number(horizonDays || 0), 0));
+
+  const events = [];
+  for (const invoice of invoices) {
+    const allocation = allocatePaymentPlan(invoice, payments, now);
+    if (allocation.installments.length) {
+      allocation.installments.forEach((item, index) => {
+        if (item.outstanding <= 0) return;
+        const dueDate = item.dueDate ? new Date(item.dueDate) : null;
+        if (!dueDate || dueDate > horizon || dueDate < now) return;
+        events.push({
+          type: 'payment',
+          date: dueDate.toISOString().slice(0, 10),
+          amount: roundMoney(item.outstanding),
+          invoiceId: invoice.id,
+          installmentIndex: index,
+          label: invoice.name || invoice.title || invoice.id,
+          status: item.status
+        });
+      });
+    } else {
+      const metric = calculateInvoicePaymentStatus(invoice, payments, now);
+      if (metric.outstanding > 0 && invoice.dueDate) {
+        const dueDate = new Date(invoice.dueDate);
+        if (dueDate >= now && dueDate <= horizon) {
+          events.push({
+            type: 'payment',
+            date: dueDate.toISOString().slice(0, 10),
+            amount: metric.outstanding,
+            invoiceId: invoice.id,
+            installmentIndex: null,
+            label: invoice.name || invoice.title || invoice.id,
+            status: metric.status
+          });
+        }
+      }
+    }
+  }
+
+  for (const expense of expenses) {
+    if (expense.status !== 'Planned' && expense.planned !== true) continue;
+    const dateValue = expense.expenseDate || expense.date;
+    if (!dateValue) continue;
+    const date = new Date(dateValue);
+    if (date < now || date > horizon) continue;
+    events.push({
+      type: 'expense',
+      date: date.toISOString().slice(0, 10),
+      amount: roundMoney(Math.max(Number(expense.amount || 0), 0)),
+      expenseId: expense.id,
+      label: expense.name || expense.title || expense.id,
+      status: 'Planned'
+    });
+  }
+
+  events.sort((a, b) => a.date.localeCompare(b.date) || (a.type === 'expense' ? 1 : -1));
+  const futureInflows = roundMoney(events.filter(x => x.type === 'payment').reduce((sum, x) => sum + x.amount, 0));
+  const futureExpenses = roundMoney(events.filter(x => x.type === 'expense').reduce((sum, x) => sum + x.amount, 0));
+  const actualExpenses = roundMoney(expenses.filter(x => x.status !== 'Planned' && x.planned !== true).reduce((sum, x) => sum + Number(x.amount || 0), 0));
+  const actualPaid = roundMoney(payments.reduce((sum, x) => sum + Number(x.amount || 0), 0));
+  const currentNetCash = roundMoney(actualPaid - actualExpenses);
+  return {
+    horizonDays: Math.max(Number(horizonDays || 0), 0),
+    events,
+    futureInflows,
+    futureExpenses,
+    currentNetCash,
+    forecastNetCash: roundMoney(currentNetCash + futureInflows - futureExpenses)
+  };
+}
+
 function calculateBusinessMetrics(store, now = new Date()) {
   const source = store && typeof store === 'object' ? store : {};
   const invoices = Array.isArray(source.invoices) ? source.invoices : [];
@@ -227,4 +304,4 @@ function formatMoney(value, currency = 'EUR', locale = 'en-US') {
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(Number(value || 0));
 }
 
-export { roundMoney, lineTotal, calculateInvoice, calculatePaymentPlan, allocatePaymentPlan, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney, calculateBusinessMetrics };
+export { roundMoney, lineTotal, calculateInvoice, calculatePaymentPlan, allocatePaymentPlan, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateCashflowForecast, formatMoney, calculateBusinessMetrics };
