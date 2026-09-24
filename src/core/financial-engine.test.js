@@ -122,3 +122,49 @@ test('overdue uses linked payments instead of stale invoice paid field', () => {
   assert.equal(result.outstanding, 750);
   assert.equal(result.overdue, 750);
 });
+
+
+test('project profit includes linked actual and planned expenses plus budget forecast', () => {
+  const result = calculateProjectProfit({
+    id: 'project-1',
+    revenue: 5000,
+    actualCosts: 200,
+    actualHours: 10,
+    labourRate: 100,
+    budget: 1500,
+    budgetType: 'Fee'
+  }, {
+    expenses: [
+      { id: 'exp-1', projectId: 'project-1', amount: 300, status: 'Paid' },
+      { id: 'exp-2', projectId: 'project-1', amount: 400, status: 'Planned' },
+      { id: 'exp-3', projectId: 'other', amount: 900, status: 'Paid' }
+    ]
+  });
+
+  assert.equal(result.labourCost, 1000);
+  assert.equal(result.projectExpenses, 300);
+  assert.equal(result.actualCosts, 1500);
+  assert.equal(result.plannedExpenses, 400);
+  assert.equal(result.profit, 3500);
+  assert.equal(result.margin, 70);
+  assert.equal(result.budgetUsed, 1500);
+  assert.equal(result.budgetRemaining, 0);
+  assert.equal(result.forecastCosts, 1900);
+  assert.equal(result.forecastProfit, 3100);
+  assert.equal(result.forecastMargin, 62);
+});
+
+test('time budget tracks actual hours and does not confuse hours with money', () => {
+  const result = calculateProjectProfit({
+    id: 'project-time',
+    revenue: 3000,
+    actualHours: 12,
+    labourRate: 50,
+    budget: 20,
+    budgetType: 'Time'
+  });
+
+  assert.equal(result.budgetUsed, 12);
+  assert.equal(result.budgetRemaining, 8);
+  assert.equal(result.labourCost, 600);
+});
