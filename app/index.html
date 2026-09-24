@@ -10,7 +10,7 @@
 .screen{display:none}.screen.active{display:block}.page-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.toolbar{display:flex;gap:9px;align-items:center}.filter{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 12px}.primary{border:0;background:var(--blue);color:#fff;border-radius:9px;padding:10px 14px;font-weight:700}.secondary{border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px 14px}.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;overflow:auto}.stage{background:#eef2f8;border-radius:12px;padding:10px;min-width:190px}.stage-head{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:10px}.deal{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 2px 8px rgba(19,35,66,.03)}.deal strong{font-size:13px}.deal small{display:block;color:var(--muted);margin-top:5px}.deal-value{font-weight:800;margin-top:9px}.table-card{padding:8px 16px}.data-table{width:100%;border-collapse:collapse}.data-table th,.data-table td{text-align:left;padding:13px 8px;border-bottom:1px solid #edf0f5}.data-table th{font-size:12px;color:var(--muted)}.badge{padding:5px 8px;border-radius:99px;background:#edf5ff;color:var(--blue);font-size:11px;font-weight:700}.badge.green{background:#eaf8f0;color:var(--green)}.badge.red{background:#fff0f1;color:var(--red)}.detail-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.mini{padding:14px}.mini strong{display:block;font-size:19px;margin-top:6px}.timeline{display:grid;gap:0}.event{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #edf0f5}.event-dot{width:9px;height:9px;border-radius:50%;background:var(--blue);margin-top:5px}.empty{padding:42px;text-align:center;color:var(--muted)}@media(max-width:900px){.pipeline{grid-template-columns:repeat(5,190px)}.detail-grid{grid-template-columns:1fr}.stat-strip{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.page-title{align-items:flex-start}.toolbar .filter{display:none}.data-table{min-width:650px}.table-card{overflow:auto}.stat-strip{grid-template-columns:1fr 1fr}.pipeline{grid-template-columns:repeat(5,175px)}}
 .drawer{position:fixed;inset:0;z-index:20;display:none;background:rgba(8,18,35,.32)}.drawer.open{display:flex;justify-content:flex-end}.drawer-panel{width:min(520px,100%);height:100%;background:#fff;padding:24px;box-shadow:-12px 0 40px rgba(10,25,50,.16);overflow:auto}.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.close{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 10px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:700;color:var(--muted)}.field input,.field select,.field textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;font:inherit}.field textarea{min-height:90px;resize:vertical}.drawer-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:18px}@media(max-width:600px){.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.drawer-panel{padding:18px}}.entity-view{display:grid;grid-template-columns:1.35fr .65fr;gap:14px}.entity-card{padding:18px}.entity-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.entity-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.pill{border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:11px;color:var(--muted)}.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.kpi{background:#f7f9fc;border-radius:10px;padding:12px}.kpi b{display:block;font-size:18px;margin-top:5px}.action-list{display:grid;gap:8px}.action-item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #edf0f5}.action-item:last-child{border-bottom:0}.action-item small{display:block;color:var(--muted);margin-top:3px}.entity-section{margin-top:18px}.entity-section h3{margin:0 0 9px}@media(max-width:800px){.entity-view{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}}.mobile-nav{display:none}.mobile-nav button{border:0;background:transparent;color:var(--muted);font-size:10px;padding:7px 4px}.mobile-nav button.active{color:var(--blue);font-weight:800}.mobile-nav span{display:block;font-size:17px;margin-bottom:2px}@media(max-width:720px){.mobile-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:15;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:6px 4px;box-shadow:0 -6px 20px rgba(20,35,60,.08)}body{padding-bottom:64px}.sidebar .nav{display:none}}
 /* B07.2 persistence-ready UI state */
-.data-table tbody tr,.deal{cursor:pointer}.data-table tbody tr:hover,.deal:hover{background:#f7faff}.toast{position:fixed;right:18px;bottom:18px;z-index:50;background:#0b1730;color:#fff;padding:11px 14px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:13px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:none}.invoice-lines{display:grid;gap:8px}.invoice-line{display:grid;grid-template-columns:1.5fr .65fr .8fr auto;gap:7px;align-items:end;padding:10px;background:#f7f9fc;border:1px solid var(--line);border-radius:9px}.invoice-line input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;font:inherit}.invoice-line label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px}.invoice-line-remove{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}@media(max-width:600px){.invoice-line{grid-template-columns:1fr 1fr}.invoice-line .invoice-line-description{grid-column:1/-1}.invoice-line-remove{grid-column:1/-1}}
+.data-table tbody tr,.deal{cursor:pointer}.data-table tbody tr:hover,.deal:hover{background:#f7faff}.toast{position:fixed;right:18px;bottom:18px;z-index:50;background:#0b1730;color:#fff;padding:11px 14px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:13px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:none}.invoice-lines{display:grid;gap:8px}.plan-line{display:grid;grid-template-columns:1fr .8fr 1fr auto;gap:7px;align-items:end;padding:10px;background:#f7f9fc;border:1px solid var(--line);border-radius:9px}.plan-line input,.plan-line select{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;font:inherit}.plan-line label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px}@media(max-width:600px){.plan-line{grid-template-columns:1fr 1fr}.plan-line .plan-date{grid-column:1/-1}.plan-line-remove{grid-column:1/-1}}.invoice-line{display:grid;grid-template-columns:1.5fr .65fr .8fr auto;gap:7px;align-items:end;padding:10px;background:#f7f9fc;border:1px solid var(--line);border-radius:9px}.invoice-line input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;font:inherit}.invoice-line label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px}.invoice-line-remove{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}@media(max-width:600px){.invoice-line{grid-template-columns:1fr 1fr}.invoice-line .invoice-line-description{grid-column:1/-1}.invoice-line-remove{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -118,8 +118,11 @@
 <div id="fInvoiceLines" class="invoice-lines"></div>
 <button type="button" class="secondary" id="addInvoiceLine" style="margin-top:8px">＋ Add line</button>
 </div>
+<div class="field invoice-field" style="display:none"><label>Discount type</label><select id="fInvoiceDiscountType"><option value="none">None</option><option value="percent">Percentage</option><option value="fixed">Fixed amount</option></select></div>
+<div class="field invoice-field" style="display:none"><label>Discount value</label><input id="fInvoiceDiscountValue" type="number" min="0" step="0.01" value="0"></div>
 <div class="field invoice-field" style="display:none"><label>Tax rate %</label><input id="fInvoiceTaxRate" type="number" min="0" max="100" step="0.01" value="0"></div>
 <div class="field invoice-field" style="display:none"><label>Due date</label><input id="fInvoiceDueDate" type="date"></div>
+<div class="field full invoice-field" style="display:none"><label>Payment plan</label><div id="fInvoicePlanLines" class="invoice-lines"></div><button type="button" class="secondary" id="addInvoicePlanLine">＋ Add installment</button><small class="muted">Types: Fixed, %, Equal. Plan total must equal Invoice total.</small></div>
 <div class="field payment-field" style="display:none"><label>Payment amount</label><input id="fPaymentAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
 <div class="field payment-field" style="display:none"><label>Payment date</label><input id="fPaymentDate" type="date"></div>
 <div class="field payment-field" style="display:none"><label>Payment method</label><select id="fPaymentMethod"><option>Bank transfer</option><option>Card</option><option>Cash</option><option>Other</option></select></div>
@@ -131,7 +134,7 @@
 <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
 <script type="module">
-import { calculateBusinessMetrics, calculateProjectProfit } from "../src/core/financial-engine.js";
+import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan } from "../src/core/financial-engine.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings'],f:['Client call — Nova Studio','Send proposal — GreenTech','Follow up — Alex Rivera','Meeting — Bright Media','Send invoice — Luna Agency']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки'],f:['Звонок клиенту — Nova Studio','Отправить предложение — GreenTech','Связаться — Alex Rivera','Встреча — Bright Media','Отправить счёт — Luna Agency']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes'],f:['Llamada con cliente — Nova Studio','Enviar propuesta — GreenTech','Seguimiento — Alex Rivera','Reunión — Bright Media','Enviar factura — Luna Agency']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen'],f:['Kundengespräch — Nova Studio','Angebot senden — GreenTech','Nachfassen — Alex Rivera','Meeting — Bright Media','Rechnung senden — Luna Agency']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres'],f:['Appel client — Nova Studio','Envoyer proposition — GreenTech','Relancer — Alex Rivera','Réunion — Bright Media','Envoyer facture — Luna Agency']}};
 
 const screenCopy={
@@ -451,6 +454,28 @@ function getInvoiceLines(){
     unitPrice:Number(row.querySelector('[data-line="unitPrice"]').value)
   }));
 }
+function setInvoicePlanLines(items){
+  const container=document.getElementById('fInvoicePlanLines'); if(!container)return;
+  container.innerHTML='';
+  (Array.isArray(items)?items:[]).forEach(item=>addInvoicePlanLine(item));
+}
+function addInvoicePlanLine(item={amountType:'equal',amount:0,dueDate:''}){
+  const container=document.getElementById('fInvoicePlanLines'); if(!container)return;
+  const row=document.createElement('div'); row.className='plan-line';
+  row.innerHTML='<div><label>Type</label><select data-plan="type"><option value="equal">Equal</option><option value="percent">%</option><option value="fixed">Fixed</option></select></div><div><label>Amount</label><input data-plan="amount" type="number" min="0" step="0.01"></div><div class="plan-date"><label>Due date</label><input data-plan="date" type="date"></div><button type="button" class="invoice-line-remove plan-line-remove">Remove</button>';
+  row.querySelector('[data-plan="type"]').value=item.amountType||'equal';
+  row.querySelector('[data-plan="amount"]').value=item.amount??0;
+  row.querySelector('[data-plan="date"]').value=item.dueDate||'';
+  row.querySelector('.plan-line-remove').addEventListener('click',()=>row.remove());
+  container.appendChild(row);
+}
+function getInvoicePlanLines(){
+  return Array.from(document.querySelectorAll('#fInvoicePlanLines .plan-line')).map(row=>({
+    amountType:row.querySelector('[data-plan="type"]').value,
+    amount:Number(row.querySelector('[data-plan="amount"]').value)||0,
+    dueDate:row.querySelector('[data-plan="date"]').value||null
+  }));
+}
 function prepareDrawerRelations(type,record={}){
   document.querySelectorAll('.relation-field').forEach(el=>el.style.display='none');
   visibleRelations(type).forEach(key=>document.querySelector('[data-relation="'+key+'"]').style.display='grid');
@@ -467,7 +492,10 @@ function openCreateDrawer(type){
   document.getElementById('fName').value='';
   ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate','fExpenseDate'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fInvoiceTaxRate').value='0';
+  document.getElementById('fInvoiceDiscountType').value='none';
+  document.getElementById('fInvoiceDiscountValue').value='0';
   setInvoiceLines([{description:'',quantity:1,unitPrice:0}]);
+  setInvoicePlanLines([]);
   document.getElementById('fPaymentDate').value=new Date().toISOString().slice(0,10);
   document.getElementById('fProjectBillingType').value='Fixed Fee';
   document.getElementById('fProjectBudgetType').value='Fee';
@@ -485,7 +513,10 @@ function openEditDrawer(type,record){
   document.getElementById('fValue').value=record.amount??record.total??record.value??0;
   const invoiceItems=Array.isArray(record.lineItems)&&record.lineItems.length?record.lineItems:[{description:'',quantity:1,unitPrice:record.value??record.amount??0}];
   setInvoiceLines(invoiceItems);
+  document.getElementById('fInvoiceDiscountType').value=record.discountType||'none';
+  document.getElementById('fInvoiceDiscountValue').value=record.discountValue??0;
   document.getElementById('fInvoiceTaxRate').value=record.taxRate??0;
+  setInvoicePlanLines(record.paymentPlan?.installments||[]);
   document.getElementById('fInvoiceDueDate').value=record.dueDate||'';
   document.getElementById('fPaymentAmount').value=record.amount??0;
   document.getElementById('fPaymentDate').value=record.paymentDate||record.date||'';
@@ -518,6 +549,7 @@ document.querySelectorAll('[data-i18n]').forEach(el=>el.addEventListener('click'
   if(createMap[key]) openCreateDrawer(createMap[key]);
 }));
 document.getElementById('addInvoiceLine').addEventListener('click',()=>addInvoiceLine());
+document.getElementById('addInvoicePlanLine').addEventListener('click',()=>addInvoicePlanLine());
 document.getElementById('drawerSave').addEventListener('click',()=>{
   if(!pendingType)return;
   const relationFields={leads:['clientId'],proposals:['clientId','leadId'],projects:['clientId','proposalId'],invoices:['clientId','projectId'],payments:['clientId','invoiceId'],expenses:['clientId','projectId']};
@@ -545,13 +577,21 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   const invoiceLines=isInvoice?getInvoiceLines():[];
   if(isInvoice){
     const taxRate=Number(document.getElementById('fInvoiceTaxRate').value);
+    const discountType=document.getElementById('fInvoiceDiscountType').value;
+    const discountValue=Number(document.getElementById('fInvoiceDiscountValue').value)||0;
     if(!invoiceLines.length || invoiceLines.some(line=>!Number.isFinite(line.quantity)||line.quantity<=0||!Number.isFinite(line.unitPrice)||line.unitPrice<0)){
       toast('Ошибка: проверьте позиции счёта');return;
     }
     if(!Number.isFinite(taxRate)||taxRate<0||taxRate>100){toast('Ошибка: налоговая ставка должна быть от 0 до 100%');return;}
+    if(!Number.isFinite(discountValue)||discountValue<0 || (discountType==='percent' && discountValue>100)){toast('Ошибка: проверьте скидку');return;}
     const subtotal=invoiceLines.reduce((sum,line)=>sum+(line.quantity*line.unitPrice),0);
-    const total=subtotal+(subtotal*(taxRate/100));
-    const invoicePatch={lineItems:invoiceLines,taxRate,dueDate:document.getElementById('fInvoiceDueDate').value||null,value:total,amount:total};
+    const discount=discountType==='percent'?Math.min(subtotal,subtotal*(discountValue/100)):discountType==='fixed'?Math.min(subtotal,discountValue):0;
+    const taxableSubtotal=Math.max(subtotal-discount,0);
+    const total=taxableSubtotal+(taxableSubtotal*(taxRate/100));
+    const planLines=getInvoicePlanLines();
+    const paymentPlan=planLines.length?calculatePaymentPlan(total,planLines):null;
+    if(paymentPlan && !paymentPlan.valid){toast('Ошибка: payment plan не сходится с итогом счёта');return;}
+    const invoicePatch={lineItems:invoiceLines,discountType,discountValue,taxRate,dueDate:document.getElementById('fInvoiceDueDate').value||null,value:total,amount:total,paymentPlan};
   }else{
     var invoicePatch={value,amount:value};
   }
