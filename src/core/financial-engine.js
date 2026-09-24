@@ -16,11 +16,11 @@ function calculateInvoice(invoice, now = new Date()) {
   const outstanding = roundMoney(Math.max(total - paid, 0));
 
   let status = invoice.status || 'Draft';
-  if (status !== 'Cancelled' && status !== 'Draft') {
+  if (status !== 'Cancelled') {
     if (outstanding <= 0 && total > 0) status = 'Paid';
     else if (paid > 0) status = 'Partially Paid';
-    else if (invoice.dueDate && new Date(invoice.dueDate) < now && total > 0) status = 'Overdue';
-    else status = 'Sent';
+    else if (status !== 'Draft' && invoice.dueDate && new Date(invoice.dueDate) < now && total > 0) status = 'Overdue';
+    else if (status !== 'Draft') status = 'Sent';
   }
 
   return { subtotal, tax, total, paid, outstanding, status };
@@ -121,8 +121,8 @@ function calculateBusinessMetrics(store, now = new Date()) {
   const actualProfit = roundMoney(paid - actualExpensesTotal);
 
   const expectedPayments = roundMoney(invoiceMetrics.reduce((sum, metric, index) => {
-    const originalStatus = String(invoices[index].status || '').toLowerCase();
-    return sum + (!['paid', 'cancelled'].includes(originalStatus) ? metric.outstanding : 0);
+    const derivedStatus = String(metric.status || '').toLowerCase();
+    return sum + (!['paid', 'cancelled'].includes(derivedStatus) ? metric.outstanding : 0);
   }, 0));
 
   const forecastCash = roundMoney(paid + expectedPayments - actualExpensesTotal - plannedExpenses);
