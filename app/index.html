@@ -520,7 +520,8 @@ function openEditDrawer(type,record){
   setInvoicePlanLines(record.paymentPlan?.installments||[]);
   document.getElementById('fInvoiceDueDate').value=record.dueDate||'';
   document.getElementById('fPaymentAmount').value=record.amount??0;
-  document.getElementById('fPaymentDate').value=record.paymentDate||record.date||'';\n  populatePaymentInstallments(record.invoiceId, record.installmentIndex);
+  document.getElementById('fPaymentDate').value=record.paymentDate||record.date||'';
+  populatePaymentInstallments(record.invoiceId, record.installmentIndex);
   document.getElementById('fPaymentMethod').value=record.paymentMethod||'Bank transfer';
   document.getElementById('fPaymentReference').value=record.reference||'';
   document.getElementById('fProjectBillingType').value=record.billingType||'Fixed Fee';
