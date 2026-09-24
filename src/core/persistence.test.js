@@ -20,3 +20,14 @@ test('validates entity relationships',()=>{const store=createEmptyStore();store.
 test('rejects invalid relationship import',()=>assert.throws(()=>importStore({schemaVersion:2,projects:[{id:'p1',clientId:'missing'}]}),/relationships/));
 test('archives and restores',()=>{let store=upsertRecord(createEmptyStore(),'clients',{id:'c1',name:'Nova'});store=archiveRecord(store,'clients','c1');assert.equal(store.clients.length,0);store=restoreRecord(store,'c1');assert.equal(store.clients[0].name,'Nova');});
 test('clears persisted store',()=>{const s=memoryStorage(); saveStore(s,upsertRecord(createEmptyStore(),'clients',{name:'Nova'})); clearStore(s); assert.equal(loadStore(s).clients.length,0);});
+
+test('validateStore rejects duplicate ids and malformed money fields', () => {
+  const store = createEmptyStore();
+  store.clients = [{ id: 'client-1', name: 'A' }, { id: 'client-1', name: 'B' }];
+  store.invoices = [{ id: 'invoice-1', amount: -10, lineItems: [{ quantity: 1, unitPrice: 'oops' }] }];
+  const result = validateStore(store);
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.includes('duplicate id: clients:client-1')));
+  assert.ok(result.errors.some(error => error.includes('invoices.invoice-1.amount')));
+  assert.ok(result.errors.some(error => error.includes('lineItems.unitPrice')));
+});
