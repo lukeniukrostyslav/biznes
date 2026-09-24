@@ -149,3 +149,26 @@ QA status: source-level проверка выполнена. Browser/mobile visu
 - полный npm test не запускался из-за отсутствия подтверждённого network/runtime доступа к clone окружению.
 
 B13 остаётся 22% до фактической browser/mobile QA и закрытия остальных UI inconsistencies.
+
+
+## B13.11 — Profit screen demo-data removal
+
+Дата: 2026-09-25
+
+Исправлено:
+- удалены статические KPI Profit ($53,980 / $7,920 / $4,920 / $41,140);
+- удалена статическая таблица проектов;
+- Profit теперь рассчитывается из local-first store и financial engine;
+- Gross revenue берётся из фактических Payments;
+- direct/project costs рассчитываются через `calculateProjectProfit`;
+- operating costs берутся из фактических расходов без projectId;
+- Net profit рассчитывается из фактических поступлений минус фактические project/operating costs;
+- таблица Profit показывает реальные проекты, Revenue, Costs, Profit и Margin;
+- добавлена локализация новых Profit KPI/заголовков для EN/RU/ES/DE/FR.
+
+Проверка:
+- source-level verification выполнена;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22% до фактической browser/mobile QA и закрытия остальных UI inconsistencies.
