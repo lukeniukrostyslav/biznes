@@ -23,8 +23,8 @@
 | B04 | Архитектура продукта | 100% |
 | B05 | UX/UI дизайн | 50% |
 | B06 | Система локализации | 100% |
-| B07 | Core-функциональность | 0% |
-| B08 | Расчёты денег и прибыли | 30% |
+| B07 | Core-функциональность | 10% |
+| B08 | Расчёты денег и прибыли | 70% |
 | B09 | CRM / Leads / Pipeline | 0% |
 | B10 | Projects / Proposals / Invoices | 0% |
 | B11 | Cashflow / Dashboard / Analytics | 0% |
@@ -78,9 +78,13 @@ B05 = **50%**.
 
 ## B08 — финансовый движок
 
-B08 = **30%**. Зафиксирована финансовая модель V1: Pipeline, Weighted Pipeline, Contracted, Invoiced, Paid, Outstanding, Overdue, Expenses, Labour Cost, Profit, Margin, invoice calculations, cashflow states, currency rules, pricing-engine inputs и financial alerts. Реальный код расчётов и автоматические тесты ещё не завершены.
+B08 = **70%**. Финансовая модель V1 зафиксирована и реализована в `src/core/financial-engine.js`: invoice totals/status, project profit/margin, weighted pipeline, cashflow и locale-aware currency formatting. Добавлены автоматические Node tests; локальная проверка прошла: **6/6 тестов успешно**. Остались расширенные edge-case tests, интеграция с persistence/data model и подключение engine к UI.
 
 Документ: `docs/B08_FINANCIAL_ENGINE_V1.md`.
+
+## B07 — core-функциональность
+
+B07 = **10%**. Начат реальный core-код: финансовый engine является первой общей доменной библиотекой, на которую будут опираться Dashboard, Projects, Invoices и Cashflow. Полная core-модель и persistence ещё не реализованы.
 
 ## B06 — локализация
 
