@@ -139,7 +139,8 @@ es:{leadsTitle:'Leads',leadsSub:'Avanza las oportunidades sin perder la próxima
 de:{leadsTitle:'Leads',leadsSub:'Bringe Chancen voran, ohne den nächsten Schritt zu verlieren.',newLead:'＋ Neuer Lead',clientsTitle:'Kunden',clientsSub:'Beziehungen, Projekte und Zahlungen in einem Kontext.',newClient:'＋ Neuer Kunde',proposalsTitle:'Angebote',proposalsSub:'Verwandle qualifizierte Leads in klare Angebote mit Preis, Umfang und nächstem Schritt.',newProposal:'＋ Neues Angebot',projectsTitle:'Projekte',projectsSub:'Steuere Lieferung, Kosten und Marge, bevor Gewinn verloren geht.',newProject:'＋ Neues Projekt',invoicesTitle:'Rechnungen',invoicesSub:'Sieh, was berechnet, bezahlt und noch offen ist.',newInvoice:'＋ Neue Rechnung',paymentsTitle:'Zahlungen',paymentsSub:'Verfolge Zahlungseingänge und verbinde sie mit Rechnung und Projekt.',recordPayment:'＋ Zahlung erfassen',expensesTitle:'Ausgaben',expensesSub:'Erkenne, wo Projekt- und Betriebskosten deine Marge reduzieren.',addExpense:'＋ Ausgabe hinzufügen',profitTitle:'Gewinn',profitSub:'Sieh, welche Projekte und Kunden gesunde Margen erzeugen.',cashflowTitle:'Cashflow',cashflowSub:'Sieh bezahlte und erwartete Beträge sowie Ausgaben, die dein verfügbares Geld reduzieren.'},
 fr:{leadsTitle:'Prospects',leadsSub:'Faites avancer les opportunités sans perdre la prochaine action.',newLead:'＋ Nouveau prospect',clientsTitle:'Clients',clientsSub:'Relations, projets et paiements dans un même contexte.',newClient:'＋ Nouveau client',proposalsTitle:'Propositions',proposalsSub:'Transformez les prospects qualifiés en offres claires avec prix, périmètre et prochaine action.',newProposal:'＋ Nouvelle proposition',projectsTitle:'Projets',projectsSub:'Contrôlez livraison, coûts et marge avant que le profit ne fuie.',newProject:'＋ Nouveau projet',invoicesTitle:'Factures',invoicesSub:'Voyez ce qui a été facturé, payé et nécessite encore votre attention.',newInvoice:'＋ Nouvelle facture',paymentsTitle:'Paiements',paymentsSub:'Suivez les encaissements et reliez chaque paiement à sa facture et à son projet.',recordPayment:'＋ Enregistrer un paiement',expensesTitle:'Dépenses',expensesSub:'Identifiez où les coûts de livraison et de fonctionnement réduisent votre marge.',addExpense:'＋ Ajouter une dépense',profitTitle:'Profit',profitSub:'Voyez quels projets et clients créent des marges saines.',cashflowTitle:'Cashflow',cashflowSub:'Voyez ce qui est payé, attendu et les dépenses qui réduiront la trésorerie disponible.'}
 };
-function render(lang){const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');document.getElementById('followups').innerHTML=c.f.map((x,i)=>'<div class="row"><span class="dot"></span><div><strong>'+x+'</strong><small>'+['10:00','12:00','14:30','16:00','17:30'][i]+'</small></div></div>').join('');bindNav();}
+let activeLanguage='en';
+function render(lang){activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');document.getElementById('followups').innerHTML=c.f.map((x,i)=>'<div class="row"><span class="dot"></span><div><strong>'+x+'</strong><small>'+['10:00','12:00','14:30','16:00','17:30'][i]+'</small></div></div>').join('');bindNav();}
 function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
 const bars=[42,58,50,72,65,83,96,105,74,88,112,125];document.getElementById('chart').innerHTML=bars.map(x=>'<div class="bar" style="height:'+x+'px"></div>').join('');
 const STORE_KEY='business-os-store-v1';
@@ -193,7 +194,7 @@ function renderLeads(){
 function renderStoredRecords(){
   const configs=[
     ['clientsScreen','clients',['Client','Projects','Revenue','Outstanding','Status']],
-    ['proposalsScreen','proposals',['Proposal','Status','Value','Next action','Record']],
+    ['proposalsScreen','proposals',['Proposal','Status','Value','Next action','Action','Record']],
     ['projectsScreen','projects',['Project','Status','Revenue','Profit / Margin','Forecast / Budget','Action']],
     ['invoicesScreen','invoices',['Invoice','Status','Amount','Next action','Record']],
     ['paymentsScreen','payments',['Payment','Status','Amount','Next action','Record']],
@@ -219,6 +220,13 @@ function renderStoredRecords(){
         const forecastMargin=profit.forecastMargin;
         const budget=profit.budgetRemaining==null?'—':money(profit.budgetRemaining);
         cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+money(revenue)+'</td><td>'+money(profit.profit)+' / '+escapeHtml(margin!=null?margin+'%':'—')+'</td><td><small>Forecast '+money(profit.forecastProfit)+' · Budget left '+budget+'</small></td><td><button class="secondary row-edit">Edit</button></td>';
+      }else if(type==='proposals'){
+        const status=String(record.status||'').toLowerCase();
+        const alreadyLinked=(businessStore.projects||[]).some(project=>project.proposalId===record.id);
+        const canConvert=['won','accepted'].includes(status) && !alreadyLinked;
+        const convertLabel={en:'Create project',ru:'Создать проект',es:'Crear proyecto',de:'Projekt erstellen',fr:'Créer un projet'}[activeLanguage]||'Create project';
+        const action=canConvert?'<button class="secondary row-convert">'+convertLabel+'</button>':'';
+        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+recordAmount(record)+'</td><td>'+escapeHtml(record.nextAction||'—')+'</td><td>'+action+'</td><td><button class="secondary row-edit">Edit</button> <button class="secondary row-delete">Delete</button></td>';
       }else{
         cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+recordAmount(record)+'</td><td>'+escapeHtml(record.nextAction||'—')+'</td><td><button class="secondary row-edit">Edit</button> <button class="secondary row-delete">Delete</button></td>';
       }
@@ -231,9 +239,47 @@ function renderStoredRecords(){
         if(rec)openEditDrawer(type,rec);
       });
       row.querySelector('.row-edit')?.addEventListener('click',()=>openEditDrawer(type,rec));
+      row.querySelector('.row-convert')?.addEventListener('click',()=>convertProposalToProject(rec.id));
       row.querySelector('.row-delete')?.addEventListener('click',()=>deleteRecord(type,rec.id));
     });  });
   renderLeads();
+}
+function convertProposalToProject(proposalId){
+  const proposal=(businessStore.proposals||[]).find(x=>x.id===proposalId);
+  if(!proposal){toast('Proposal not found');return;}
+  const status=String(proposal.status||'').toLowerCase();
+  if(!['won','accepted'].includes(status)){toast('Proposal must be accepted first');return;}
+  const existing=(businessStore.projects||[]).find(x=>x.proposalId===proposal.id);
+  if(existing){toast('Project already exists for this proposal');return;}
+  if(!proposal.clientId){toast('Proposal needs a client before conversion');return;}
+
+  const value=Number(proposal.value||proposal.amount||0);
+  const now=new Date().toISOString();
+  const project={
+    id:uid('project'),
+    createdAt:now,
+    updatedAt:now,
+    name:(proposal.name||proposal.title||'Untitled proposal')+' Project',
+    status:'Active',
+    clientId:proposal.clientId,
+    proposalId:proposal.id,
+    revenue:value,
+    budget:value,
+    budgetType:'Fee',
+    billingType:'Fixed Fee',
+    actualCosts:0,
+    actualHours:0,
+    labourRate:0,
+    nextAction:proposal.nextAction||'Define project kickoff',
+    notes:proposal.notes||''
+  };
+  const candidate={...businessStore,projects:[...(businessStore.projects||[]),project]};
+  const errors=validateStoredRelationships(candidate);
+  if(errors.length){toast('Conversion blocked: check linked records');return;}
+  businessStore=saveStore(candidate);
+  toast(activeLanguage==='ru'?'Проект создан из предложения':'Project created from proposal');
+  refreshDashboardMetrics();
+  renderStoredRecords();
 }
 function validateStoredRelationships(store){
   const rules={leads:{clientId:'clients'},proposals:{clientId:'clients',leadId:'leads'},projects:{clientId:'clients',proposalId:'proposals'},invoices:{clientId:'clients',projectId:'projects'},payments:{invoiceId:'invoices',clientId:'clients'},expenses:{projectId:'projects',clientId:'clients'}};
