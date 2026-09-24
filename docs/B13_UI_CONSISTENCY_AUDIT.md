@@ -60,3 +60,21 @@ B13 и B14 не повышаются только за наличие CSS или
 ## Последний checkpoint — 2026-09-24
 
 Выполнен data-driven Dashboard pass и дополнительный localization consistency pass. Следующий обязательный этап — browser/mobile visual QA; без него B13 не закрывается.
+
+
+## B13 — localization/data re-render consistency — 2026-09-24
+
+Выполнен дополнительный consistency pass без добавления новых бизнес-функций.
+
+### Исправлено
+
+- после смены языка Dashboard теперь повторно рендерит реальные данные, поэтому demo Follow-ups больше не может остаться поверх local-first данных;
+- Project Profitability headers теперь переводятся EN/RU/ES/DE/FR динамически;
+- dynamic status badges используют локализованные названия статусов;
+- существующие Dashboard calculations остаются привязанными к financial engine/local-first store.
+
+### QA status
+
+Кодовый review после изменения выполнен через GitHub source inspection. Полный browser/mobile visual QA и npm test execution в текущей среде недоступны из-за отсутствия сетевого доступа к репозиторию/runtime. Поэтому B13 и B14 не закрываются по этому checkpoint.
+
+Commit: `f754e10ad8b1896be22e11611c715a2915938fe6` + syntax repair `7a1b1d7cdca74c8d2fc59b213f5aff6547d83266`.
