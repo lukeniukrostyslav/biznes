@@ -168,3 +168,29 @@ test('time budget tracks actual hours and does not confuse hours with money', ()
   assert.equal(result.budgetRemaining, 8);
   assert.equal(result.labourCost, 600);
 });
+
+
+test('invoice status transitions from Draft to Partially Paid or Paid from linked payments', () => {
+  const partially = calculateBusinessMetrics({
+    invoices: [{ id: 'draft-1', lineItems: [{ quantity: 1, unitPrice: 1000 }], status: 'Draft' }],
+    payments: [{ invoiceId: 'draft-1', amount: 250 }]
+  }, new Date('2026-01-01'));
+  assert.equal(partially.outstanding, 750);
+  assert.equal(partially.expectedPayments, 750);
+
+  const paid = calculateBusinessMetrics({
+    invoices: [{ id: 'draft-2', lineItems: [{ quantity: 1, unitPrice: 1000 }], status: 'Draft' }],
+    payments: [{ invoiceId: 'draft-2', amount: 1000 }]
+  }, new Date('2026-01-01'));
+  assert.equal(paid.outstanding, 0);
+  assert.equal(paid.expectedPayments, 0);
+});
+
+test('forecast payments use derived invoice status, not stale stored status', () => {
+  const result = calculateBusinessMetrics({
+    invoices: [{ id: 'stale-paid', lineItems: [{ quantity: 1, unitPrice: 1000 }], status: 'Paid', paid: 1000 }],
+    payments: [{ invoiceId: 'stale-paid', amount: 250 }]
+  }, new Date('2026-01-01'));
+  assert.equal(result.outstanding, 750);
+  assert.equal(result.expectedPayments, 750);
+});
