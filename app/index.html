@@ -123,9 +123,31 @@ function addRecord(type,record){
   businessStore=saveStore({...businessStore,[type]:[...(businessStore[type]||[]),{id:uid(type.slice(0,-1)),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),...record}]});
   toast('Запись сохранена локально');
   refreshDashboardMetrics();
+  renderStoredRecords();
 }
 function money(value){
   return new Intl.NumberFormat(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(value)||0);
+}
+function escapeHtml(value){
+  return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+const entityLabels={leads:'Lead',clients:'Client',proposals:'Proposal',projects:'Project',invoices:'Invoice',payments:'Payment',expenses:'Expense'};
+function renderStoredRecords(){
+  const configs=[
+    ['clientsScreen','clients'],['proposalsScreen','proposals'],['projectsScreen','projects'],
+    ['invoicesScreen','invoices'],['paymentsScreen','payments'],['expensesScreen','expenses']
+  ];
+  configs.forEach(([screenId,type])=>{
+    const screen=document.getElementById(screenId), rows=screen?.querySelectorAll('tbody tr');
+    if(!rows)return;
+    const records=businessStore[type]||[];
+    records.forEach((record,index)=>{
+      const row=rows[index] || screen.querySelector('tbody')?.insertRow();
+      if(!row)return;
+      const amount=Number(record.amount??record.value??0);
+      row.innerHTML='<td><strong>'+escapeHtml(record.name||record.client||'Untitled')+'</strong></td><td>'+escapeHtml(record.status||'New')+'</td><td>'+money(amount)+'</td><td>'+escapeHtml(record.nextAction||'—')+'</td><td><span class="badge">'+escapeHtml(entityLabels[type]||type)+'</span></td>';
+    });
+  });
 }
 function refreshDashboardMetrics(){
   const invoices=businessStore.invoices||[], payments=businessStore.payments||[], leads=businessStore.leads||[], expenses=businessStore.expenses||[];
@@ -155,6 +177,7 @@ function importBusinessData(file){
   reader.readAsText(file);
 }
 refreshDashboardMetrics();
+renderStoredRecords();
 const saved=localStorage.getItem('business-os-lang')||'en';document.getElementById('lang').value=saved;render(saved);document.getElementById('lang').addEventListener('change',e=>{localStorage.setItem('business-os-lang',e.target.value);render(e.target.value)});
 document.getElementById('exportData').addEventListener('click',exportBusinessData);
 document.getElementById('importData').addEventListener('click',()=>document.getElementById('importDataInput').click());
