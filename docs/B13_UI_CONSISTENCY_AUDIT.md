@@ -231,3 +231,27 @@ B13 остаётся 22% до фактической browser/mobile QA.
 B13 остаётся 22% до фактической browser/mobile QA и закрытия оставшихся UI inconsistencies.
 
 GitHub commit кода: 06c9d90bf0bac8106b49e4352ded6f11905794a2.
+
+
+## B13.15 — Client Entity 360° demo-data removal
+
+Дата: 2026-09-25
+
+Исправлено:
+- статический клиент Nova Studio и его demo-метрики удалены из Entity 360°;
+- Entity view теперь получает выбранного клиента из local-first store;
+- Revenue, Outstanding и Margin рассчитываются из реальных payments, invoices, projects и expenses;
+- количество проектов и счетов рассчитывается из связанных записей;
+- Timeline строится из реальных проектов, счетов и платежей;
+- Next actions строятся из фактических непогашенных счетов;
+- клик по клиенту в таблице открывает его 360° Entity view; Edit возвращает к существующему drawer;
+- добавлена локализация Entity view для EN/RU/ES/DE/FR.
+
+Проверка:
+- source-level verification выполнена;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22% до фактической browser/mobile QA и проверки оставшихся UI inconsistencies.
+
+GitHub commit кода: be2a7d983e9932ea7bf395dfb46367568518828f.
