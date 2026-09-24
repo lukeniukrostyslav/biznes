@@ -80,7 +80,7 @@ B08 = **70%**. Финансовая модель V1 зафиксирована �
 
 ## B07 — core-функциональность
 
-B07 = **20%**.
+B07 = **30%**.
 
 Выполнено:
 - финансовый engine как общая доменная библиотека;
@@ -90,7 +90,13 @@ B07 = **20%**.
 - связи между сущностями;
 - зафиксирована стратегия перехода к local-first persistence.
 
-Следующий шаг: B07.2 — реальный local-first store и подключение UI к данным.
+Выполнено B07.2 (первый слой): schemaVersioned local-first store на localStorage, стабильные локальные ID, сохранение новых записей из UI и toast-подтверждение. Следующий шаг: полноценный CRUD, валидация, миграции и экспорт/импорт.
+
+## Конкурентный контроль — 2026-09-24
+
+Проведён свежий обзор рынка. Easlo Freelance OS сейчас показывает $79 и 858 продаж; это Notion-продукт с CRM, pipeline, projects/tasks и invoice tracker. citeturn0search0
+Публичные обзоры 2026 также показывают, что HoneyBook, Dubsado, Bonsai и Moxie уже объединяют CRM, proposals, contracts, invoicing/payments и project-management функции, поэтому BUSINESS OS не должен конкурировать только количеством модулей. citeturn0search3turn0search14
+Рыночный вывод для разработки: усиливаем наше отличие — **local-first, one-time purchase, единая денежная модель и profit-first workflow**, а не копируем SaaS-модель подписки или Notion-шаблон.
 
 ## B06 — локализация
 
