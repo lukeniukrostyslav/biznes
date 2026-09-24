@@ -89,3 +89,12 @@ Commit: `f754e10ad8b1896be22e11611c715a2915938fe6` + syntax repair `7a1b1d7cdca7
 Commits: `f2546a2d50d0394b52abea2cf2038712b4092024`, `1e0c7f505aaa847bd9c882b36bdf4a56e05d29df`.
 
 Browser/mobile visual QA и npm test execution всё ещё не подтверждены; процент B13 не повышается.
+
+
+## B13 — Follow-ups data-driven checkpoint — 2026-09-24
+
+Последний оставшийся demo-счётчик Dashboard Follow-ups Today заменён на данные из local-first Leads. Счётчик теперь показывает количество отображаемых follow-ups, строки строятся из lead name/nextAction/value, при отсутствии данных используется empty state.
+
+Commit: `bb1f1e4b5ee608615638de18fa59be43a449a75d`.
+
+Browser/mobile visual QA и test execution по-прежнему не подтверждены; B13 процент не повышен.
