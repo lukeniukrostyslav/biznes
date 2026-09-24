@@ -350,3 +350,15 @@ Financial engine расширен для Project:
 - forecast margin.
 
 Добавлены regression tests для fee budget и time budget. Процент B08 пока не повышен: полный QA и UI integration ещё не завершены.
+
+
+## B11.1 — project financial view integration — 2026-09-24
+
+Project list теперь использует единый financial engine и показывает для сохранённых проектов:
+
+- Revenue;
+- Actual Profit / Margin;
+- Forecast Profit;
+- Remaining Budget.
+
+Это убирает отдельные UI-формулы и связывает Project UI с реальными Expenses. Процент B11 пока не повышен: Dashboard/Cashflow ещё содержит demo/static areas и требует полного QA.
