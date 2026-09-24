@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateBusinessMetrics, lineTotal, allocatePaymentPlan } from './financial-engine.js';
+import { calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateBusinessMetrics, lineTotal, allocatePaymentPlan, calculateCashflowForecast } from './financial-engine.js';
 
 test('line total', () => assert.equal(lineTotal({ quantity: 3, unitPrice: 120 }), 360));
 
@@ -290,4 +290,27 @@ test('allocatePaymentPlan respects explicit installment and reports overflow as 
   assert.equal(result.installments[1].paid, 700);
   assert.equal(result.installments[1].status, 'Paid');
   assert.equal(result.unallocatedPayments, 150);
+});
+
+
+test('cashflow forecast uses installment due dates and planned expenses within horizon', () => {
+  const store = {
+    invoices: [{
+      id: 'inv_cf',
+      name: 'Website',
+      lineItems: [{ quantity: 1, unitPrice: 1000 }],
+      taxRate: 0,
+      paymentPlan: { installments: [
+        { amountType: 'fixed', amount: 400, dueDate: '2026-09-27' },
+        { amountType: 'fixed', amount: 600, dueDate: '2026-10-20' }
+      ]}
+    }],
+    payments: [{ id: 'pay_cf', invoiceId: 'inv_cf', amount: 100, paymentDate: '2026-09-24' }],
+    expenses: [{ id: 'exp_cf', name: 'Hosting', amount: 120, status: 'Planned', expenseDate: '2026-10-01' }]
+  };
+  const result = calculateCashflowForecast(store, new Date('2026-09-24T00:00:00Z'), 30);
+  assert.equal(result.futureInflows, 900);
+  assert.equal(result.futureExpenses, 120);
+  assert.equal(result.forecastNetCash, 780);
+  assert.equal(result.events.length, 3);
 });
