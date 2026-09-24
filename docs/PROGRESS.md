@@ -377,3 +377,61 @@ Expense drawer усилен:
 Рыночный контроль показал, что зрелые продукты связывают расходы с проектами и используют их для project profitability/cashflow; HoneyBook требует привязки расхода к проекту для точной project profit аналитики, а Bonsai разделяет billable/non-billable расходы в profitability calculations. citeturn0search0turn0search5turn0search7
 
 Проценты не повышены до QA.
+
+
+## B13.1 — UI localization + currency consistency — 2026-09-24
+
+После B13 audit выполнен первый реальный consistency pass без добавления новых бизнес-функций.
+
+Сделано:
+- добавлен единый UI currency source-of-truth: EUR, согласованный с default currency financial engine;
+- topbar Export / Import / New переведены через общий UI dictionary;
+- Dashboard labels для Revenue / Outstanding / Pipeline / Profit / Cashflow и связанных блоков переведены;
+- основной create/edit drawer получил единый переводческий слой для EN/RU/ES/DE/FR;
+- invoice line labels динамически используют текущий язык;
+- payment-plan labels и installment types динамически используют текущий язык;
+- payment installment Auto-allocation label локализован;
+- status options в drawer локализуются;
+- язык применяется и при первоначальной загрузке, и после переключения;
+- сохранён единый visual architecture без нового feature creep.
+
+GitHub commit: `c45161f8c627f38d45864f290902c7c9f50cc00a`
+
+### QA status
+
+Проверка исходного кода после изменения подтвердила наличие:
+- `UI_CURRENCY='EUR'`;
+- `uiCopy`;
+- `applyUiCopy(lang)`;
+- локализации динамических invoice lines;
+- локализации payment-plan rows;
+- локализации Auto-allocate;
+- применения UI dictionary при старте.
+
+Полный browser/mobile/E2E QA ещё НЕ выполнен, поэтому B13 не закрыт и B14 остаётся 0%.
+
+### Current progress baseline
+
+Эта таблица является текущим рабочим baseline после последнего checkpoint:
+
+| Блок | Прогресс |
+|---|---:|
+| B00 | 100% |
+| B01 | 100% |
+| B02 | 100% |
+| B03 | 100% |
+| B04 | 100% |
+| B05 | 100% |
+| B06 | 100% |
+| B07 | 89% |
+| B08 | 76% |
+| B09 | 6% |
+| B10 | 44% |
+| B11 | 35% |
+| B12 | 74% |
+| B13 | 15% |
+| B14 | 0% |
+| B15 | 0% |
+| B16 | 0% |
+
+B13 повышен только частично: выполнен и зафиксирован первый localization/currency consistency pass. Browser/mobile visual QA всё ещё впереди.
