@@ -10,8 +10,12 @@ function lineTotal(line) {
 function calculateInvoice(invoice, now = new Date()) {
   const items = Array.isArray(invoice.lineItems) ? invoice.lineItems : [];
   const subtotal = roundMoney(items.reduce((sum, item) => sum + lineTotal(item), 0));
-  const tax = roundMoney(subtotal * (Number(invoice.taxRate || 0) / 100));
-  const total = roundMoney(subtotal + tax);
+  const discountType = invoice.discountType === 'percent' ? 'percent' : invoice.discountType === 'fixed' ? 'fixed' : 'none';
+  const rawDiscount = Math.max(Number(invoice.discountValue || 0), 0);
+  const discount = roundMoney(Math.min(discountType === 'percent' ? subtotal * (rawDiscount / 100) : rawDiscount, subtotal));
+  const taxableSubtotal = roundMoney(Math.max(subtotal - discount, 0));
+  const tax = roundMoney(taxableSubtotal * (Number(invoice.taxRate || 0) / 100));
+  const total = roundMoney(taxableSubtotal + tax);
   const paid = roundMoney(Number(invoice.paid || 0));
   const outstanding = roundMoney(Math.max(total - paid, 0));
 
@@ -23,7 +27,35 @@ function calculateInvoice(invoice, now = new Date()) {
     else if (status !== 'Draft') status = 'Sent';
   }
 
-  return { subtotal, tax, total, paid, outstanding, status };
+  return { subtotal, discount, discountType, discountValue: rawDiscount, taxableSubtotal, tax, total, paid, outstanding, status };
+}
+
+function calculatePaymentPlan(invoiceTotal, installments = [], now = new Date()) {
+  const total = roundMoney(Math.max(Number(invoiceTotal || 0), 0));
+  const source = Array.isArray(installments) ? installments : [];
+  const fixed = source.filter(x => x.amountType === 'fixed').reduce((sum, x) => sum + Math.max(Number(x.amount || 0), 0), 0);
+  const percentage = source.filter(x => x.amountType === 'percent').reduce((sum, x) => sum + Math.max(Number(x.amount || 0), 0), 0);
+  const equal = source.filter(x => x.amountType === 'equal');
+  const percentAmount = roundMoney(total * percentage / 100);
+  const remainingForEqual = Math.max(total - fixed - percentAmount, 0);
+  const equalAmount = equal.length ? roundMoney(remainingForEqual / equal.length) : 0;
+  const calculated = source.map((item, index) => {
+    const amount = item.amountType === 'fixed'
+      ? Math.max(Number(item.amount || 0), 0)
+      : item.amountType === 'percent'
+        ? roundMoney(total * Math.max(Number(item.amount || 0), 0) / 100)
+        : equalAmount;
+    const dueDate = item.dueDate ? new Date(item.dueDate) : null;
+    return { ...item, index, calculatedAmount: roundMoney(amount), overdue: Boolean(dueDate && dueDate < now && !item.paid) };
+  });
+  const plannedTotal = roundMoney(calculated.reduce((sum, item) => sum + item.calculatedAmount, 0));
+  return {
+    total,
+    installments: calculated,
+    plannedTotal,
+    difference: roundMoney(total - plannedTotal),
+    valid: Math.abs(total - plannedTotal) <= 0.01 && fixed <= total && percentage <= 100
+  };
 }
 
 function calculateInvoicePaymentStatus(invoice, payments = [], now = new Date()) {
@@ -150,4 +182,4 @@ function formatMoney(value, currency = 'EUR', locale = 'en-US') {
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(Number(value || 0));
 }
 
-export { roundMoney, lineTotal, calculateInvoice, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney, calculateBusinessMetrics };
+export { roundMoney, lineTotal, calculateInvoice, calculatePaymentPlan, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, formatMoney, calculateBusinessMetrics };
