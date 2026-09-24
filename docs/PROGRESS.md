@@ -24,7 +24,7 @@
 | B05 | UX/UI дизайн | 50% |
 | B06 | Система локализации | 100% |
 | B07 | Core-функциональность | 0% |
-| B08 | Расчёты денег и прибыли | 0% |
+| B08 | Расчёты денег и прибыли | 30% |
 | B09 | CRM / Leads / Pipeline | 0% |
 | B10 | Projects / Proposals / Invoices | 0% |
 | B11 | Cashflow / Dashboard / Analytics | 0% |
@@ -75,6 +75,12 @@ B05 = **50%**.
 - 5 языков.
 
 Это визуальное направление является концептом, а не утверждением о завершённой реализации.
+
+## B08 — финансовый движок
+
+B08 = **30%**. Зафиксирована финансовая модель V1: Pipeline, Weighted Pipeline, Contracted, Invoiced, Paid, Outstanding, Overdue, Expenses, Labour Cost, Profit, Margin, invoice calculations, cashflow states, currency rules, pricing-engine inputs и financial alerts. Реальный код расчётов и автоматические тесты ещё не завершены.
+
+Документ: `docs/B08_FINANCIAL_ENGINE_V1.md`.
 
 ## B06 — локализация
 
