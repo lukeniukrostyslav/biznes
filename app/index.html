@@ -561,7 +561,7 @@ function refreshInvoiceProposalLabels(){
 function refreshInvoiceProposalMetrics(){
  const invoices=businessStore.invoices||[], payments=businessStore.payments||[], now=new Date();
  const invoiced=invoices.reduce((sum,i)=>sum+Number(i.amount??i.total??i.value??0),0);
- const paid=payments.reduce((sum,p)=>sum+Number(p.amount||0),0);
+ const paid=payments.filter(p=>p.invoiceId).reduce((sum,p)=>sum+Number(p.amount||0),0);
  const outstanding=invoices.reduce((sum,invoice)=>sum+Number(calculateInvoicePaymentStatus(invoice,payments,now).outstanding||0),0);
  const overdue=invoices.reduce((sum,invoice)=>{const state=calculateInvoicePaymentStatus(invoice,payments,now);return sum+(state.status==='Overdue'?Number(state.outstanding||0):0);},0);
  [['invoicesInvoiced',invoiced],['invoicesPaid',paid],['invoicesOutstanding',outstanding],['invoicesOverdue',overdue]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=money(value);});
