@@ -339,3 +339,24 @@ GitHub commit кода: dc73666dc3cd9a8a4633ea38ba4fd40838201b89.
 B13 остаётся 22%: source cleanup продолжен, но процент не повышен до фактической browser/mobile QA.
 
 GitHub commit кода: 7bdbfb3e8caad14d0e5eca366c93b56925aa1fc0.
+
+
+## B13.20 — Existing drawer option localization
+
+Дата: 2026-09-25
+
+Исправлено:
+- существующие опции Discount, Project billing, Budget type, Payment method, Expense category и Billable локализуются EN/RU/ES/DE/FR;
+- Payment Plan help text локализован;
+- Transaction reference placeholder локализован;
+- внутренние значения option сохранены на английском как стабильные data values, меняется только отображаемый label;
+- новых бизнес-функций не добавлялось.
+
+Проверка:
+- source-level verification выполнена после GitHub commit;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22% до фактической browser/mobile QA.
+
+GitHub commit кода: 72126366cedbacccdad7cc6d196a6036ec9b9c22.
