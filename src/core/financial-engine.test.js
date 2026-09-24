@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, lineTotal } from './financial-engine.js';
+import { calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateBusinessMetrics, lineTotal } from './financial-engine.js';
 
 test('line total', () => assert.equal(lineTotal({ quantity: 3, unitPrice: 120 }), 360));
 
