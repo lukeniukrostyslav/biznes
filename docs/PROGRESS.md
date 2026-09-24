@@ -21,7 +21,7 @@
 | B02 | Анализ рынка и конкурентов | 100% |
 | B03 | Клиент и позиционирование | 100% |
 | B04 | Архитектура продукта | 100% |
-| B05 | UX/UI дизайн | 50% |
+| B05 | UX/UI дизайн | 70% |
 | B06 | Система локализации | 100% |
 | B07 | Core-функциональность | 10% |
 | B08 | Расчёты денег и прибыли | 70% |
@@ -61,9 +61,14 @@ B05 = **50%**.
 - interaction rules;
 - конкурентный UX review 2026-09-24;
 - первый coded Dashboard prototype в `app/index.html`;
+- рабочая навигация между Dashboard / Leads / Clients / Projects / Invoices;
+- Kanban-style Leads view;
+- Clients table;
+- Projects profitability/health view;
+- Invoices financial status view;
 - переключатель EN/RU/ES/DE/FR с сохранением языка локально.
 
-Это всё ещё prototype: production data model integration, полноценные остальные экраны и QA не завершены.
+Это всё ещё prototype: production data model integration, полноценные остальные экраны, полноценная локализация всех новых экранов и QA не завершены.
 
 Есть утверждённое направление визуального прототипа:
 - premium business software;
