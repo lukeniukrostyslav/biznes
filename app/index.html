@@ -97,7 +97,18 @@
 <div class="entity-section"><h3>Timeline</h3><div class="timeline"><div class="event"><span class="event-dot"></span><div><strong>Proposal accepted</strong><small>Sep 22 · Website Redesign · $12,000</small></div></div><div class="event"><span class="event-dot"></span><div><strong>Invoice sent</strong><small>Sep 21 · INV-0018 · $4,800</small></div></div><div class="event"><span class="event-dot"></span><div><strong>Payment received</strong><small>Sep 18 · $4,800</small></div></div></div></div></div>
 <div class="card entity-card"><div class="card-title"><h2>Next actions</h2></div><div class="action-list"><div class="action-item"><div><strong>Follow up on invoice</strong><small>Due Sep 27</small></div><span class="badge red">$2,400</span></div><div class="action-item"><div><strong>Project check-in</strong><small>Tomorrow · Website Redesign</small></div><span class="badge">Today</span></div><div class="action-item"><div><strong>Review margin</strong><small>Before next milestone</small></div><span class="badge green">73%</span></div></div></div></div>
 </div></section>
-</main><div id="detailDrawer" class="drawer" aria-hidden="true"><aside class="drawer-panel"><div class="drawer-head"><div><div class="muted" id="drawerEyebrow">Business OS</div><h2 id="drawerTitle">New record</h2></div><button class="close" id="drawerClose">×</button></div><div class="form-grid"><div class="field"><label>Client</label><input id="fClient" placeholder="Client name"></div><div class="field"><label>Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Awaiting</option><option>Paid</option><option>Overdue</option></select></div><div class="field"><label>Value</label><input id="fValue" placeholder="$0"></div><div class="field"><label>Next action</label><input id="fAction" placeholder="Follow up"></div><div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div></div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
+</main><div id="detailDrawer" class="drawer" aria-hidden="true"><aside class="drawer-panel"><div class="drawer-head"><div><div class="muted" id="drawerEyebrow">Business OS</div><h2 id="drawerTitle">New record</h2></div><button class="close" id="drawerClose">×</button></div><div class="form-grid">
+<div class="field"><label id="fNameLabel">Name</label><input id="fName" placeholder="Record name"></div>
+<div class="field"><label>Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Awaiting</option><option>Sent</option><option>Paid</option><option>Overdue</option><option>Cancelled</option></select></div>
+<div class="field relation-field" data-relation="client"><label>Client</label><select id="fClientId"><option value="">— No client —</option></select></div>
+<div class="field relation-field" data-relation="lead"><label>Lead</label><select id="fLeadId"><option value="">— No lead —</option></select></div>
+<div class="field relation-field" data-relation="proposal"><label>Proposal</label><select id="fProposalId"><option value="">— No proposal —</option></select></div>
+<div class="field relation-field" data-relation="project"><label>Project</label><select id="fProjectId"><option value="">— No project —</option></select></div>
+<div class="field relation-field" data-relation="invoice"><label>Invoice</label><select id="fInvoiceId"><option value="">— No invoice —</option></select></div>
+<div class="field"><label>Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
+<div class="field"><label>Next action</label><input id="fAction" placeholder="Follow up"></div>
+<div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
+</div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics } from "../src/core/financial-engine.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings'],f:['Client call — Nova Studio','Send proposal — GreenTech','Follow up — Alex Rivera','Meeting — Bright Media','Send invoice — Luna Agency']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки'],f:['Звонок клиенту — Nova Studio','Отправить предложение — GreenTech','Связаться — Alex Rivera','Встреча — Bright Media','Отправить счёт — Luna Agency']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes'],f:['Llamada con cliente — Nova Studio','Enviar propuesta — GreenTech','Seguimiento — Alex Rivera','Reunión — Bright Media','Enviar factura — Luna Agency']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen'],f:['Kundengespräch — Nova Studio','Angebot senden — GreenTech','Nachfassen — Alex Rivera','Meeting — Bright Media','Rechnung senden — Luna Agency']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres'],f:['Appel client — Nova Studio','Envoyer proposition — GreenTech','Relancer — Alex Rivera','Réunion — Bright Media','Envoyer facture — Luna Agency']}};
@@ -258,22 +269,58 @@ document.querySelectorAll('.data-table tbody tr').forEach(row=>row.addEventListe
 let pendingType=null;
 let editingId=null;
 const createMap={newLead:'leads',newClient:'clients',newProposal:'proposals',newProject:'projects',newInvoice:'invoices',recordPayment:'payments',addExpense:'expenses'};
+function relationOptions(type, selected=''){
+  const map={
+    client:['clients','fClientId','Client'],
+    lead:['leads','fLeadId','Lead'],
+    proposal:['proposals','fProposalId','Proposal'],
+    project:['projects','fProjectId','Project'],
+    invoice:['invoices','fInvoiceId','Invoice']
+  };
+  Object.entries(map).forEach(([key,[collection,id,label]])=>{
+    const el=document.getElementById(id); if(!el)return;
+    const records=businessStore[collection]||[];
+    const labelFor=r=>escapeHtml(r.name||r.title||r.client||label+' '+String(r.id||'').slice(-5));
+    el.innerHTML='<option value="">— No '+label.toLowerCase()+' —</option>'+records.map(r=>'<option value="'+escapeHtml(r.id)+'">'+labelFor(r)+'</option>').join('');
+    el.value=selected[key+'Id']||'';
+  });
+}
+function visibleRelations(type){
+  const relations={
+    leads:['client'],
+    proposals:['client','lead'],
+    projects:['client','proposal'],
+    invoices:['client','project'],
+    payments:['client','invoice'],
+    expenses:['client','project'],
+    clients:[]
+  };
+  return relations[type]||[];
+}
+function prepareDrawerRelations(type,record={}){
+  document.querySelectorAll('.relation-field').forEach(el=>el.style.display='none');
+  visibleRelations(type).forEach(key=>document.querySelector('[data-relation="'+key+'"]').style.display='grid');
+  relationOptions(type,record);
+}
 function openCreateDrawer(type){
   pendingType=type; editingId=null;
   document.getElementById('drawerTitle').textContent='New '+type.replace(/s$/,'');
-  ['fClient','fValue','fAction','fNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fName').value='';
+  ['fValue','fAction','fNotes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fStatus').value=type==='payments'?'Paid':'New';
+  prepareDrawerRelations(type,{});
   document.getElementById('detailDrawer').classList.add('open');
   document.getElementById('detailDrawer').setAttribute('aria-hidden','false');
 }
 function openEditDrawer(type,record){
   pendingType=type; editingId=record.id;
   document.getElementById('drawerTitle').textContent='Edit '+type.replace(/s$/,'');
-  document.getElementById('fClient').value=record.name||record.client||record.title||'';
+  document.getElementById('fName').value=record.name||record.client||record.title||'';
   document.getElementById('fValue').value=record.amount??record.total??record.value??0;
   document.getElementById('fAction').value=record.nextAction||'';
   document.getElementById('fNotes').value=record.notes||'';
   document.getElementById('fStatus').value=record.status||'New';
+  prepareDrawerRelations(type,record);
   document.getElementById('detailDrawer').classList.add('open');
   document.getElementById('detailDrawer').setAttribute('aria-hidden','false');
 }
@@ -288,13 +335,17 @@ document.querySelectorAll('[data-i18n]').forEach(el=>el.addEventListener('click'
 }));
 document.getElementById('drawerSave').addEventListener('click',()=>{
   if(!pendingType)return;
-  const value=Number(String(document.getElementById('fValue').value).replace(/[^0-9.-]/g,''))||0;
-  const patch={name:document.getElementById('fClient').value.trim()||'Untitled',status:document.getElementById('fStatus').value,value,amount:value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),updatedAt:new Date().toISOString()};
-  if(editingId){
-    businessStore=saveStore({...businessStore,[pendingType]:(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x)});
-    toast('Record updated locally');  }else{
-    addRecord(pendingType,patch);
-  }
+  const relationFields={leads:['clientId'],proposals:['clientId','leadId'],projects:['clientId','proposalId'],invoices:['clientId','projectId'],payments:['clientId','invoiceId'],expenses:['clientId','projectId']};
+  const relations={};
+  (relationFields[pendingType]||[]).forEach(field=>{relations[field]=document.getElementById('f'+field.charAt(0).toUpperCase()+field.slice(1)).value||null;});
+  const name=document.getElementById('fName').value.trim()||'Untitled';
+  const value=Number(document.getElementById('fValue').value)||0;
+  const patch={name,status:document.getElementById('fStatus').value,value,amount:value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...relations,updatedAt:new Date().toISOString()};
+  const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
+  const errors=validateStoredRelationships(candidate);
+  if(errors.length){toast('Ошибка: проверьте связанные записи');return;}
+  businessStore=saveStore(candidate);
+  toast(editingId?'Record updated locally':'Record saved locally');
   refreshDashboardMetrics();
   renderStoredRecords();
   closeCreateDrawer();
