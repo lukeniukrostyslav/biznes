@@ -100,10 +100,10 @@
 <div id="entityScreen" class="screen">
 <div class="page-title"><div><h1 id="entityTitle">Client</h1><p id="entitySubtitle">360° business context</p></div><div class="toolbar"><button class="secondary" id="entityBack">← Back</button><button class="primary" id="entityEdit">Edit</button></div></div>
 <div class="entity-view">
-<div class="card entity-card"><div class="entity-header"><div><h2 id="entityName">Nova Studio</h2><div class="entity-meta"><span class="pill">Active</span><span class="pill">3 projects</span><span class="pill">5 invoices</span></div></div><strong id="entityValue">$24,800</strong></div>
-<div class="kpi-grid"><div class="kpi"><span class="muted">Revenue</span><b>$24,800</b></div><div class="kpi"><span class="muted">Outstanding</span><b>$2,400</b></div><div class="kpi"><span class="muted">Margin</span><b>73%</b></div></div>
-<div class="entity-section"><h3>Timeline</h3><div class="timeline"><div class="event"><span class="event-dot"></span><div><strong>Proposal accepted</strong><small>Sep 22 · Website Redesign · $12,000</small></div></div><div class="event"><span class="event-dot"></span><div><strong>Invoice sent</strong><small>Sep 21 · INV-0018 · $4,800</small></div></div><div class="event"><span class="event-dot"></span><div><strong>Payment received</strong><small>Sep 18 · $4,800</small></div></div></div></div></div>
-<div class="card entity-card"><div class="card-title"><h2>Next actions</h2></div><div class="action-list"><div class="action-item"><div><strong>Follow up on invoice</strong><small>Due Sep 27</small></div><span class="badge red">$2,400</span></div><div class="action-item"><div><strong>Project check-in</strong><small>Tomorrow · Website Redesign</small></div><span class="badge">Today</span></div><div class="action-item"><div><strong>Review margin</strong><small>Before next milestone</small></div><span class="badge green">73%</span></div></div></div></div>
+<div class="card entity-card"><div class="entity-header"><div><h2 id="entityName">—</h2><div class="entity-meta" id="entityMeta"></div></div><strong id="entityValue">€0</strong></div>
+<div class="kpi-grid"><div class="kpi"><span class="muted" data-ui="revenue">Revenue</span><b id="entityRevenue">€0</b></div><div class="kpi"><span class="muted" data-ui="outstanding">Outstanding</span><b id="entityOutstanding">€0</b></div><div class="kpi"><span class="muted" data-ui="margin">Margin</span><b id="entityMargin">—</b></div></div>
+<div class="entity-section"><h3 data-ui="timeline">Timeline</h3><div class="timeline" id="entityTimeline"></div></div></div>
+<div class="card entity-card"><div class="card-title"><h2 data-ui="nextActions">Next actions</h2></div><div class="action-list" id="entityActions"></div></div></div></div></div>
 </div></section>
 </main><div id="detailDrawer" class="drawer" aria-hidden="true"><aside class="drawer-panel"><div class="drawer-head"><div><div class="muted" id="drawerEyebrow" data-ui="drawerEyebrow">Business OS</div><h2 id="drawerTitle">New record</h2></div><button class="close" id="drawerClose">×</button></div><div class="form-grid">
 <div class="field"><label id="fNameLabel" data-ui="nameLabel">Name</label><input id="fName" placeholder="Record name"></div>
@@ -187,6 +187,9 @@ function addRecord(type,record){
   refreshDashboardMetrics();
   renderStoredRecords();
 }
+document.getElementById('entityBack').addEventListener('click',()=>{document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('clientsScreen').classList.add('active');document.querySelectorAll('.nav button').forEach((x,j)=>x.classList.toggle('active',j===2));});
+document.getElementById('entityEdit').addEventListener('click',()=>{const screen=document.getElementById('entityScreen');if(screen.dataset.entityType&&screen.dataset.entityId){const rec=(businessStore[screen.dataset.entityType]||[]).find(x=>x.id===screen.dataset.entityId);if(rec)openEditDrawer(screen.dataset.entityType,rec);}});
+
 const UI_CURRENCY='EUR';
 const uiLabels={en:{actual:'Actual',project:'Project',revenue:'Revenue',profit:'Profit',margin:'Margin',noData:'No data yet.',search:'Search'},ru:{actual:'Факт',project:'Проект',revenue:'Выручка',profit:'Прибыль',margin:'Маржа',noData:'Пока нет данных.',search:'Поиск'},es:{actual:'Real',project:'Proyecto',revenue:'Ingresos',profit:'Beneficio',margin:'Margen',noData:'Aún no hay datos.',search:'Buscar'},de:{actual:'Ist',project:'Projekt',revenue:'Umsatz',profit:'Gewinn',margin:'Marge',noData:'Noch keine Daten.',search:'Suche'},fr:{actual:'Réel',project:'Projet',revenue:'Chiffre d’affaires',profit:'Profit',margin:'Marge',noData:'Aucune donnée.',search:'Rechercher'}};
 function money(value){
@@ -232,6 +235,50 @@ function renderLeads(){
     if(rec) openEditDrawer('leads',rec);
   }));
 }
+function renderEntity(type,id){
+  const screen=document.getElementById('entityScreen');
+  if(!screen)return;
+  const record=(businessStore[type]||[]).find(x=>x.id===id);
+  if(!record)return;
+  const lang=activeLanguage||'en';
+  const copy={
+    en:{title:'Client',subtitle:'360° business context',back:'← Back',edit:'Edit',active:'Active',revenue:'Revenue',outstanding:'Outstanding',margin:'Margin',timeline:'Timeline',nextActions:'Next actions',noActivity:'No recent activity',noActions:'No open actions'},
+    ru:{title:'Клиент',subtitle:'Полный контекст 360°',back:'← Назад',edit:'Изменить',active:'Активен',revenue:'Выручка',outstanding:'К оплате',margin:'Маржа',timeline:'История',nextActions:'Следующие действия',noActivity:'Нет недавней активности',noActions:'Нет открытых действий'},
+    es:{title:'Cliente',subtitle:'Contexto empresarial 360°',back:'← Volver',edit:'Editar',active:'Activo',revenue:'Ingresos',outstanding:'Pendiente',margin:'Margen',timeline:'Cronología',nextActions:'Próximas acciones',noActivity:'Sin actividad reciente',noActions:'No hay acciones abiertas'},
+    de:{title:'Kunde',subtitle:'360° Geschäftskontext',back:'← Zurück',edit:'Bearbeiten',active:'Aktiv',revenue:'Umsatz',outstanding:'Offen',margin:'Marge',timeline:'Verlauf',nextActions:'Nächste Aktionen',noActivity:'Keine aktuelle Aktivität',noActions:'Keine offenen Aktionen'},
+    fr:{title:'Client',subtitle:'Contexte commercial à 360°',back:'← Retour',edit:'Modifier',active:'Actif',revenue:'Chiffre d’affaires',outstanding:'À encaisser',margin:'Marge',timeline:'Historique',nextActions:'Prochaines actions',noActivity:'Aucune activité récente',noActions:'Aucune action ouverte'}
+  }[lang]||null;
+  const client=type==='clients'?record:(businessStore.clients||[]).find(c=>c.id===record.clientId);
+  if(!client)return;
+  const projects=(businessStore.projects||[]).filter(p=>p.clientId===client.id);
+  const invoices=(businessStore.invoices||[]).filter(i=>i.clientId===client.id);
+  const payments=(businessStore.payments||[]).filter(p=>p.clientId===client.id||invoices.some(i=>i.id===p.invoiceId));
+  const revenue=payments.reduce((sum,p)=>sum+Number(p.amount||0),0);
+  const outstanding=invoices.reduce((sum,i)=>sum+Number(calculateInvoicePaymentStatus(i,payments,new Date()).outstanding||0),0);
+  const projectCalcs=projects.map(p=>calculateProjectProfit(p,{expenses:businessStore.expenses||[]}));
+  const profit=projectCalcs.reduce((sum,x)=>sum+Number(x.profit||0),0);
+  const margin=revenue>0?(profit/revenue*100):null;
+  document.getElementById('entityTitle').textContent=copy.title;
+  document.getElementById('entitySubtitle').textContent=copy.subtitle;
+  document.getElementById('entityBack').textContent=copy.back;
+  document.getElementById('entityEdit').textContent=copy.edit;
+  document.getElementById('entityName').textContent=client.name||'—';
+  document.getElementById('entityValue').textContent=money(revenue);
+  document.getElementById('entityRevenue').textContent=money(revenue);
+  document.getElementById('entityOutstanding').textContent=money(outstanding);
+  document.getElementById('entityMargin').textContent=margin===null?'—':margin.toFixed(1)+'%';
+  document.getElementById('entityMeta').innerHTML='<span class="pill">'+copy.active+'</span><span class="pill">'+projects.length+' projects</span><span class="pill">'+invoices.length+' invoices</span>';
+  const timelineItems=[
+    ...projects.map(p=>({date:p.updatedAt||p.createdAt,label:p.name||'Project',detail:p.status||''})),
+    ...invoices.map(i=>({date:i.updatedAt||i.createdAt,label:i.name||i.id,detail:money(i.amount||i.value||0)})),
+    ...payments.map(p=>({date:p.paymentDate||p.date||p.createdAt,label:copy.revenue,detail:money(p.amount||0)}))
+  ].filter(x=>x.date).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,8);
+  document.getElementById('entityTimeline').innerHTML=timelineItems.length?timelineItems.map(x=>'<div class="event"><span class="event-dot"></span><div><strong>'+escapeHtml(x.label)+'</strong><small>'+escapeHtml(new Date(x.date).toLocaleDateString())+' · '+escapeHtml(x.detail)+'</small></div></div>').join(''):'<div class="empty">'+copy.noActivity+'</div>';
+  const actions=invoices.map(i=>{const st=calculateInvoicePaymentStatus(i,payments,new Date());return st.outstanding>0?{label:i.name||i.id,detail:st.status,amount:st.outstanding,cls:st.status==='Overdue'?'red':''}:null}).filter(Boolean).slice(0,5);
+  document.getElementById('entityActions').innerHTML=actions.length?actions.map(a=>'<div class="action-item"><div><strong>'+escapeHtml(a.label)+'</strong><small>'+escapeHtml(a.detail)+'</small></div><span class="badge '+a.cls+'">'+money(a.amount)+'</span></div>').join(''):'<div class="empty">'+copy.noActions+'</div>';
+  screen.dataset.entityType=type; screen.dataset.entityId=id;
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active')); screen.classList.add('active');
+}
 function renderStoredRecords(){
   
   const tc=recordUiCopy[activeLanguage]||recordUiCopy.en;
@@ -268,7 +315,7 @@ function renderStoredRecords(){
     }).join('');
     tbody.querySelectorAll('tr').forEach(row=>{
       const rec=records.find(x=>x.id===row.dataset.recordId);
-      row.addEventListener('click',e=>{if(e.target.closest('button'))return;if(rec)openEditDrawer(type,rec);});
+      row.addEventListener('click',e=>{if(e.target.closest('button'))return;if(rec){if(type==='clients')renderEntity(type,rec.id);else openEditDrawer(type,rec);}});
       row.querySelector('.row-edit')?.addEventListener('click',()=>openEditDrawer(type,rec));
       row.querySelector('.row-convert')?.addEventListener('click',()=>convertProposalToProject(rec.id));
       row.querySelector('.row-invoice')?.addEventListener('click',()=>createInvoiceFromProject(rec.id));
