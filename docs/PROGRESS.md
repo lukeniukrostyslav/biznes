@@ -82,7 +82,7 @@ B08 = **70%**. Финансовая модель V1 зафиксирована �
 
 ## B07 — core-функциональность
 
-B07 = **50%**.
+B07 = **55%**.
 
 Выполнено:
 - финансовый engine как общая доменная библиотека;
@@ -92,7 +92,7 @@ B07 = **50%**.
 - связи между сущностями;
 - зафиксирована стратегия перехода к local-first persistence.
 
-Выполнено B07.2 (первый слой): schemaVersioned local-first store на localStorage, стабильные локальные ID, сохранение новых записей из UI и toast-подтверждение. Реализовано: schemaVersioned local-first store в UI и отдельный `src/core/persistence.js` с create/load/save/upsert/remove/export/import. Добавлены автоматические тесты persistence. Дополнительно выполнено: защита импорта от будущих schemaVersion и безопасный reset persisted store с тестами. Следующий шаг: полноценное подключение всех экранов к store, валидация полей, миграции и пользовательский экспорт/импорт.
+Выполнено B07.2 (первый слой): schemaVersioned local-first store на localStorage, стабильные локальные ID, сохранение новых записей из UI и toast-подтверждение. Реализовано: schemaVersioned local-first store в UI и отдельный `src/core/persistence.js` с create/load/save/upsert/remove/export/import. Добавлены автоматические тесты persistence. Дополнительно выполнено: защита импорта от будущих schemaVersion, безопасный reset persisted store с тестами, пользовательские Export/Import JSON прямо из интерфейса. Следующий шаг: полноценное подключение всех экранов к store, валидация полей, миграции и пользовательский экспорт/импорт.
 
 ## Конкурентный контроль — 2026-09-24
 
