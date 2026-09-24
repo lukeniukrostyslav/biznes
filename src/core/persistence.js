@@ -24,8 +24,16 @@ function createEmptyStore() {
   return clone(EMPTY_STORE);
 }
 
-function normalizeStore(input) {
+function migrateStore(input) {
   const source = input && typeof input === 'object' ? input : {};
+  const version = Number(source.schemaVersion || 1);
+  if (version > CURRENT_SCHEMA_VERSION) throw new Error('Unsupported BUSINESS OS schema version');
+  if (version === 1) return { ...source, schemaVersion: CURRENT_SCHEMA_VERSION, archivedRecords: Array.isArray(source.archivedRecords) ? source.archivedRecords : [] };
+  return source;
+}
+
+function normalizeStore(input) {
+  const source = migrateStore(input);
   return {
     schemaVersion: CURRENT_SCHEMA_VERSION,
     clients: Array.isArray(source.clients) ? source.clients : [],
@@ -97,6 +105,7 @@ export {
   createId,
   createEmptyStore,
   normalizeStore,
+  migrateStore,
   loadStore,
   saveStore,
   upsertRecord,
