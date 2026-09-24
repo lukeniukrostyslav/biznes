@@ -206,7 +206,7 @@ function uid(prefix){return prefix+'_'+Date.now().toString(36)+'_'+Math.random()
 let businessStore=loadStore();
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1800)}
 const toastCopy={
-  en:{saved:'Record saved locally',updated:'Record updated locally',proposalNotFound:'Proposal not found',proposalAccepted:'Proposal must be accepted first',projectExists:'Project already exists for this proposal',proposalClient:'Proposal needs a client before conversion',conversionBlocked:'Conversion blocked: check linked records',projectCreated:'Project created from proposal',projectNotFound:'Project not found',nonBillable:'Non-billable projects cannot be invoiced',invoiceExists:'An invoice already exists for this project',projectClient:'Project needs a client',projectAmount:'Project has no billable amount',invoiceBlocked:'Invoice creation blocked: check linked records',invoiceCreated:'Invoice created from project',imported:'Data imported',importError:'Import error',invoiceLine:'Invoice needs at least one line',paymentInput:'Error: select an invoice and enter a payment amount',invoiceMissing:'Error: invoice not found',paymentClient:'Error: payment client must match invoice client',paymentInvoiceAmount:'Error: payment exceeds invoice outstanding',installmentMissing:'Error: selected installment not found',paymentInstallmentAmount:'Error: payment exceeds selected installment outstanding',invoiceLines:'Error: check invoice lines',taxRate:'Error: tax rate must be between 0 and 100%',discount:'Error: check discount',paymentPlan:'Error: payment plan does not match invoice total',relations:'Error: check linked records',entityReady:'Entity details ready to connect to store'},
+  en:{saved:'Record saved locally',updated:'Record updated locally',proposalNotFound:'Proposal not found',proposalAccepted:'Proposal must be accepted first',projectExists:'Project already exists for this proposal',proposalClient:'Proposal needs a client before conversion',conversionBlocked:'Conversion blocked: check linked records',projectCreated:'Project created from proposal',projectNotFound:'Project not found',nonBillable:'Non-billable projects cannot be invoiced',invoiceExists:'An invoice already exists for this project',projectClient:'Project needs a client',projectAmount:'Project has no billable amount',invoiceBlocked:'Invoice creation blocked: check linked records',invoiceCreated:'Invoice created from project',imported:'Data imported',importError:'Import error',invoiceLine:'Invoice needs at least one line',paymentInput:'Error: select an invoice and enter a payment amount',invoiceMissing:'Error: invoice not found',paymentClient:'Error: payment client must match invoice client',paymentInvoiceAmount:'Error: payment exceeds invoice outstanding',installmentMissing:'Error: selected installment not found',paymentInstallmentAmount:'Error: payment exceeds selected installment outstanding',invoiceLines:'Error: check invoice lines',taxRate:'Error: tax rate must be between 0 and 100%',discount:'Error: check discount',paymentPlan:'Error: payment plan does not match invoice total',relations:'Error: check linked records',entityReady:'Entity details ready to connect to store',cashflowExported:'Cashflow report exported',profitExported:'Profit analysis exported'},
   ru:{saved:'Запись сохранена локально',updated:'Запись обновлена локально',proposalNotFound:'Предложение не найдено',proposalAccepted:'Сначала примите предложение',projectExists:'Проект для этого предложения уже существует',proposalClient:'Для конвертации предложению нужен клиент',conversionBlocked:'Конвертация заблокирована: проверьте связанные записи',projectCreated:'Проект создан из предложения',projectNotFound:'Проект не найден',nonBillable:'Небиллабельный проект нельзя выставить в счёт',invoiceExists:'Для этого проекта уже есть счёт',projectClient:'Проекту нужен клиент',projectAmount:'У проекта нет суммы для счёта',invoiceBlocked:'Создание счёта заблокировано: проверьте связи',invoiceCreated:'Счёт создан из проекта',imported:'Данные импортированы',importError:'Ошибка импорта',invoiceLine:'В счёте должна быть хотя бы одна позиция',paymentInput:'Ошибка: выберите счёт и укажите сумму платежа',invoiceMissing:'Ошибка: счёт не найден',paymentClient:'Ошибка: клиент платежа должен совпадать с клиентом счёта',paymentInvoiceAmount:'Ошибка: платёж превышает остаток счёта',installmentMissing:'Ошибка: выбранный платёж по плану не найден',paymentInstallmentAmount:'Ошибка: платёж превышает остаток выбранного платежа',invoiceLines:'Ошибка: проверьте позиции счёта',taxRate:'Ошибка: налоговая ставка должна быть от 0 до 100%',discount:'Ошибка: проверьте скидку',paymentPlan:'Ошибка: план платежей не сходится с итогом счёта',relations:'Ошибка: проверьте связанные записи',entityReady:'Данные объекта готовы для подключения к store'},
   es:{saved:'Registro guardado localmente',updated:'Registro actualizado localmente',proposalNotFound:'Propuesta no encontrada',proposalAccepted:'La propuesta debe aceptarse primero',projectExists:'Ya existe un proyecto para esta propuesta',proposalClient:'La propuesta necesita un cliente',conversionBlocked:'Conversión bloqueada: revisa los registros vinculados',projectCreated:'Proyecto creado desde la propuesta',projectNotFound:'Proyecto no encontrado',nonBillable:'Los proyectos no facturables no pueden facturarse',invoiceExists:'Ya existe una factura para este proyecto',projectClient:'El proyecto necesita un cliente',projectAmount:'El proyecto no tiene importe facturable',invoiceBlocked:'Creación de factura bloqueada: revisa los vínculos',invoiceCreated:'Factura creada desde el proyecto',imported:'Datos importados',importError:'Error de importación',invoiceLine:'La factura necesita al menos una línea',paymentInput:'Error: selecciona una factura e indica un importe',invoiceMissing:'Error: factura no encontrada',paymentClient:'Error: el cliente del pago debe coincidir con el de la factura',paymentInvoiceAmount:'Error: el pago supera el saldo de la factura',installmentMissing:'Error: cuota seleccionada no encontrada',paymentInstallmentAmount:'Error: el pago supera el saldo de la cuota',invoiceLines:'Error: revisa las líneas de la factura',taxRate:'Error: el impuesto debe estar entre 0 y 100%',discount:'Error: revisa el descuento',paymentPlan:'Error: el plan no coincide con el total de la factura',relations:'Error: revisa los registros vinculados',entityReady:'Detalles del registro listos para conectar al store'},
   de:{saved:'Datensatz lokal gespeichert',updated:'Datensatz lokal aktualisiert',proposalNotFound:'Angebot nicht gefunden',proposalAccepted:'Das Angebot muss zuerst angenommen werden',projectExists:'Für dieses Angebot existiert bereits ein Projekt',proposalClient:'Das Angebot benötigt einen Kunden',conversionBlocked:'Konvertierung blockiert: verknüpfte Datensätze prüfen',projectCreated:'Projekt aus Angebot erstellt',projectNotFound:'Projekt nicht gefunden',nonBillable:'Nicht abrechenbare Projekte können nicht fakturiert werden',invoiceExists:'Für dieses Projekt existiert bereits eine Rechnung',projectClient:'Projekt benötigt einen Kunden',projectAmount:'Projekt hat keinen abrechenbaren Betrag',invoiceBlocked:'Rechnungserstellung blockiert: Verknüpfungen prüfen',invoiceCreated:'Rechnung aus Projekt erstellt',imported:'Daten importiert',importError:'Importfehler',invoiceLine:'Rechnung benötigt mindestens eine Position',paymentInput:'Fehler: Rechnung auswählen und Zahlungsbetrag eingeben',invoiceMissing:'Fehler: Rechnung nicht gefunden',paymentClient:'Fehler: Zahlungskunde muss dem Rechnungskunden entsprechen',paymentInvoiceAmount:'Fehler: Zahlung übersteigt offenen Rechnungsbetrag',installmentMissing:'Fehler: ausgewählte Rate nicht gefunden',paymentInstallmentAmount:'Fehler: Zahlung übersteigt den offenen Ratenbetrag',invoiceLines:'Fehler: Rechnungspositionen prüfen',taxRate:'Fehler: Steuersatz muss zwischen 0 und 100% liegen',discount:'Fehler: Rabatt prüfen',paymentPlan:'Fehler: Zahlungsplan stimmt nicht mit dem Rechnungsbetrag überein',relations:'Fehler: Verknüpfungen prüfen',entityReady:'Datensatzdetails sind für die Store-Anbindung bereit'},
@@ -688,6 +688,53 @@ function refreshDashboardMetrics(){
   renderProfitRealData();
   renderDashboardRealData();
 }
+function downloadTextFile(filename,content,mime='text/csv;charset=utf-8'){
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),0);
+}
+function csvCell(value){
+  const text=String(value??'');
+  return '"'+text.replace(/"/g,'""')+'"';
+}
+function exportCashflowReport(){
+  const forecast=calculateCashflowForecast(businessStore,new Date(),30);
+  const rows=[['Date','Type','Label','Amount','Direction']];
+  (forecast.events||[]).forEach(event=>{
+    rows.push([event.date,event.type,event.label,event.amount,event.direction||'']);
+  });
+  rows.push([]);
+  rows.push(['Metric','Value']);
+  rows.push(['Current net cash',forecast.currentNetCash]);
+  rows.push(['Future inflows',forecast.futureInflows]);
+  rows.push(['Future expenses',forecast.futureExpenses]);
+  rows.push(['Forecast net cash',forecast.forecastNetCash]);
+  downloadTextFile('business-os-cashflow-30d.csv',rows.map(row=>row.map(csvCell).join(',')).join('\n'));
+  toast(t('cashflowExported'));
+}
+function exportProfitAnalysis(){
+  const expenses=businessStore.expenses||[];
+  const projects=businessStore.projects||[];
+  const rows=[['Project','Revenue','Costs','Profit','Margin']];
+  projects.forEach(project=>{
+    const calc=calculateProjectProfit(project,{expenses});
+    rows.push([project.name||project.id,calc.revenue,calc.directCosts||0,calc.profit,calc.margin==null?'':calc.margin]);
+  });
+  const payments=businessStore.payments||[];
+  const grossRevenue=payments.reduce((sum,p)=>sum+Number(p.amount||0),0);
+  const directCosts=projects.reduce((sum,project)=>sum+Number(calculateProjectProfit(project,{expenses}).directCosts||0),0);
+  const operatingCosts=expenses.filter(e=>!e.projectId).reduce((sum,e)=>sum+Number(e.amount||0),0);
+  rows.push([]);
+  rows.push(['Metric','Value']);
+  rows.push(['Gross revenue',grossRevenue]);
+  rows.push(['Direct costs',directCosts]);
+  rows.push(['Operating costs',operatingCosts]);
+  rows.push(['Net profit',grossRevenue-directCosts-operatingCosts]);
+  downloadTextFile('business-os-profit-analysis.csv',rows.map(row=>row.map(csvCell).join(',')).join('\n'));
+  toast(t('profitExported'));
+}
 function exportBusinessData(){
   const blob=new Blob([JSON.stringify(businessStore,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob); const a=document.createElement('a');
@@ -709,6 +756,8 @@ renderStoredRecords();
 const saved=localStorage.getItem('business-os-lang')||'en';document.getElementById('lang').value=saved;render(saved);document.getElementById('lang').addEventListener('change',e=>{localStorage.setItem('business-os-lang',e.target.value);render(e.target.value)});
 applyUiCopy(saved);
 document.getElementById('exportData').addEventListener('click',exportBusinessData);
+document.getElementById('exportCashflow')?.addEventListener('click',exportCashflowReport);
+document.getElementById('exportProfitAnalysis')?.addEventListener('click',exportProfitAnalysis);
 document.getElementById('importData').addEventListener('click',()=>document.getElementById('importDataInput').click());
 document.getElementById('importDataInput').addEventListener('change',e=>{if(e.target.files[0])importBusinessData(e.target.files[0]);e.target.value='';});
 
