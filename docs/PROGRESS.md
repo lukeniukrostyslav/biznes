@@ -331,3 +331,22 @@ Project drawer получил финансовую модель:
 - Labour cost/hour.
 
 Это отражает рыночную модель project billing/budget/profitability, но не считается завершённым QA. B10 остаётся **0%**, B07 — **82%**, B08 — **70%**.
+
+
+## B08.3 — project financial intelligence — 2026-09-24
+
+Financial engine расширен для Project:
+
+- actual direct costs;
+- linked actual project expenses;
+- planned project expenses;
+- labour cost = actual hours × labour rate;
+- total actual costs;
+- actual profit and margin;
+- fee/time budget usage;
+- remaining budget;
+- forecast costs;
+- forecast profit;
+- forecast margin.
+
+Добавлены regression tests для fee budget и time budget. Процент B08 пока не повышен: полный QA и UI integration ещё не завершены.
