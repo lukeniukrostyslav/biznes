@@ -1,8 +1,19 @@
 const STORAGE_KEY = 'business-os-store-v1';
-const CURRENT_SCHEMA_VERSION = 1;
+const CURRENT_SCHEMA_VERSION = 2;
+
+const COLLECTIONS = ['clients', 'leads', 'proposals', 'projects', 'invoices', 'payments', 'expenses'];
+const RELATION_FIELDS = {
+  leads: { clientId: 'clients' },
+  proposals: { clientId: 'clients', leadId: 'leads' },
+  projects: { clientId: 'clients', proposalId: 'proposals' },
+  invoices: { clientId: 'clients', projectId: 'projects' },
+  payments: { invoiceId: 'invoices', clientId: 'clients' },
+  expenses: { projectId: 'projects', clientId: 'clients' }
+};
 
 const EMPTY_STORE = Object.freeze({
   schemaVersion: CURRENT_SCHEMA_VERSION,
+  archivedRecords: [],
   clients: [],
   leads: [],
   proposals: [],
@@ -32,10 +43,28 @@ function migrateStore(input) {
   return source;
 }
 
+function validateStore(input) {
+  const source = input && typeof input === 'object' ? input : {};
+  const errors = [];
+  for (const collection of COLLECTIONS) {
+    for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
+      for (const [field, target] of Object.entries(RELATION_FIELDS[collection] || {})) {
+        const value = record?.[field];
+        if (value == null || value === '') continue;
+        if (!(Array.isArray(source[target]) ? source[target] : []).some(item => item.id === value)) {
+          errors.push(`${collection}.${record.id || '<unknown>'}.${field} -> ${value}`);
+        }
+      }
+    }
+  }
+  return { valid: errors.length === 0, errors };
+}
+
 function normalizeStore(input) {
   const source = migrateStore(input);
   return {
     schemaVersion: CURRENT_SCHEMA_VERSION,
+    archivedRecords: Array.isArray(source.archivedRecords) ? source.archivedRecords : [],
     clients: Array.isArray(source.clients) ? source.clients : [],
     leads: Array.isArray(source.leads) ? source.leads : [],
     proposals: Array.isArray(source.proposals) ? source.proposals : [],
@@ -59,6 +88,20 @@ function saveStore(storage, store) {
   const normalized = normalizeStore(store);
   storage.setItem(STORAGE_KEY, JSON.stringify(normalized));
   return normalized;
+}
+
+function archiveRecord(store, collection, id) {
+  const list = Array.isArray(store[collection]) ? store[collection] : [];
+  const record = list.find(item => item.id === id);
+  if (!record) return normalizeStore(store);
+  return normalizeStore({ ...store, [collection]: list.filter(item => item.id !== id), archivedRecords: [...(store.archivedRecords || []), { ...record, collection, archivedAt: new Date().toISOString() }] });
+}
+
+function restoreRecord(store, archivedId) {
+  const archived = (store.archivedRecords || []).find(item => item.id === archivedId);
+  if (!archived || !COLLECTIONS.includes(archived.collection)) return normalizeStore(store);
+  const { collection, archivedAt, ...record } = archived;
+  return normalizeStore({ ...store, [collection]: [...(store[collection] || []), record], archivedRecords: (store.archivedRecords || []).filter(item => !(item.id === archivedId && item.collection === collection)) });
 }
 
 function upsertRecord(store, collection, record) {
@@ -91,7 +134,10 @@ function importStore(json) {
   const parsed = typeof json === 'string' ? JSON.parse(json) : json;
   if (!parsed || typeof parsed !== 'object') throw new Error('Invalid BUSINESS OS export');
   if (parsed.schemaVersion && Number(parsed.schemaVersion) > CURRENT_SCHEMA_VERSION) throw new Error('Unsupported BUSINESS OS schema version');
-  return normalizeStore(parsed);
+  const normalized = normalizeStore(parsed);
+  const validation = validateStore(normalized);
+  if (!validation.valid) throw new Error(`Invalid BUSINESS OS relationships: ${validation.errors.join(', ')}`);
+  return normalized;
 }
 
 function clearStore(storage) {
@@ -112,5 +158,10 @@ export {
   removeRecord,
   exportStore,
   importStore,
-  clearStore
+  clearStore,
+  COLLECTIONS,
+  RELATION_FIELDS,
+  validateStore,
+  archiveRecord,
+  restoreRecord
 };
