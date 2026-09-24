@@ -105,3 +105,20 @@ test('overdue metric uses supplied current date', () => {
 
   assert.equal(result.overdue, 1000);
 });
+
+
+test('overdue uses linked payments instead of stale invoice paid field', () => {
+  const result = calculateBusinessMetrics({
+    invoices: [{
+      id: 'inv-overdue-linked',
+      lineItems: [{ quantity: 1, unitPrice: 1000 }],
+      paid: 900,
+      status: 'Sent',
+      dueDate: '2026-01-10'
+    }],
+    payments: [{ id: 'pay-1', invoiceId: 'inv-overdue-linked', amount: 250 }]
+  }, new Date('2026-02-01'));
+
+  assert.equal(result.outstanding, 750);
+  assert.equal(result.overdue, 750);
+});
