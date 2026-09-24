@@ -93,9 +93,9 @@
 <div class="card table-card"><table class="data-table"><thead><tr><th>Date</th><th>Expense</th><th>Project</th><th>Category</th><th>Amount</th></tr></thead><tbody><tr><td>Sep 24</td><td><strong>Hosting</strong></td><td>Website Redesign</td><td>Project</td><td>$240</td></tr><tr><td>Sep 22</td><td><strong>Stock assets</strong></td><td>Brand Identity</td><td>Project</td><td>$180</td></tr><tr><td>Sep 20</td><td><strong>Software subscriptions</strong></td><td>—</td><td>Operating</td><td>$390</td></tr><tr><td>Sep 18</td><td><strong>Contractor</strong></td><td>Mobile App Design</td><td>Project</td><td>$2,400</td></tr></tbody></table></div>
 </div>
 <div id="profitScreen" class="screen">
-<div class="page-title"><div><h1 data-i18n="profitTitle">Profit</h1><p data-i18n="profitSub">See which projects and clients create healthy margins.</p></div><button class="secondary">Export analysis</button></div>
-<div class="stat-strip"><div class="card mini"><span class="muted">Gross revenue</span><strong>$53,980</strong></div><div class="card mini"><span class="muted">Direct costs</span><strong>$7,920</strong></div><div class="card mini"><span class="muted">Operating costs</span><strong>$4,920</strong></div><div class="card mini"><span class="muted">Net profit</span><strong>$41,140</strong></div></div>
-<div class="card table-card"><table class="data-table"><thead><tr><th>Project</th><th>Revenue</th><th>Costs</th><th>Profit</th><th>Margin</th></tr></thead><tbody><tr><td><strong>Website Redesign</strong></td><td>$12,000</td><td>$2,100</td><td>$9,900</td><td>82.5%</td></tr><tr><td><strong>Brand Identity</strong></td><td>$5,500</td><td>$1,200</td><td>$4,300</td><td>78.2%</td></tr><tr><td><strong>Mobile App Design</strong></td><td>$18,000</td><td>$7,200</td><td>$10,800</td><td>60.0%</td></tr><tr><td><strong>Marketing Website</strong></td><td>$8,750</td><td>$2,300</td><td>$6,450</td><td>73.7%</td></tr></tbody></table></div>
+<div class="page-title"><div><h1 data-i18n="profitTitle">Profit</h1><p data-i18n="profitSub">See which projects and clients create healthy margins.</p></div><button class="secondary" id="exportProfitAnalysis" data-ui="exportAnalysis">Export analysis</button></div>
+<div class="stat-strip"><div class="card mini"><span class="muted" data-ui="grossRevenue">Gross revenue</span><strong id="profitGrossRevenue">€0</strong></div><div class="card mini"><span class="muted" data-ui="directCosts">Direct costs</span><strong id="profitDirectCosts">€0</strong></div><div class="card mini"><span class="muted" data-ui="operatingCosts">Operating costs</span><strong id="profitOperatingCosts">€0</strong></div><div class="card mini"><span class="muted" data-ui="netProfit">Net profit</span><strong id="profitNetProfit">€0</strong></div></div>
+<div class="card table-card"><table class="data-table"><thead><tr><th data-ui-label="project">Project</th><th data-ui-label="revenue">Revenue</th><th data-ui-label="costs">Costs</th><th data-ui-label="profit">Profit</th><th data-ui-label="margin">Margin</th></tr></thead><tbody id="profitabilityBody"></tbody></table></div>
 </div>
 <div id="entityScreen" class="screen">
 <div class="page-title"><div><h1 id="entityTitle">Client</h1><p id="entitySubtitle">360° business context</p></div><div class="toolbar"><button class="secondary" id="entityBack">← Back</button><button class="primary" id="entityEdit">Edit</button></div></div>
@@ -492,6 +492,20 @@ function refreshOperationalMetrics(){
   const operating=monthExpenses.filter(e=>!e.projectId).reduce((s,e)=>s+Number(e.amount||0),0);
   [['paymentsReceivedMonth',receivedMonth],['paymentsExpected',forecast.futureInflows],['paymentsOverdue',overdue],['paymentsCollectionRate',collection],['expensesThisMonth',expenseTotal],['expensesProjectCosts',projectCosts],['expensesOperating',operating],['expensesUnassigned',monthExpenses.filter(e=>!e.projectId&&!e.clientId).reduce((s,e)=>s+Number(e.amount||0),0)]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=id==='paymentsCollectionRate'?String(v)+'%':money(v);});
 }
+function renderProfitRealData(){
+  const projects=businessStore.projects||[];
+  const expenses=businessStore.expenses||[];
+  const projectRows=projects.map(project=>({project,calc:calculateProjectProfit(project,{expenses})}));
+  const grossRevenue=(businessStore.payments||[]).reduce((sum,p)=>sum+Number(p.amount||0),0);
+  const directCosts=projectRows.reduce((sum,x)=>sum+x.calc.actualCosts,0);
+  const operatingCosts=expenses.filter(e=>!e.projectId && e.status!=='Planned' && e.planned!==true).reduce((sum,e)=>sum+Number(e.amount||0),0);
+  const netProfit=roundMoney(grossRevenue-directCosts-operatingCosts);
+  const ids={grossRevenue, directCosts, operatingCosts, netProfit};
+  Object.entries(ids).forEach(([key,value])=>{const el=document.getElementById('profit'+key.charAt(0).toUpperCase()+key.slice(1));if(el)el.textContent=money(value);});
+  const body=document.getElementById('profitabilityBody');
+  if(!body)return;
+  body.innerHTML=projectRows.length?projectRows.map(({project,calc})=>'<tr><td><strong>'+escapeHtml(project.name||'Project')+'</strong></td><td>'+money(calc.revenue)+'</td><td>'+money(calc.actualCosts)+'</td><td>'+money(calc.profit)+'</td><td>'+ (calc.margin===null?'—':calc.margin.toFixed(1)+'%') +'</td></tr>').join(''):'<tr><td colspan="5" class="empty">No project data</td></tr>';
+}
 function refreshDashboardMetrics(){
   const metrics=calculateBusinessMetrics(businessStore);
   document.getElementById('metricRevenue').textContent=money(metrics.paid);
@@ -500,6 +514,7 @@ function refreshDashboardMetrics(){
   document.getElementById('metricProfit').textContent=money(metrics.actualProfit);
   renderCashflow();
   refreshOperationalMetrics();
+  renderProfitRealData();
   renderDashboardRealData();
 }
 function exportBusinessData(){
@@ -786,6 +801,13 @@ document.getElementById('drawerClose').addEventListener('click',closeCreateDrawe
 document.getElementById('drawerCancel').addEventListener('click',closeCreateDrawer);
 document.getElementById('detailDrawer').addEventListener('click',e=>{if(e.target.id==='detailDrawer')closeCreateDrawer();});
 </script><nav class="mobile-nav" id="mobileNav"><button data-mobile="0" class="active"><span>⌂</span><span data-mobile-label="dashboard">Обзор</span></button><button data-mobile="1"><span>↗</span><span data-mobile-label="leads">Лиды</span></button><button data-mobile="2"><span>◎</span><span data-mobile-label="clients">Клиенты</span></button><button data-mobile="4"><span>▣</span><span data-mobile-label="projects">Проекты</span></button><button data-mobile="5"><span>▤</span><span data-mobile-label="invoices">Счета</span></button></nav><script>document.querySelectorAll('#mobileNav button').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.mobile),map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]).classList.add('active');document.querySelectorAll('#mobileNav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.nav button').forEach((x,j)=>x.classList.toggle('active',j===i));});</script><script>
+const profitUiCopy={
+ en:{grossRevenue:'Gross revenue',directCosts:'Direct costs',operatingCosts:'Operating costs',netProfit:'Net profit',exportAnalysis:'Export analysis',costs:'Costs',noProjectData:'No project data'},
+ ru:{grossRevenue:'Валовая выручка',directCosts:'Прямые затраты',operatingCosts:'Операционные расходы',netProfit:'Чистая прибыль',exportAnalysis:'Экспорт анализа',costs:'Затраты',noProjectData:'Нет данных по проектам'},
+ es:{grossRevenue:'Ingresos brutos',directCosts:'Costes directos',operatingCosts:'Costes operativos',netProfit:'Beneficio neto',exportAnalysis:'Exportar análisis',costs:'Costes',noProjectData:'No hay datos de proyectos'},
+ de:{grossRevenue:'Bruttoumsatz',directCosts:'Direkte Kosten',operatingCosts:'Betriebskosten',netProfit:'Nettogewinn',exportAnalysis:'Analyse exportieren',costs:'Kosten',noProjectData:'Keine Projektdaten'},
+ fr:{grossRevenue:'Chiffre d’affaires brut',directCosts:'Coûts directs',operatingCosts:'Coûts opérationnels',netProfit:'Bénéfice net',exportAnalysis:'Exporter l’analyse',costs:'Coûts',noProjectData:'Aucune donnée de projet'}
+};
 const mobileNavCopy={
  en:{dashboard:'Overview',leads:'Leads',clients:'Clients',projects:'Projects',invoices:'Invoices'},
  ru:{dashboard:'Обзор',leads:'Лиды',clients:'Клиенты',projects:'Проекты',invoices:'Счета'},
@@ -793,12 +815,19 @@ const mobileNavCopy={
  de:{dashboard:'Übersicht',leads:'Leads',clients:'Kunden',projects:'Projekte',invoices:'Rechnungen'},
  fr:{dashboard:'Aperçu',leads:'Prospects',clients:'Clients',projects:'Projets',invoices:'Factures'}
 };
+function refreshProfitLabels(){
+ const copy=profitUiCopy[activeLanguage]||profitUiCopy.en;
+ document.querySelectorAll('[data-ui]').forEach(el=>{const key=el.dataset.ui;if(copy[key])el.textContent=copy[key];});
+ document.querySelectorAll('[data-ui-label="costs"]').forEach(el=>el.textContent=copy.costs);
+ const empty=document.querySelector('#profitabilityBody .empty'); if(empty&&copy.noProjectData)empty.textContent=copy.noProjectData;
+}
 function refreshMobileNavLabels(){
  const copy=mobileNavCopy[activeLanguage]||mobileNavCopy.en;
  document.querySelectorAll('[data-mobile-label]').forEach(el=>{const key=el.dataset.mobileLabel;if(copy[key])el.textContent=copy[key];});
 }
 const _applyUiCopy=applyUiCopy;
-applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();};
+applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();};
 refreshMobileNavLabels();
+refreshProfitLabels();
 </script></body>
 </html>
