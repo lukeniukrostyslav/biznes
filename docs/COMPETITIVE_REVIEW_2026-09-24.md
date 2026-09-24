@@ -25,3 +25,16 @@
 ## Ограничение
 
 Рынок подтверждает существование категории и различных ценовых моделей, но не гарантирует конкретный объём продаж BUSINESS OS. Цена $79–99 остаётся коммерческой гипотезой до реальной валидации продажами.
+
+
+## Повторная конкурентная проверка — 2026-09-24
+
+- HoneyBook продолжает объединять clients/projects, invoices/payments, proposals/contracts, calendar и отчёты в подписном продукте. citeturn0search0
+- HoneyBook в августе 2026 документирует cash flow и project profit, но эти показатели в текущем описании основаны на уже оплаченных платежах и не прогнозируют будущие платежи. citeturn0search1
+- Easlo Freelance OS остаётся lifetime Notion-продуктом за $79 и показывает 858 продаж; в составе CRM, pipeline, projects/tasks и invoice tracker. citeturn0search2
+- Easlo Business OS указан за $179 и также остаётся Notion-продуктом с CRM, deals, projects, finance и invoice tracker. citeturn0search7
+- Bonsai продолжает развивать proposal/document workflow, включая fee options, tax rates и автоматическое создание invoice после принятия proposal. citeturn0search14
+
+### Решение для следующего этапа
+
+Следующий приоритет BUSINESS OS — не добавление ещё одного модуля, а **единый жизненный цикл записи**: создание → редактирование → связь с другими сущностями → финансовое влияние → удаление/архивация. После этого финансовый engine должен получать данные UI, а dashboard — рассчитываться из store, а не из демонстрационных значений.
