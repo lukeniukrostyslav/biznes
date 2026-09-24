@@ -16,8 +16,8 @@
 <body>
 <div id="toast" class="toast" role="status"></div><div class="app">
 <aside class="sidebar">
-<div class="brand"><div class="logo">B</div><div><strong>BUSINESS OS</strong><small>Your business. One place.</small></div></div>
-<nav class="nav" id="nav"></nav><div class="spacer"></div><div class="user"><strong>Demo Workspace</strong><br><small>Local-first</small></div>
+<div class="brand"><div class="logo">B</div><div><strong>BUSINESS OS</strong><small id="brandTagline">Your business. One place.</small></div></div>
+<nav class="nav" id="nav"></nav><div class="spacer"></div><div class="user"><strong id="workspaceLabel">Demo Workspace</strong><br><small id="workspaceMode">Local-first</small></div>
 </aside>
 <main class="main">
 <input id="importDataInput" type="file" accept="application/json" hidden>
@@ -55,7 +55,7 @@
 </div>
 <div id="projectsScreen" class="screen">
 <div class="page-title"><div><h1 data-i18n="projectsTitle">Projects</h1><p data-i18n="projectsSub">Control delivery, cost and margin before profit leaks.</p></div><button class="primary" data-i18n="newProject">＋ New project</button></div>
-<div class="stat-strip"><div class="card mini"><span class="muted">Active projects</span><strong>8</strong></div><div class="card mini"><span class="muted">Contracted</span><strong>$86,400</strong></div><div class="card mini"><span class="muted">Expected profit</span><strong>$49,180</strong></div><div class="card mini"><span class="muted">Avg. margin</span><strong>61%</strong></div></div>
+<div class="stat-strip"><div class="card mini"><span class="muted" data-project-ui="activeProjects">Active projects</span><strong id="projectsActiveCount">0</strong></div><div class="card mini"><span class="muted" data-project-ui="contracted">Contracted</span><strong id="projectsContracted">€0</strong></div><div class="card mini"><span class="muted" data-project-ui="expectedProfit">Expected profit</span><strong id="projectsExpectedProfit">€0</strong></div><div class="card mini"><span class="muted" data-project-ui="avgMargin">Avg. margin</span><strong id="projectsAvgMargin">0%</strong></div></div>
 <div class="detail-grid"><div class="card table-card"><table class="data-table"><thead><tr><th>Project</th><th>Progress</th><th>Revenue</th><th>Margin</th></tr></thead><tbody><tr><td><strong>Website Redesign</strong></td><td>82%</td><td>$12,000</td><td class="green">73%</td></tr><tr><td><strong>Brand Identity</strong></td><td>64%</td><td>$5,500</td><td class="green">65%</td></tr><tr><td><strong>Mobile App Design</strong></td><td>48%</td><td>$18,000</td><td class="green">59%</td></tr><tr><td><strong>Marketing Website</strong></td><td>91%</td><td>$8,750</td><td class="green">67%</td></tr></tbody></table></div>
 <div class="card wide"><div class="card-title"><h2>Project health</h2></div><div class="timeline"><div class="event"><span class="event-dot"></span><div><strong>Website Redesign</strong><small class="muted">Margin above target · 73%</small></div></div><div class="event"><span class="event-dot" style="background:var(--orange)"></span><div><strong>Mobile App Design</strong><small class="muted">Hours running 12% above estimate</small></div></div><div class="event"><span class="event-dot" style="background:var(--red)"></span><div><strong>Marketing Website</strong><small class="muted">Invoice due in 3 days</small></div></div></div></div></div>
 </div>
@@ -106,7 +106,7 @@
 <div class="card entity-card"><div class="card-title"><h2 data-ui="nextActions">Next actions</h2></div><div class="action-list" id="entityActions"></div></div></div></div></div>
 </div></section>
 </main><div id="detailDrawer" class="drawer" aria-hidden="true"><aside class="drawer-panel"><div class="drawer-head"><div><div class="muted" id="drawerEyebrow" data-ui="drawerEyebrow">Business OS</div><h2 id="drawerTitle">New record</h2></div><button class="close" id="drawerClose">×</button></div><div class="form-grid">
-<div class="field"><label id="fNameLabel" data-ui="nameLabel">Name</label><input id="fName" placeholder="Record name"></div>
+<div class="field"><label id="fNameLabel" data-ui="nameLabel">Name</label><input id="fName" placeholder="Record name" data-ui-placeholder="recordName"></div>
 <div class="field"><label data-ui="statusLabel">Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Awaiting</option><option>Sent</option><option>Paid</option><option>Overdue</option><option>Planned</option><option>Cancelled</option></select></div>
 <div class="field relation-field" data-relation="client"><label data-ui="clientLabel">Client</label><select id="fClientId"><option value="">— No client —</option></select></div>
 <div class="field relation-field" data-relation="lead"><label data-ui="leadLabel">Lead</label><select id="fLeadId"><option value="">— No lead —</option></select></div>
@@ -120,7 +120,7 @@
 <div class="field project-field" style="display:none"><label data-ui="actualCosts">Actual costs</label><input id="fProjectActualCosts" type="number" min="0" step="0.01" placeholder="0.00"></div>
 <div class="field project-field" style="display:none"><label data-ui="actualHours">Actual hours</label><input id="fProjectActualHours" type="number" min="0" step="0.01" placeholder="0"></div>
 <div class="field project-field" style="display:none"><label data-ui="labourRate">Labour cost / hour</label><input id="fProjectLabourRate" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field value-field"><label>Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
+<div class="field value-field"><label data-ui="value">Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
 <div class="field full invoice-field" style="display:none">
 <label data-ui="invoiceLineItems">Invoice line items</label>
 <div id="fInvoiceLines" class="invoice-lines"></div>
@@ -139,8 +139,8 @@
 <div class="field expense-field" style="display:none"><label data-ui="expenseCategory">Expense category</label><select id="fExpenseCategory"><option>Software</option><option>Contractor</option><option>Travel</option><option>Marketing</option><option>Equipment</option><option>Other</option></select></div>
 <div class="field expense-field" style="display:none"><label data-ui="expenseDate">Expense date</label><input id="fExpenseDate" type="date"></div>
 <div class="field expense-field" style="display:none"><label data-ui="billable">Billable to client</label><select id="fExpenseBillable"><option value="false">No</option><option value="true">Yes</option></select></div>
-<div class="field"><label data-ui="nextAction">Next action</label><input id="fAction" placeholder="Follow up"></div>
-<div class="field full"><label data-ui="notes">Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
+<div class="field"><label data-ui="nextAction">Next action</label><input id="fAction" placeholder="Follow up" data-ui-placeholder="followUp"></div>
+<div class="field full"><label data-ui="notes">Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…" data-ui-placeholder="notesPlaceholder"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast } from "../src/core/financial-engine.js";
@@ -169,11 +169,17 @@ function applyUiCopy(lang){
   const statusLabels={en:['New','Active','Qualified','Proposal','Negotiation','Won','Awaiting','Sent','Paid','Overdue','Planned','Cancelled'],ru:['Новый','Активный','Квалифицирован','Предложение','Переговоры','Выигран','Ожидание','Отправлен','Оплачен','Просрочен','Запланирован','Отменён'],es:['Nuevo','Activo','Cualificado','Propuesta','Negociación','Ganado','En espera','Enviado','Pagado','Vencido','Planificado','Cancelado'],de:['Neu','Aktiv','Qualifiziert','Angebot','Verhandlung','Gewonnen','Wartend','Gesendet','Bezahlt','Überfällig','Geplant','Storniert'],fr:['Nouveau','Actif','Qualifié','Proposition','Négociation','Gagné','En attente','Envoyé','Payé','En retard','Planifié','Annulé']}[lang]||[];
   const status=document.getElementById('fStatus'); if(status)Array.from(status.options).forEach((o,i)=>{if(statusLabels[i])o.textContent=statusLabels[i];});
   document.querySelectorAll('[data-status-value]').forEach(el=>{const value=el.dataset.statusValue;const index=['New','Active','Qualified','Proposal','Negotiation','Won','Awaiting','Sent','Paid','Overdue','Planned','Cancelled'].indexOf(value);if(index>=0&&statusLabels[index])el.textContent=statusLabels[index];});
+  const placeholders={en:{recordName:'Record name',followUp:'Follow up',notesPlaceholder:'Context, scope, next step…'},ru:{recordName:'Название записи',followUp:'Связаться / следующее действие',notesPlaceholder:'Контекст, объём работ, следующий шаг…'},es:{recordName:'Nombre del registro',followUp:'Seguimiento',notesPlaceholder:'Contexto, alcance, próximo paso…'},de:{recordName:'Name des Datensatzes',followUp:'Nachfassen',notesPlaceholder:'Kontext, Umfang, nächster Schritt…'},fr:{recordName:'Nom de l’enregistrement',followUp:'Relance',notesPlaceholder:'Contexte, périmètre, prochaine étape…'}}[lang]||{};
+  document.querySelectorAll('[data-ui-placeholder]').forEach(el=>{const key=el.dataset.uiPlaceholder;if(placeholders[key])el.placeholder=placeholders[key];});
+  const sidebar={en:{brand:'Your business. One place.',workspace:'Demo Workspace',mode:'Local-first'},ru:{brand:'Ваш бизнес. В одном месте.',workspace:'Демо-рабочее пространство',mode:'Local-first'},es:{brand:'Tu negocio. En un solo lugar.',workspace:'Espacio de trabajo demo',mode:'Local-first'},de:{brand:'Dein Unternehmen. Ein Ort.',workspace:'Demo-Arbeitsbereich',mode:'Local-first'},fr:{brand:'Votre activité. Un seul endroit.',workspace:'Espace de travail démo',mode:'Local-first'}}[lang]||{};
+  if(document.getElementById('brandTagline'))document.getElementById('brandTagline').textContent=sidebar.brand;
+  if(document.getElementById('workspaceLabel'))document.getElementById('workspaceLabel').textContent=sidebar.workspace;
+  if(document.getElementById('workspaceMode'))document.getElementById('workspaceMode').textContent=sidebar.mode;
 }
 let activeLanguage='en';
-function render(lang){activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);bindNav();renderDashboardRealData();renderStoredRecords();}
+function render(lang){activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();}
 function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
-const bars=[42,58,50,72,65,83,96,105,74,88,112,125];document.getElementById('chart').innerHTML=bars.map(x=>'<div class="bar" style="height:'+x+'px"></div>').join('');
+
 const STORE_KEY='business-os-store-v1';
 const defaultStore={schemaVersion:2,clients:[],leads:[],proposals:[],projects:[],invoices:[],payments:[],expenses:[],archivedRecords:[]};
 function loadStore(){try{return {...defaultStore,...JSON.parse(localStorage.getItem(STORE_KEY)||'{}')}}catch(e){return {...defaultStore}}}
@@ -218,6 +224,21 @@ const recordUiCopy={
     de:{headers:{clients:['Kunde','Projekte','Umsatz','Offen','Status'],proposals:['Angebot','Status','Wert','Nächste Aktion','Aktion','Datensatz'],projects:['Projekt','Status','Umsatz','Gewinn / Marge','Prognose / Budget','Aktion'],invoices:['Rechnung','Status','Betrag','Nächste Aktion','Datensatz'],payments:['Zahlung','Status','Betrag','Nächste Aktion','Datensatz'],expenses:['Ausgabe','Status','Betrag','Nächste Aktion','Datensatz']},forecast:'Prognose',budgetLeft:'Budget übrig',edit:'Bearbeiten',delete:'Löschen',noLeads:'Keine Leads',opportunity:'Chance',nextAction:'Nächste Aktion'},
     fr:{headers:{clients:['Client','Projets','Chiffre d’affaires','À encaisser','Statut'],proposals:['Proposition','Statut','Valeur','Prochaine action','Action','Enregistrement'],projects:['Projet','Statut','Chiffre d’affaires','Profit / Marge','Prévision / Budget','Action'],invoices:['Facture','Statut','Montant','Prochaine action','Enregistrement'],payments:['Paiement','Statut','Montant','Prochaine action','Enregistrement'],expenses:['Dépense','Statut','Montant','Prochaine action','Enregistrement']},forecast:'Prévision',budgetLeft:'Budget restant',edit:'Modifier',delete:'Supprimer',noLeads:'Aucun prospect',opportunity:'Opportunité',nextAction:'Prochaine action'}
   };
+const projectUiCopy={en:{activeProjects:'Active projects',contracted:'Contracted',expectedProfit:'Expected profit',avgMargin:'Avg. margin'},ru:{activeProjects:'Активные проекты',contracted:'По контрактам',expectedProfit:'Ожидаемая прибыль',avgMargin:'Средняя маржа'},es:{activeProjects:'Proyectos activos',contracted:'Contratado',expectedProfit:'Beneficio esperado',avgMargin:'Margen medio'},de:{activeProjects:'Aktive Projekte',contracted:'Vertraglich vereinbart',expectedProfit:'Erwarteter Gewinn',avgMargin:'Durchschnittliche Marge'},fr:{activeProjects:'Projets actifs',contracted:'Sous contrat',expectedProfit:'Profit attendu',avgMargin:'Marge moyenne'}};
+function refreshProjectMetrics(){
+  const projects=businessStore.projects||[];
+  const terminal=new Set(['won','lost','closed','cancelled','completed']);
+  const active=projects.filter(p=>!terminal.has(String(p.status||'').toLowerCase()));
+  const calcs=projects.map(p=>calculateProjectProfit(p,{expenses:businessStore.expenses||[]}));
+  const revenue=calcs.reduce((s,x)=>s+Number(x.revenue||0),0);
+  const expected=calcs.reduce((s,x)=>s+Number(x.forecastProfit??x.profit??0),0);
+  const margins=calcs.filter(x=>Number.isFinite(Number(x.margin))).map(x=>Number(x.margin));
+  const avg=margins.length?margins.reduce((s,x)=>s+x,0)/margins.length:0;
+  const ids={projectsActiveCount:active.length,projectsContracted:money(revenue),projectsExpectedProfit:money(expected),projectsAvgMargin:Math.round(avg)+'%'};
+  Object.entries(ids).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});
+  const copy=projectUiCopy[activeLanguage]||projectUiCopy.en;
+  document.querySelectorAll('[data-project-ui]').forEach(el=>{const key=el.dataset.projectUi;if(copy[key])el.textContent=copy[key];});
+}
 function renderLeads(){
   const screen=document.getElementById('leadsScreen');
   const pipeline=screen?.querySelector('.pipeline');
