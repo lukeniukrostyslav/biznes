@@ -2,7 +2,7 @@
 
 **Постоянное правило проекта:** перед существенными продуктовыми решениями проверять актуальный интернет и конкурентов; результаты учитывать в архитектуре и сохранять в GitHub.
 
-Последнее обновление: 2026-09-24 — B07.3
+Последнее обновление: 2026-09-24 — B13 UI consistency pass
 
 ## Текущая стадия
 
@@ -25,16 +25,16 @@
 | B04 | Архитектура продукта | 100% |
 | B05 | UX/UI дизайн | 100% |
 | B06 | Система локализации | 100% |
-| B07 | Core-функциональность | 82% |
-| B08 | Расчёты денег и прибыли | 70% |
-| B09 | CRM / Leads / Pipeline | 0% |
-| B10 | Projects / Proposals / Invoices | 0% |
-| B11 | Cashflow / Dashboard / Analytics | 10% |
-| B12 | Persistence / Export / Import | 70% |
-| B13 | Responsive / Mobile QA | 0% |
-| B14 | Functional QA | 0% |
+| B07 | Core-функциональность | 89% |
+| B08 | Расчёты денег и прибыли | 76% |
+| B09 | CRM / Leads / Pipeline | 6% |
+| B10 | Projects / Proposals / Invoices / Payments | 44% |
+| B11 | Cashflow / Dashboard / Analytics | 35% |
+| B12 | Persistence / Export / Import | 74% |
+| B13 | Responsive / Mobile QA | 15% |
+| B14 | Functional / E2E QA | 0% |
 | B15 | Commercial Packaging | 0% |
-| B16 | Продажи / Storefront | 0% |
+| B16 | Продажи / площадки | 0% |
 
 ## Почему B02 = 100%
 
@@ -435,3 +435,9 @@ GitHub commit: `c45161f8c627f38d45864f290902c7c9f50cc00a`
 | B16 | 0% |
 
 B13 повышен только частично: выполнен и зафиксирован первый localization/currency consistency pass. Browser/mobile visual QA всё ещё впереди.
+
+
+## B13 — текущий статус
+
+Выполнен первый UI consistency pass: единая UI-валюта EUR, локализация основных Dashboard/create-edit/invoice/payment-plan элементов для EN/RU/ES/DE/FR, локализация динамических строк при переключении языка. Browser/mobile visual QA пока не выполнен; статические demo-блоки Dashboard ещё требуют подключения к реальным данным или корректных empty states.
+
