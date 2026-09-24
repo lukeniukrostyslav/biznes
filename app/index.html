@@ -76,8 +76,16 @@
 </div>
 <div id="cashflowScreen" class="screen">
 <div class="page-title"><div><h1 data-i18n="cashflowTitle">Cashflow</h1><p data-i18n="cashflowSub">See what is paid, what is expected and what expenses will reduce available cash.</p></div><button class="secondary">Export report</button></div>
-<div class="stat-strip"><div class="card mini"><span class="muted">Cash received</span><strong>$53,980</strong></div><div class="card mini"><span class="muted">Outstanding</span><strong>$8,420</strong></div><div class="card mini"><span class="muted">Expenses</span><strong>$12,840</strong></div><div class="card mini"><span class="muted">Net cash</span><strong>$41,140</strong></div></div>
-<div class="detail-grid"><div class="card wide"><div class="card-title"><h2>Next 30 days</h2></div><div class="timeline"><div class="event"><span class="event-dot"></span><div><strong>Sep 27 · +$4,800</strong><small class="muted">Nova Studio · INV-0018</small></div></div><div class="event"><span class="event-dot"></span><div><strong>Sep 29 · +$980</strong><small class="muted">Bright Media · INV-0020</small></div></div><div class="event"><span class="event-dot" style="background:var(--red)"></span><div><strong>Oct 01 · −$2,400</strong><small class="muted">Software & operating expenses</small></div></div><div class="event"><span class="event-dot" style="background:var(--red)"></span><div><strong>Oct 03 · +$2,750</strong><small class="muted">GreenTech · INV-0019</small></div></div></div></div><div class="card wide"><div class="card-title"><h2>Money clarity</h2></div><div class="empty">Forecast will become data-driven when invoices, payments and expenses are connected to the persistence layer.</div></div></div>
+<div class="stat-strip">
+<div class="card mini"><span class="muted">Cash received</span><strong id="cashflowReceived">$0</strong></div>
+<div class="card mini"><span class="muted">Outstanding</span><strong id="cashflowOutstanding">$0</strong></div>
+<div class="card mini"><span class="muted">Next 30 days</span><strong id="cashflowForecastNet">$0</strong></div>
+<div class="card mini"><span class="muted">Planned expenses</span><strong id="cashflowPlannedExpenses">$0</strong></div>
+</div>
+<div class="detail-grid">
+<div class="card wide"><div class="card-title"><h2>Next 30 days</h2><span class="muted" id="cashflowForecastSummary"></span></div><div class="timeline" id="cashflowTimeline"><div class="empty">No scheduled cash movements.</div></div></div>
+<div class="card wide"><div class="card-title"><h2>Money clarity</h2></div><div class="list" id="cashflowClarity"><div class="metric"><span>Current net cash</span><strong id="cashflowCurrentNet">$0</strong></div><div class="metric"><span>Expected inflows</span><strong id="cashflowFutureInflows">$0</strong></div><div class="metric"><span>Expected outflows</span><strong id="cashflowFutureExpenses">$0</strong></div></div></div>
+</div>
 </div>
 <div id="expensesScreen" class="screen">
 <div class="page-title"><div><h1 data-i18n="expensesTitle">Expenses</h1><p data-i18n="expensesSub">Know where delivery and operating costs reduce your margin.</p></div><button class="primary" data-i18n="addExpense">＋ Add expense</button></div>
@@ -135,7 +143,7 @@
 <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
 <script type="module">
-import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan } from "../src/core/financial-engine.js";
+import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast } from "../src/core/financial-engine.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings'],f:['Client call — Nova Studio','Send proposal — GreenTech','Follow up — Alex Rivera','Meeting — Bright Media','Send invoice — Luna Agency']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки'],f:['Звонок клиенту — Nova Studio','Отправить предложение — GreenTech','Связаться — Alex Rivera','Встреча — Bright Media','Отправить счёт — Luna Agency']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes'],f:['Llamada con cliente — Nova Studio','Enviar propuesta — GreenTech','Seguimiento — Alex Rivera','Reunión — Bright Media','Enviar factura — Luna Agency']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen'],f:['Kundengespräch — Nova Studio','Angebot senden — GreenTech','Nachfassen — Alex Rivera','Meeting — Bright Media','Rechnung senden — Luna Agency']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres'],f:['Appel client — Nova Studio','Envoyer proposition — GreenTech','Relancer — Alex Rivera','Réunion — Bright Media','Envoyer facture — Luna Agency']}};
 
 const screenCopy={
@@ -366,12 +374,31 @@ function deleteRecord(type,id){
   refreshDashboardMetrics();
   renderStoredRecords();
 }
+function renderCashflow(){
+  const metrics=calculateBusinessMetrics(businessStore);
+  const forecast=calculateCashflowForecast(businessStore,new Date(),30);
+  document.getElementById('cashflowReceived').textContent=money(metrics.paid);
+  document.getElementById('cashflowOutstanding').textContent=money(metrics.outstanding);
+  document.getElementById('cashflowForecastNet').textContent=money(forecast.forecastNetCash);
+  document.getElementById('cashflowPlannedExpenses').textContent=money(forecast.futureExpenses);
+  document.getElementById('cashflowCurrentNet').textContent=money(forecast.currentNetCash);
+  document.getElementById('cashflowFutureInflows').textContent=money(forecast.futureInflows);
+  document.getElementById('cashflowFutureExpenses').textContent=money(forecast.futureExpenses);
+  document.getElementById('cashflowForecastSummary').textContent=forecast.events.length+' scheduled movements';
+  const timeline=document.getElementById('cashflowTimeline');
+  timeline.innerHTML=forecast.events.length?forecast.events.map(event=>{
+    const isExpense=event.type==='expense';
+    const sign=isExpense?'−':'+';
+    const label=isExpense?'Planned expense':'Expected payment';
+    return '<div class="event"><span class="event-dot"'+(isExpense?' style="background:var(--red)"':'')+'></span><div><strong>'+escapeHtml(new Date(event.date+'T00:00:00').toLocaleDateString())+' · '+sign+money(event.amount)+'</strong><small class="muted">'+label+' · '+escapeHtml(event.label||'—')+(event.installmentIndex!==null&&event.installmentIndex!==undefined?' · Installment '+(event.installmentIndex+1):'')+'</small></div></div>';
+  }).join(''):'<div class="empty">No scheduled cash movements in the next 30 days.</div>';
+}
 function refreshDashboardMetrics(){
   const metrics=calculateBusinessMetrics(businessStore);
   document.getElementById('metricRevenue').textContent=money(metrics.paid);
   document.getElementById('metricOutstanding').textContent=money(metrics.outstanding);
   document.getElementById('metricPipeline').textContent=money(metrics.pipeline);
-  document.getElementById('metricProfit').textContent=money(metrics.actualProfit);
+  document.getElementById('metricProfit').textContent=money(metrics.actualProfit);\n  renderCashflow();
 }
 function exportBusinessData(){
   const blob=new Blob([JSON.stringify(businessStore,null,2)],{type:'application/json'});
