@@ -46,17 +46,49 @@ function migrateStore(input) {
 function validateStore(input) {
   const source = input && typeof input === 'object' ? input : {};
   const errors = [];
+
+  const findById = (collection, id) =>
+    (Array.isArray(source[collection]) ? source[collection] : []).find(item => item.id === id);
+
   for (const collection of COLLECTIONS) {
     for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
       for (const [field, target] of Object.entries(RELATION_FIELDS[collection] || {})) {
         const value = record?.[field];
         if (value == null || value === '') continue;
-        if (!(Array.isArray(source[target]) ? source[target] : []).some(item => item.id === value)) {
+        if (!findById(target, value)) {
           errors.push(`${collection}.${record.id || '<unknown>'}.${field} -> ${value}`);
         }
       }
     }
   }
+
+  // Cross-entity integrity: related records must belong to the same client.
+  const checks = [
+    ['proposals', 'leadId', 'leads', 'clientId'],
+    ['projects', 'proposalId', 'proposals', 'clientId'],
+    ['invoices', 'projectId', 'projects', 'clientId'],
+    ['payments', 'invoiceId', 'invoices', 'clientId'],
+    ['expenses', 'projectId', 'projects', 'clientId']
+  ];
+
+  for (const [collection, relationField, targetCollection, clientField] of checks) {
+    for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
+      const relationId = record?.[relationField];
+      if (relationId == null || relationId === '') continue;
+
+      const target = findById(targetCollection, relationId);
+      if (!target) continue;
+
+      const recordClient = record?.clientId;
+      const targetClient = target?.[clientField];
+      if (recordClient && targetClient && recordClient !== targetClient) {
+        errors.push(
+          `${collection}.${record.id || '<unknown>'}.${relationField} client mismatch: ${recordClient} != ${targetClient}`
+        );
+      }
+    }
+  }
+
   return { valid: errors.length === 0, errors };
 }
 
