@@ -200,3 +200,24 @@ Local-first store, schema versioning, save/load, upsert/remove, reset, JSON expo
 Решение для BUSINESS OS: не наращивать функции ради количества. Следующий приоритет — целостный lifecycle и качество данных: строгие связи сущностей, финансовая достоверность, прозрачный Actual/Forecast Cashflow, быстрые entity-specific действия и простота local-first продукта. Конкурентные цены и возможности перепроверять перед каждым крупным коммерческим решением, поскольку публичные цены меняются. citeturn0search0turn0search5
 
 **Правило работы:** после каждого существенного изменения — тестирование, checkpoint и сохранение в GitHub; процент повышается только за реально реализованный и проверенный функционал.
+
+
+## B07.4 — core integrity implementation checkpoint — 2026-09-24
+
+Реализован следующий слой B07.4 в core-слое, без искусственного повышения процента:
+
+- src/core/persistence.js переведён на schemaVersion 2 с миграцией v1 → v2;
+- добавлена модель допустимых связей Lead → Client, Proposal → Client/Lead, Project → Client/Proposal, Invoice → Client/Project, Payment → Invoice/Client, Expense → Project/Client;
+- добавлен validateStore() для проверки целостности ссылок;
+- импорт JSON теперь отклоняет store с отсутствующими связанными сущностями;
+- добавлены archiveRecord() и restoreRecord() вместо обязательного физического удаления в core;
+- src/core/financial-engine.js расширен единым calculateBusinessMetrics() с разделением Actual и Forecast: paid, invoiced, outstanding, actual profit, expected payments, planned expenses, forecast cash, overdue и weighted pipeline;
+- добавлен тест единого financial metrics engine.
+
+UI пока не считается закрывшим B07.4: формы должны передавать реальные foreign-key связи, archive/restore должен быть подключён к интерфейсу, а dashboard должен использовать единый engine вместо локальных дублирующих формул. Поэтому проценты B07/B08/B12 не повышаются до завершения UI integration и тестовой проверки.
+
+### Свежий конкурентный контроль — 24.09.2026
+
+Актуальный рынок по-прежнему показывает широкий lifecycle в одном продукте: CRM, proposals/contracts, invoicing/payments, project management и automation. HoneyBook публикует Starter от $29/месяц при годовой оплате и включает proposals/contracts, invoices/payments, client portal и reports; более высокий уровень добавляет automations и QuickBooks integration. citeturn0search1 Независимая проверка цен августа 2026 фиксирует HoneyBook $29/$49/$109, Dubsado $335/$525 в год, Bonsai $9/$19/$29/$49 за пользователя в месяц при годовой оплате и Moxie $10/$20/$32 при годовой оплате. citeturn0search0
+
+Отдельно Bonsai сейчас подчёркивает real-time budget monitoring, actual costs, budget forecasting и profit margin tracking. citeturn1search3 Следствие для BUSINESS OS: financial engine должен быть не декоративным KPI-слоем, а единым источником расчётов по связанным сущностям. Наш следующий шаг — довести этот engine до UI и добавить прозрачный Actual/Forecast Cashflow без копирования SaaS-модели подписки.
