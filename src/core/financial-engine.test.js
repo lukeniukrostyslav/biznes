@@ -209,3 +209,39 @@ test('multi-line invoice calculates subtotal and tax correctly', () => {
   assert.equal(result.total, 3900);
   assert.equal(result.outstanding, 3900);
 });
+
+test('invoice discount is applied before tax', () => {
+  const result = calculateInvoice({
+    lineItems: [{ quantity: 1, unitPrice: 1000 }],
+    discountType: 'percent',
+    discountValue: 10,
+    taxRate: 20,
+    status: 'Sent'
+  });
+  assert.equal(result.subtotal, 1000);
+  assert.equal(result.discount, 100);
+  assert.equal(result.taxableSubtotal, 900);
+  assert.equal(result.tax, 180);
+  assert.equal(result.total, 1080);
+});
+
+test('payment plan validates fixed, percentage and equal installments', () => {
+  const result = calculatePaymentPlan(1000, [
+    { amountType: 'fixed', amount: 200, dueDate: '2099-01-01' },
+    { amountType: 'percent', amount: 30, dueDate: '2099-02-01' },
+    { amountType: 'equal', amount: 0, dueDate: '2099-03-01' },
+    { amountType: 'equal', amount: 0, dueDate: '2099-04-01' }
+  ], new Date('2026-01-01'));
+  assert.equal(result.plannedTotal, 1000);
+  assert.equal(result.difference, 0);
+  assert.equal(result.installments[0].calculatedAmount, 200);
+  assert.equal(result.installments[1].calculatedAmount, 300);
+  assert.equal(result.installments[2].calculatedAmount, 250);
+  assert.equal(result.installments[3].calculatedAmount, 250);
+  assert.equal(result.valid, true);
+});
+
+test('payment plan rejects percentages above 100%', () => {
+  const result = calculatePaymentPlan(1000, [{ amountType: 'percent', amount: 110 }]);
+  assert.equal(result.valid, false);
+});
