@@ -221,3 +221,21 @@ UI пока не считается закрывшим B07.4: формы дол�
 Актуальный рынок по-прежнему показывает широкий lifecycle в одном продукте: CRM, proposals/contracts, invoicing/payments, project management и automation. HoneyBook публикует Starter от $29/месяц при годовой оплате и включает proposals/contracts, invoices/payments, client portal и reports; более высокий уровень добавляет automations и QuickBooks integration. citeturn0search1 Независимая проверка цен августа 2026 фиксирует HoneyBook $29/$49/$109, Dubsado $335/$525 в год, Bonsai $9/$19/$29/$49 за пользователя в месяц при годовой оплате и Moxie $10/$20/$32 при годовой оплате. citeturn0search0
 
 Отдельно Bonsai сейчас подчёркивает real-time budget monitoring, actual costs, budget forecasting и profit margin tracking. citeturn1search3 Следствие для BUSINESS OS: financial engine должен быть не декоративным KPI-слоем, а единым источником расчётов по связанным сущностям. Наш следующий шаг — довести этот engine до UI и добавить прозрачный Actual/Forecast Cashflow без копирования SaaS-модели подписки.
+
+
+## B08.1 — unified financial engine UI integration — 2026-09-24
+
+Реализован и сохранён следующий фактический шаг без повышения процента блока до завершения QA:
+
+- `calculateBusinessMetrics()` теперь разделяет **Actual Expenses** и **Planned Expenses**, чтобы planned расходы не вычитались дважды;
+- расчёт invoice status теперь принимает единый `now`, что делает overdue/forecast расчёты детерминированнее;
+- Dashboard UI подключён к единому financial engine вместо локальных дублирующих формул;
+- Import UI теперь принимает schema v2 и дополнительно проверяет relationship references перед сохранением;
+- UI default store обновлён до schema v2 с `archivedRecords`;
+- сохранён принцип: B08 остаётся 70%, пока тестовый прогон и edge-case QA не подтверждены.
+
+### Коммерческий контроль — 24.09.2026
+
+Свежий review рынка подтверждает, что HoneyBook, Dubsado и Bonsai продолжают продавать recurring SaaS вокруг CRM, proposals/contracts, invoicing/payments и project/workflow management. HoneyBook публикует $29/$49/$109 в месяц при годовой оплате; Dubsado — $35/$55 в месяц или $335/$525 в год; Bonsai — от $9/user/month при годовой оплате. citeturn0search0turn0search1turn0search4
+
+BUSINESS OS сохраняет другую коммерческую модель: **standalone + one-time purchase на внешних площадках**, без обязательной ежемесячной подписки. Это не основание для копирования функций конкурентов; приоритет остаётся на качестве lifecycle, финансовой достоверности, local-first данных и простоте продукта.
