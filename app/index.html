@@ -331,11 +331,11 @@ function renderEntity(type,id){
   if(!record)return;
   const lang=activeLanguage||'en';
   const copy={
-    en:{title:'Client',subtitle:'360° business context',back:'← Back',edit:'Edit',active:'Active',revenue:'Revenue',outstanding:'Outstanding',margin:'Margin',timeline:'Timeline',nextActions:'Next actions',noActivity:'No recent activity',noActions:'No open actions'},
-    ru:{title:'Клиент',subtitle:'Полный контекст 360°',back:'← Назад',edit:'Изменить',active:'Активен',revenue:'Выручка',outstanding:'К оплате',margin:'Маржа',timeline:'История',nextActions:'Следующие действия',noActivity:'Нет недавней активности',noActions:'Нет открытых действий'},
-    es:{title:'Cliente',subtitle:'Contexto empresarial 360°',back:'← Volver',edit:'Editar',active:'Activo',revenue:'Ingresos',outstanding:'Pendiente',margin:'Margen',timeline:'Cronología',nextActions:'Próximas acciones',noActivity:'Sin actividad reciente',noActions:'No hay acciones abiertas'},
-    de:{title:'Kunde',subtitle:'360° Geschäftskontext',back:'← Zurück',edit:'Bearbeiten',active:'Aktiv',revenue:'Umsatz',outstanding:'Offen',margin:'Marge',timeline:'Verlauf',nextActions:'Nächste Aktionen',noActivity:'Keine aktuelle Aktivität',noActions:'Keine offenen Aktionen'},
-    fr:{title:'Client',subtitle:'Contexte commercial à 360°',back:'← Retour',edit:'Modifier',active:'Actif',revenue:'Chiffre d’affaires',outstanding:'À encaisser',margin:'Marge',timeline:'Historique',nextActions:'Prochaines actions',noActivity:'Aucune activité récente',noActions:'Aucune action ouverte'}
+    en:{title:'Client',subtitle:'360° business context',back:'← Back',edit:'Edit',active:'Active',revenue:'Revenue',outstanding:'Outstanding',margin:'Margin',timeline:'Timeline',nextActions:'Next actions',noActivity:'No recent activity',noActions:'No open actions',projects:'projects',invoices:'invoices',project:'Project'},
+    ru:{title:'Клиент',subtitle:'Полный контекст 360°',back:'← Назад',edit:'Изменить',active:'Активен',revenue:'Выручка',outstanding:'К оплате',margin:'Маржа',timeline:'История',nextActions:'Следующие действия',noActivity:'Нет недавней активности',noActions:'Нет открытых действий',projects:'проекта',invoices:'счетов',project:'Проект'},
+    es:{title:'Cliente',subtitle:'Contexto empresarial 360°',back:'← Volver',edit:'Editar',active:'Activo',revenue:'Ingresos',outstanding:'Pendiente',margin:'Margen',timeline:'Cronología',nextActions:'Próximas acciones',noActivity:'Sin actividad reciente',noActions:'No hay acciones abiertas',projects:'proyectos',invoices:'facturas',project:'Proyecto'},
+    de:{title:'Kunde',subtitle:'360° Geschäftskontext',back:'← Zurück',edit:'Bearbeiten',active:'Aktiv',revenue:'Umsatz',outstanding:'Offen',margin:'Marge',timeline:'Verlauf',nextActions:'Nächste Aktionen',noActivity:'Keine aktuelle Aktivität',noActions:'Keine offenen Aktionen',projects:'Projekte',invoices:'Rechnungen',project:'Projekt'},
+    fr:{title:'Client',subtitle:'Contexte commercial à 360°',back:'← Retour',edit:'Modifier',active:'Actif',revenue:'Chiffre d’affaires',outstanding:'À encaisser',margin:'Marge',timeline:'Historique',nextActions:'Prochaines actions',noActivity:'Aucune activité récente',noActions:'Aucune action ouverte',projects:'projets',invoices:'factures',project:'Projet'}
   }[lang]||null;
   const client=type==='clients'?record:(businessStore.clients||[]).find(c=>c.id===record.clientId);
   if(!client)return;
@@ -356,9 +356,9 @@ function renderEntity(type,id){
   document.getElementById('entityRevenue').textContent=money(revenue);
   document.getElementById('entityOutstanding').textContent=money(outstanding);
   document.getElementById('entityMargin').textContent=margin===null?'—':margin.toFixed(1)+'%';
-  document.getElementById('entityMeta').innerHTML='<span class="pill">'+copy.active+'</span><span class="pill">'+projects.length+' projects</span><span class="pill">'+invoices.length+' invoices</span>';
+  document.getElementById('entityMeta').innerHTML='<span class="pill">'+copy.active+'</span><span class="pill">'+projects.length+' '+copy.projects+'</span><span class="pill">'+invoices.length+' '+copy.invoices+'</span>';
   const timelineItems=[
-    ...projects.map(p=>({date:p.updatedAt||p.createdAt,label:p.name||'Project',detail:p.status||''})),
+    ...projects.map(p=>({date:p.updatedAt||p.createdAt,label:p.name||copy.project,detail:p.status||''})),
     ...invoices.map(i=>({date:i.updatedAt||i.createdAt,label:i.name||i.id,detail:money(i.amount||i.value||0)})),
     ...payments.map(p=>({date:p.paymentDate||p.date||p.createdAt,label:copy.revenue,detail:money(p.amount||0)}))
   ].filter(x=>x.date).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,8);
@@ -870,7 +870,7 @@ function populatePaymentInstallments(invoiceId, selectedIndex = null){
   const invoice=(businessStore.invoices||[]).find(x=>x.id===invoiceId);
   const installments=invoice?.paymentPlan?.installments||[];
   const autoLabel={en:'Auto-allocate (FIFO)',ru:'Автораспределение (FIFO)',es:'Asignación automática (FIFO)',de:'Automatische Zuordnung (FIFO)',fr:'Attribution automatique (FIFO)'}[activeLanguage]||'Auto-allocate (FIFO)'; select.innerHTML='<option value="">'+autoLabel+'</option>'+installments.map((item,index)=>{
-    const label=item.dueDate ? new Date(item.dueDate).toLocaleDateString() : 'No due date';
+    const label=item.dueDate ? new Date(item.dueDate).toLocaleDateString() : ({en:'No due date',ru:'Без срока оплаты',es:'Sin fecha de vencimiento',de:'Kein Fälligkeitsdatum',fr:'Sans date d’échéance'}[activeLanguage]||'No due date');
     return '<option value="'+index+'">#'+(index+1)+' — '+label+' — '+money(item.calculatedAmount||item.amount||0)+'</option>';
   }).join('');
   select.value=selectedIndex===null||selectedIndex===undefined?'':String(selectedIndex);
