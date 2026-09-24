@@ -105,6 +105,13 @@
 <div class="field relation-field" data-relation="proposal"><label>Proposal</label><select id="fProposalId"><option value="">— No proposal —</option></select></div>
 <div class="field relation-field" data-relation="project"><label>Project</label><select id="fProjectId"><option value="">— No project —</option></select></div>
 <div class="field relation-field" data-relation="invoice"><label>Invoice</label><select id="fInvoiceId"><option value="">— No invoice —</option></select></div>
+<div class="field project-field" style="display:none"><label>Billing type</label><select id="fProjectBillingType"><option>Fixed Fee</option><option>Time and Materials</option><option>Retainer</option><option>Non-billable</option></select></div>
+<div class="field project-field" style="display:none"><label>Budget type</label><select id="fProjectBudgetType"><option>Fee</option><option>Time</option></select></div>
+<div class="field project-field" style="display:none"><label>Budget</label><input id="fProjectBudget" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field project-field" style="display:none"><label>Revenue</label><input id="fProjectRevenue" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field project-field" style="display:none"><label>Actual costs</label><input id="fProjectActualCosts" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field project-field" style="display:none"><label>Actual hours</label><input id="fProjectActualHours" type="number" min="0" step="0.01" placeholder="0"></div>
+<div class="field project-field" style="display:none"><label>Labour cost / hour</label><input id="fProjectLabourRate" type="number" min="0" step="0.01" placeholder="0.00"></div>
 <div class="field value-field"><label>Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
 <div class="field invoice-field" style="display:none"><label>Item description</label><input id="fInvoiceDescription" placeholder="Service or deliverable"></div>
 <div class="field invoice-field" style="display:none"><label>Quantity</label><input id="fInvoiceQuantity" type="number" min="0" step="0.01" value="1"></div>
@@ -311,17 +318,20 @@ function prepareDrawerRelations(type,record={}){
   visibleRelations(type).forEach(key=>document.querySelector('[data-relation="'+key+'"]').style.display='grid');
   document.querySelectorAll('.invoice-field').forEach(el=>el.style.display=type==='invoices'?'grid':'none');
   document.querySelectorAll('.payment-field').forEach(el=>el.style.display=type==='payments'?'grid':'none');
-  document.querySelector('.value-field').style.display=(type==='invoices'||type==='payments')?'none':'grid';
+  document.querySelectorAll('.project-field').forEach(el=>el.style.display=type==='projects'?'grid':'none');
+  document.querySelector('.value-field').style.display=(type==='invoices'||type==='payments'||type==='projects')?'none':'grid';
   relationOptions(type,record);
 }
 function openCreateDrawer(type){
   pendingType=type; editingId=null;
   document.getElementById('drawerTitle').textContent='New '+type.replace(/s$/,'');
   document.getElementById('fName').value='';
-  ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference'].forEach(id=>document.getElementById(id).value='');
+  ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fInvoiceQuantity').value='1';
   document.getElementById('fInvoiceTaxRate').value='0';
   document.getElementById('fPaymentDate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('fProjectBillingType').value='Fixed Fee';
+  document.getElementById('fProjectBudgetType').value='Fee';
   document.getElementById('fStatus').value=type==='payments'?'Paid':'New';
   prepareDrawerRelations(type,{});
   document.getElementById('detailDrawer').classList.add('open');
@@ -342,6 +352,13 @@ function openEditDrawer(type,record){
   document.getElementById('fPaymentDate').value=record.paymentDate||record.date||'';
   document.getElementById('fPaymentMethod').value=record.paymentMethod||'Bank transfer';
   document.getElementById('fPaymentReference').value=record.reference||'';
+  document.getElementById('fProjectBillingType').value=record.billingType||'Fixed Fee';
+  document.getElementById('fProjectBudgetType').value=record.budgetType||'Fee';
+  document.getElementById('fProjectBudget').value=record.budget??'';
+  document.getElementById('fProjectRevenue').value=record.revenue??'';
+  document.getElementById('fProjectActualCosts').value=record.actualCosts??'';
+  document.getElementById('fProjectActualHours').value=record.actualHours??'';
+  document.getElementById('fProjectLabourRate').value=record.labourRate??'';
   document.getElementById('fAction').value=record.nextAction||'';
   document.getElementById('fNotes').value=record.notes||'';
   document.getElementById('fStatus').value=record.status||'New';
@@ -389,13 +406,23 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     value:invoiceQuantity*invoiceUnitPrice,
     amount:invoiceQuantity*invoiceUnitPrice
   }:{value,amount:value};
+  const isProject=pendingType==='projects';
+  const projectPatch=isProject?{
+    billingType:document.getElementById('fProjectBillingType').value,
+    budgetType:document.getElementById('fProjectBudgetType').value,
+    budget:Number(document.getElementById('fProjectBudget').value)||0,
+    revenue:Number(document.getElementById('fProjectRevenue').value)||0,
+    actualCosts:Number(document.getElementById('fProjectActualCosts').value)||0,
+    actualHours:Number(document.getElementById('fProjectActualHours').value)||0,
+    labourRate:Number(document.getElementById('fProjectLabourRate').value)||0
+  }:{};
   const paymentPatch=isPayment?{
     amount:paymentAmount,
     paymentDate:document.getElementById('fPaymentDate').value||null,
     paymentMethod:document.getElementById('fPaymentMethod').value,
     reference:document.getElementById('fPaymentReference').value.trim()
   }:{};
-  const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...relations,updatedAt:new Date().toISOString()};
+  const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...projectPatch,...relations,updatedAt:new Date().toISOString()};
   const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
   const errors=validateStoredRelationships(candidate);
   if(errors.length){toast('Ошибка: проверьте связанные записи');return;}
