@@ -124,7 +124,8 @@
 <div class="field invoice-field" style="display:none"><label>Due date</label><input id="fInvoiceDueDate" type="date"></div>
 <div class="field full invoice-field" style="display:none"><label>Payment plan</label><div id="fInvoicePlanLines" class="invoice-lines"></div><button type="button" class="secondary" id="addInvoicePlanLine">＋ Add installment</button><small class="muted">Types: Fixed, %, Equal. Plan total must equal Invoice total.</small></div>
 <div class="field payment-field" style="display:none"><label>Payment amount</label><input id="fPaymentAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field payment-field" style="display:none"><label>Payment date</label><input id="fPaymentDate" type="date"></div>\n<div class="field payment-field" style="display:none"><label>Payment plan installment</label><select id="fPaymentInstallment"><option value="">Auto-allocate (FIFO)</option></select><small class="muted">If selected, the payment is applied to that installment first.</small></div>
+<div class="field payment-field" style="display:none"><label>Payment date</label><input id="fPaymentDate" type="date"></div>
+<div class="field payment-field" style="display:none"><label>Payment plan installment</label><select id="fPaymentInstallment"><option value="">Auto-allocate (FIFO)</option></select><small class="muted">If selected, the payment is applied to that installment first.</small></div>
 <div class="field payment-field" style="display:none"><label>Payment method</label><select id="fPaymentMethod"><option>Bank transfer</option><option>Card</option><option>Cash</option><option>Other</option></select></div>
 <div class="field payment-field" style="display:none"><label>Reference</label><input id="fPaymentReference" placeholder="Transaction reference"></div>
 <div class="field expense-field" style="display:none"><label>Expense category</label><select id="fExpenseCategory"><option>Software</option><option>Contractor</option><option>Travel</option><option>Marketing</option><option>Equipment</option><option>Other</option></select></div>
@@ -573,7 +574,8 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   const isInvoice=pendingType==='invoices';
   const isPayment=pendingType==='payments';
   const paymentAmount=Number(document.getElementById('fPaymentAmount').value)||0;
-  const selectedInvoiceId=relations.invoiceId;\n  if(isPayment) populatePaymentInstallments(selectedInvoiceId, document.getElementById('fPaymentInstallment').value==='''?null:Number(document.getElementById('fPaymentInstallment').value));
+  const selectedInvoiceId=relations.invoiceId;
+  if(isPayment) populatePaymentInstallments(selectedInvoiceId, document.getElementById('fPaymentInstallment').value===''?null:Number(document.getElementById('fPaymentInstallment').value));
   if(isPayment){
     if(!selectedInvoiceId || paymentAmount<=0){toast('Ошибка: выберите счёт и укажите сумму платежа');return;}
     const invoice=businessStore.invoices.find(x=>x.id===selectedInvoiceId);
