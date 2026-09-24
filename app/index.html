@@ -217,9 +217,13 @@ function renderStoredRecords(){
         const profit=calculateProjectProfit(record,{expenses:businessStore.expenses||[]});
         const revenue=profit.revenue;
         const margin=profit.margin;
-        const forecastMargin=profit.forecastMargin;
         const budget=profit.budgetRemaining==null?'—':money(profit.budgetRemaining);
-        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+money(revenue)+'</td><td>'+money(profit.profit)+' / '+escapeHtml(margin!=null?margin+'%':'—')+'</td><td><small>Forecast '+money(profit.forecastProfit)+' · Budget left '+budget+'</small></td><td><button class="secondary row-edit">Edit</button></td>';
+        const hasInvoice=(businessStore.invoices||[]).some(invoice=>invoice.projectId===record.id);
+        const invoiceLabel={en:'Create invoice',ru:'Создать счёт',es:'Crear factura',de:'Rechnung erstellen',fr:'Créer une facture'}[activeLanguage]||'Create invoice';
+        const invoiceAction=!hasInvoice && String(record.billingType||'').toLowerCase()!=='non-billable'
+          ? '<button class="secondary row-invoice">'+invoiceLabel+'</button>'
+          : '';
+        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+money(revenue)+'</td><td>'+money(profit.profit)+' / '+escapeHtml(margin!=null?margin+'%':'—')+'</td><td><small>Forecast '+money(profit.forecastProfit)+' · Budget left '+budget+'</small></td><td>'+invoiceAction+' <button class="secondary row-edit">Edit</button></td>';
       }else if(type==='proposals'){
         const status=String(record.status||'').toLowerCase();
         const alreadyLinked=(businessStore.projects||[]).some(project=>project.proposalId===record.id);
@@ -240,6 +244,7 @@ function renderStoredRecords(){
       });
       row.querySelector('.row-edit')?.addEventListener('click',()=>openEditDrawer(type,rec));
       row.querySelector('.row-convert')?.addEventListener('click',()=>convertProposalToProject(rec.id));
+      row.querySelector('.row-invoice')?.addEventListener('click',()=>createInvoiceFromProject(rec.id));
       row.querySelector('.row-delete')?.addEventListener('click',()=>deleteRecord(type,rec.id));
     });  });
   renderLeads();
@@ -278,6 +283,42 @@ function convertProposalToProject(proposalId){
   if(errors.length){toast('Conversion blocked: check linked records');return;}
   businessStore=saveStore(candidate);
   toast(activeLanguage==='ru'?'Проект создан из предложения':'Project created from proposal');
+  refreshDashboardMetrics();
+  renderStoredRecords();
+}
+function createInvoiceFromProject(projectId){
+  const project=(businessStore.projects||[]).find(x=>x.id===projectId);
+  if(!project){toast(activeLanguage==='ru'?'Проект не найден':'Project not found');return;}
+  if(String(project.billingType||'').toLowerCase()==='non-billable'){
+    toast(activeLanguage==='ru'?'Небиллабельный проект нельзя выставить в счёт':'Non-billable projects cannot be invoiced');return;
+  }
+  const existing=(businessStore.invoices||[]).find(x=>x.projectId===project.id);
+  if(existing){toast(activeLanguage==='ru'?'Для проекта уже есть счёт':'An invoice already exists for this project');return;}
+  if(!project.clientId){toast(activeLanguage==='ru'?'Проекту нужен клиент':'Project needs a client');return;}
+  const amount=Number(project.revenue||project.budget||0);
+  if(amount<=0){toast(activeLanguage==='ru'?'У проекта нет суммы для счёта':'Project has no billable amount');return;}
+  const now=new Date().toISOString();
+  const invoice={
+    id:uid('invoice'),
+    createdAt:now,
+    updatedAt:now,
+    name:(project.name||'Project')+' Invoice',
+    status:'Draft',
+    clientId:project.clientId,
+    projectId:project.id,
+    value:amount,
+    amount:amount,
+    taxRate:0,
+    dueDate:null,
+    lineItems:[{description:project.name||'Project services',quantity:1,unitPrice:amount}],
+    nextAction:'Send invoice',
+    notes:project.notes||''
+  };
+  const candidate={...businessStore,invoices:[...(businessStore.invoices||[]),invoice]};
+  const errors=validateStoredRelationships(candidate);
+  if(errors.length){toast(activeLanguage==='ru'?'Создание счёта заблокировано: проверьте связи':'Invoice creation blocked: check linked records');return;}
+  businessStore=saveStore(candidate);
+  toast(activeLanguage==='ru'?'Счёт создан из проекта':'Invoice created from project');
   refreshDashboardMetrics();
   renderStoredRecords();
 }
