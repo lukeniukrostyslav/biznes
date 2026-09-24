@@ -297,3 +297,22 @@ GitHub commit кода: 55e112cf2969c7659a90a1967fb9c2391cf45055.
 B13 остаётся 22% до фактической browser/mobile QA.
 
 GitHub commit кода: f6c4ee2fff54c50b8e452e5ca7c338b2ac06d251.
+
+
+## B13.18 — Complete status localization
+
+Дата: 2026-09-25
+
+Исправлено:
+- drawer status selector теперь содержит полный набор используемых lifecycle-статусов, включая Accepted, Viewed, Draft, Lost и Closed;
+- все эти статусы локализуются EN/RU/ES/DE/FR;
+- dynamic status badges больше не оставляют новые/terminal статусы на английском при смене языка.
+
+Проверка:
+- source-level verification выполнена;
+- browser/mobile runtime QA ещё не выполнена;
+- полный npm test не запускался.
+
+B13 остаётся 22% до browser/mobile QA.
+
+GitHub commit кода: dc73666dc3cd9a8a4633ea38ba4fd40838201b89.
