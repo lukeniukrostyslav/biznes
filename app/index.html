@@ -111,6 +111,10 @@
 <div class="field invoice-field" style="display:none"><label>Unit price</label><input id="fInvoiceUnitPrice" type="number" min="0" step="0.01" placeholder="0.00"></div>
 <div class="field invoice-field" style="display:none"><label>Tax rate %</label><input id="fInvoiceTaxRate" type="number" min="0" step="0.01" value="0"></div>
 <div class="field invoice-field" style="display:none"><label>Due date</label><input id="fInvoiceDueDate" type="date"></div>
+<div class="field payment-field" style="display:none"><label>Payment amount</label><input id="fPaymentAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field payment-field" style="display:none"><label>Payment date</label><input id="fPaymentDate" type="date"></div>
+<div class="field payment-field" style="display:none"><label>Payment method</label><select id="fPaymentMethod"><option>Bank transfer</option><option>Card</option><option>Cash</option><option>Other</option></select></div>
+<div class="field payment-field" style="display:none"><label>Reference</label><input id="fPaymentReference" placeholder="Transaction reference"></div>
 <div class="field"><label>Next action</label><input id="fAction" placeholder="Follow up"></div>
 <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
@@ -306,16 +310,18 @@ function prepareDrawerRelations(type,record={}){
   document.querySelectorAll('.relation-field').forEach(el=>el.style.display='none');
   visibleRelations(type).forEach(key=>document.querySelector('[data-relation="'+key+'"]').style.display='grid');
   document.querySelectorAll('.invoice-field').forEach(el=>el.style.display=type==='invoices'?'grid':'none');
-  document.querySelector('.value-field').style.display=type==='invoices'?'none':'grid';
+  document.querySelectorAll('.payment-field').forEach(el=>el.style.display=type==='payments'?'grid':'none');
+  document.querySelector('.value-field').style.display=(type==='invoices'||type==='payments')?'none':'grid';
   relationOptions(type,record);
 }
 function openCreateDrawer(type){
   pendingType=type; editingId=null;
   document.getElementById('drawerTitle').textContent='New '+type.replace(/s$/,'');
   document.getElementById('fName').value='';
-  ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate'].forEach(id=>document.getElementById(id).value='');
+  ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fInvoiceQuantity').value='1';
   document.getElementById('fInvoiceTaxRate').value='0';
+  document.getElementById('fPaymentDate').value=new Date().toISOString().slice(0,10);
   document.getElementById('fStatus').value=type==='payments'?'Paid':'New';
   prepareDrawerRelations(type,{});
   document.getElementById('detailDrawer').classList.add('open');
@@ -332,6 +338,10 @@ function openEditDrawer(type,record){
   document.getElementById('fInvoiceUnitPrice').value=invoiceItem.unitPrice??record.value??record.amount??0;
   document.getElementById('fInvoiceTaxRate').value=record.taxRate??0;
   document.getElementById('fInvoiceDueDate').value=record.dueDate||'';
+  document.getElementById('fPaymentAmount').value=record.amount??0;
+  document.getElementById('fPaymentDate').value=record.paymentDate||record.date||'';
+  document.getElementById('fPaymentMethod').value=record.paymentMethod||'Bank transfer';
+  document.getElementById('fPaymentReference').value=record.reference||'';
   document.getElementById('fAction').value=record.nextAction||'';
   document.getElementById('fNotes').value=record.notes||'';
   document.getElementById('fStatus').value=record.status||'New';
@@ -356,6 +366,20 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   const name=document.getElementById('fName').value.trim()||'Untitled';
   const value=Number(document.getElementById('fValue').value)||0;
   const isInvoice=pendingType==='invoices';
+  const isPayment=pendingType==='payments';
+  const paymentAmount=Number(document.getElementById('fPaymentAmount').value)||0;
+  const selectedInvoiceId=relations.invoiceId;
+  if(isPayment){
+    if(!selectedInvoiceId || paymentAmount<=0){toast('Ошибка: выберите счёт и укажите сумму платежа');return;}
+    const invoice=businessStore.invoices.find(x=>x.id===selectedInvoiceId);
+    if(!invoice){toast('Ошибка: счёт не найден');return;}
+    const linkedPaid=(businessStore.payments||[]).filter(p=>p.invoiceId===selectedInvoiceId && p.id!==editingId).reduce((sum,p)=>sum+Number(p.amount||0),0);
+    const items=Array.isArray(invoice.lineItems)?invoice.lineItems:[];
+    const subtotal=items.reduce((sum,item)=>sum+(Number(item.quantity||0)*Number(item.unitPrice||0)),0);
+    const total=subtotal+(subtotal*(Number(invoice.taxRate||0)/100));
+    const outstanding=Math.max(total-linkedPaid,0);
+    if(paymentAmount>outstanding+0.0001){toast('Ошибка: платёж превышает остаток счёта');return;}
+  }
   const invoiceQuantity=Number(document.getElementById('fInvoiceQuantity').value)||0;
   const invoiceUnitPrice=Number(document.getElementById('fInvoiceUnitPrice').value)||0;
   const invoicePatch=isInvoice?{
@@ -365,7 +389,13 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     value:invoiceQuantity*invoiceUnitPrice,
     amount:invoiceQuantity*invoiceUnitPrice
   }:{value,amount:value};
-  const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...relations,updatedAt:new Date().toISOString()};
+  const paymentPatch=isPayment?{
+    amount:paymentAmount,
+    paymentDate:document.getElementById('fPaymentDate').value||null,
+    paymentMethod:document.getElementById('fPaymentMethod').value,
+    reference:document.getElementById('fPaymentReference').value.trim()
+  }:{};
+  const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...relations,updatedAt:new Date().toISOString()};
   const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
   const errors=validateStoredRelationships(candidate);
   if(errors.length){toast('Ошибка: проверьте связанные записи');return;}
