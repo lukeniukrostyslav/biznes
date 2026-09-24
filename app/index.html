@@ -202,9 +202,14 @@ function renderStoredRecords(){
   renderLeads();
 }
 function deleteRecord(type,id){
-  if(!confirm('Delete this record?'))return;
-  businessStore=saveStore({...businessStore,[type]:(businessStore[type]||[]).filter(x=>x.id!==id)});
-  toast('Record deleted locally');
+  const record=(businessStore[type]||[]).find(x=>x.id===id);
+  if(!record)return;
+  const dependencies={clients:[['leads','clientId'],['proposals','clientId'],['projects','clientId'],['invoices','clientId'],['payments','clientId'],['expenses','clientId']],leads:[['proposals','leadId']],proposals:[['projects','proposalId']],projects:[['invoices','projectId'],['expenses','projectId']],invoices:[['payments','invoiceId']]};
+  const blocked=(dependencies[type]||[]).some(([collection,field])=>(businessStore[collection]||[]).some(x=>x[field]===id));
+  if(blocked){toast('Archive blocked: linked records exist');return;}
+  if(!confirm('Archive this record?'))return;
+  businessStore=saveStore({...businessStore,[type]:(businessStore[type]||[]).filter(x=>x.id!==id),archivedRecords:[...(businessStore.archivedRecords||[]),{...record,collection:type,archivedAt:new Date().toISOString()}]});
+  toast('Record archived locally');
   refreshDashboardMetrics();
   renderStoredRecords();
 }
