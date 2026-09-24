@@ -115,3 +115,19 @@ Browser/mobile visual QA и test execution по-прежнему не подтв
 GitHub commit: `bea6a9412cbddea57206747a81e87a6733922c9d`.
 
 QA status: выполнена source-level проверка изменения. Browser/mobile visual QA и полный npm test execution по-прежнему не подтверждены; процент B13 не повышается.
+
+
+## B13 — operational KPI data checkpoint — 2026-09-24
+
+Следующий consistency pass заменил демонстрационные KPI на Payments и Expenses на реальные данные local-first store.
+
+Сделано:
+- Payments: Received this month, Expected, Overdue и Collection rate теперь рассчитываются из реальных payments/invoices и financial engine;
+- Expenses: This month, Project costs, Operating и Unassigned теперь рассчитываются из реальных expenses;
+- значения используют единую EUR-форматизацию;
+- существующая локализация подписей сохранена для EN/RU/ES/DE/FR;
+- новые бизнес-функции не добавлялись.
+
+GitHub commit: `c9411001c4e8bdc1618f74ad1ee1cc2ba68f6176`.
+
+QA status: source-level проверка выполнена. Browser/mobile visual QA и полный npm test execution ещё не подтверждены; B13 остаётся 22%.
