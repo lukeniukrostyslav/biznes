@@ -78,3 +78,14 @@ B13 и B14 не повышаются только за наличие CSS или
 Кодовый review после изменения выполнен через GitHub source inspection. Полный browser/mobile visual QA и npm test execution в текущей среде недоступны из-за отсутствия сетевого доступа к репозиторию/runtime. Поэтому B13 и B14 не закрываются по этому checkpoint.
 
 Commit: `f754e10ad8b1896be22e11611c715a2915938fe6` + syntax repair `7a1b1d7cdca74c8d2fc59b213f5aff6547d83266`.
+
+
+## B13 — Dashboard demo data removal checkpoint — 2026-09-24
+
+Удалены оставшиеся статические финансовые примеры из двух Dashboard-зон: Overdue Invoices и Project Profitability. Теперь они строятся из local-first store и financial engine. Для Overdue используются реальные invoice/payment статусы; для Project Profitability используются calculateProjectProfit(). При отсутствии данных отображается empty state.
+
+После source review обнаружена и исправлена ошибка интеграции полей: UI использует возвращаемые engine поля `profit` и `margin`.
+
+Commits: `f2546a2d50d0394b52abea2cf2038712b4092024`, `1e0c7f505aaa847bd9c882b36bdf4a56e05d29df`.
+
+Browser/mobile visual QA и npm test execution всё ещё не подтверждены; процент B13 не повышается.
