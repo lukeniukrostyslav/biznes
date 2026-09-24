@@ -99,7 +99,7 @@
 </div></section>
 </main><div id="detailDrawer" class="drawer" aria-hidden="true"><aside class="drawer-panel"><div class="drawer-head"><div><div class="muted" id="drawerEyebrow">Business OS</div><h2 id="drawerTitle">New record</h2></div><button class="close" id="drawerClose">×</button></div><div class="form-grid">
 <div class="field"><label id="fNameLabel">Name</label><input id="fName" placeholder="Record name"></div>
-<div class="field"><label>Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Awaiting</option><option>Sent</option><option>Paid</option><option>Overdue</option><option>Cancelled</option></select></div>
+<div class="field"><label>Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Awaiting</option><option>Sent</option><option>Paid</option><option>Overdue</option><option>Planned</option><option>Cancelled</option></select></div>
 <div class="field relation-field" data-relation="client"><label>Client</label><select id="fClientId"><option value="">— No client —</option></select></div>
 <div class="field relation-field" data-relation="lead"><label>Lead</label><select id="fLeadId"><option value="">— No lead —</option></select></div>
 <div class="field relation-field" data-relation="proposal"><label>Proposal</label><select id="fProposalId"><option value="">— No proposal —</option></select></div>
@@ -122,6 +122,9 @@
 <div class="field payment-field" style="display:none"><label>Payment date</label><input id="fPaymentDate" type="date"></div>
 <div class="field payment-field" style="display:none"><label>Payment method</label><select id="fPaymentMethod"><option>Bank transfer</option><option>Card</option><option>Cash</option><option>Other</option></select></div>
 <div class="field payment-field" style="display:none"><label>Reference</label><input id="fPaymentReference" placeholder="Transaction reference"></div>
+<div class="field expense-field" style="display:none"><label>Expense category</label><select id="fExpenseCategory"><option>Software</option><option>Contractor</option><option>Travel</option><option>Marketing</option><option>Equipment</option><option>Other</option></select></div>
+<div class="field expense-field" style="display:none"><label>Expense date</label><input id="fExpenseDate" type="date"></div>
+<div class="field expense-field" style="display:none"><label>Billable to client</label><select id="fExpenseBillable"><option value="false">No</option><option value="true">Yes</option></select></div>
 <div class="field"><label>Next action</label><input id="fAction" placeholder="Follow up"></div>
 <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
@@ -324,6 +327,7 @@ function prepareDrawerRelations(type,record={}){
   document.querySelectorAll('.invoice-field').forEach(el=>el.style.display=type==='invoices'?'grid':'none');
   document.querySelectorAll('.payment-field').forEach(el=>el.style.display=type==='payments'?'grid':'none');
   document.querySelectorAll('.project-field').forEach(el=>el.style.display=type==='projects'?'grid':'none');
+  document.querySelectorAll('.expense-field').forEach(el=>el.style.display=type==='expenses'?'grid':'none');
   document.querySelector('.value-field').style.display=(type==='invoices'||type==='payments'||type==='projects')?'none':'grid';
   relationOptions(type,record);
 }
@@ -331,12 +335,14 @@ function openCreateDrawer(type){
   pendingType=type; editingId=null;
   document.getElementById('drawerTitle').textContent='New '+type.replace(/s$/,'');
   document.getElementById('fName').value='';
-  ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate'].forEach(id=>document.getElementById(id).value='');
+  ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate','fExpenseDate'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fInvoiceQuantity').value='1';
   document.getElementById('fInvoiceTaxRate').value='0';
   document.getElementById('fPaymentDate').value=new Date().toISOString().slice(0,10);
   document.getElementById('fProjectBillingType').value='Fixed Fee';
   document.getElementById('fProjectBudgetType').value='Fee';
+  document.getElementById('fExpenseDate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('fExpenseBillable').value='false';
   document.getElementById('fStatus').value=type==='payments'?'Paid':'New';
   prepareDrawerRelations(type,{});
   document.getElementById('detailDrawer').classList.add('open');
@@ -364,6 +370,9 @@ function openEditDrawer(type,record){
   document.getElementById('fProjectActualCosts').value=record.actualCosts??'';
   document.getElementById('fProjectActualHours').value=record.actualHours??'';
   document.getElementById('fProjectLabourRate').value=record.labourRate??'';
+  document.getElementById('fExpenseCategory').value=record.category||'Software';
+  document.getElementById('fExpenseDate').value=record.expenseDate||record.date||'';
+  document.getElementById('fExpenseBillable').value=String(record.billable===true);
   document.getElementById('fAction').value=record.nextAction||'';
   document.getElementById('fNotes').value=record.notes||'';
   document.getElementById('fStatus').value=record.status||'New';
@@ -421,13 +430,19 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     actualHours:Number(document.getElementById('fProjectActualHours').value)||0,
     labourRate:Number(document.getElementById('fProjectLabourRate').value)||0
   }:{};
+  const isExpense=pendingType==='expenses';
+  const expensePatch=isExpense?{
+    category:document.getElementById('fExpenseCategory').value,
+    expenseDate:document.getElementById('fExpenseDate').value||null,
+    billable:document.getElementById('fExpenseBillable').value==='true'
+  }:{};
   const paymentPatch=isPayment?{
     amount:paymentAmount,
     paymentDate:document.getElementById('fPaymentDate').value||null,
     paymentMethod:document.getElementById('fPaymentMethod').value,
     reference:document.getElementById('fPaymentReference').value.trim()
   }:{};
-  const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...projectPatch,...relations,updatedAt:new Date().toISOString()};
+  const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...projectPatch,...expensePatch,...relations,updatedAt:new Date().toISOString()};
   const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
   const errors=validateStoredRelationships(candidate);
   if(errors.length){toast('Ошибка: проверьте связанные записи');return;}
