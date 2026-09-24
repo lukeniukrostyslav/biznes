@@ -124,7 +124,7 @@
 <div class="field invoice-field" style="display:none"><label>Due date</label><input id="fInvoiceDueDate" type="date"></div>
 <div class="field full invoice-field" style="display:none"><label>Payment plan</label><div id="fInvoicePlanLines" class="invoice-lines"></div><button type="button" class="secondary" id="addInvoicePlanLine">＋ Add installment</button><small class="muted">Types: Fixed, %, Equal. Plan total must equal Invoice total.</small></div>
 <div class="field payment-field" style="display:none"><label>Payment amount</label><input id="fPaymentAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field payment-field" style="display:none"><label>Payment date</label><input id="fPaymentDate" type="date"></div>
+<div class="field payment-field" style="display:none"><label>Payment date</label><input id="fPaymentDate" type="date"></div>\n<div class="field payment-field" style="display:none"><label>Payment plan installment</label><select id="fPaymentInstallment"><option value="">Auto-allocate (FIFO)</option></select><small class="muted">If selected, the payment is applied to that installment first.</small></div>
 <div class="field payment-field" style="display:none"><label>Payment method</label><select id="fPaymentMethod"><option>Bank transfer</option><option>Card</option><option>Cash</option><option>Other</option></select></div>
 <div class="field payment-field" style="display:none"><label>Reference</label><input id="fPaymentReference" placeholder="Transaction reference"></div>
 <div class="field expense-field" style="display:none"><label>Expense category</label><select id="fExpenseCategory"><option>Software</option><option>Contractor</option><option>Travel</option><option>Marketing</option><option>Equipment</option><option>Other</option></select></div>
@@ -134,7 +134,7 @@
 <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel">Cancel</button><button class="primary" id="drawerSave">Save record</button></div></aside></div></div>
 <script type="module">
-import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan } from "../src/core/financial-engine.js";
+import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan } from "../src/core/financial-engine.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings'],f:['Client call — Nova Studio','Send proposal — GreenTech','Follow up — Alex Rivera','Meeting — Bright Media','Send invoice — Luna Agency']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки'],f:['Звонок клиенту — Nova Studio','Отправить предложение — GreenTech','Связаться — Alex Rivera','Встреча — Bright Media','Отправить счёт — Luna Agency']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes'],f:['Llamada con cliente — Nova Studio','Enviar propuesta — GreenTech','Seguimiento — Alex Rivera','Reunión — Bright Media','Enviar factura — Luna Agency']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen'],f:['Kundengespräch — Nova Studio','Angebot senden — GreenTech','Nachfassen — Alex Rivera','Meeting — Bright Media','Rechnung senden — Luna Agency']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres'],f:['Appel client — Nova Studio','Envoyer proposition — GreenTech','Relancer — Alex Rivera','Réunion — Bright Media','Envoyer facture — Luna Agency']}};
 
 const screenCopy={
@@ -519,7 +519,7 @@ function openEditDrawer(type,record){
   setInvoicePlanLines(record.paymentPlan?.installments||[]);
   document.getElementById('fInvoiceDueDate').value=record.dueDate||'';
   document.getElementById('fPaymentAmount').value=record.amount??0;
-  document.getElementById('fPaymentDate').value=record.paymentDate||record.date||'';
+  document.getElementById('fPaymentDate').value=record.paymentDate||record.date||'';\n  populatePaymentInstallments(record.invoiceId, record.installmentIndex);
   document.getElementById('fPaymentMethod').value=record.paymentMethod||'Bank transfer';
   document.getElementById('fPaymentReference').value=record.reference||'';
   document.getElementById('fProjectBillingType').value=record.billingType||'Fixed Fee';
@@ -539,6 +539,19 @@ function openEditDrawer(type,record){
   document.getElementById('detailDrawer').classList.add('open');
   document.getElementById('detailDrawer').setAttribute('aria-hidden','false');
 }
+function populatePaymentInstallments(invoiceId, selectedIndex = null){
+  const select=document.getElementById('fPaymentInstallment');
+  if(!select)return;
+  const invoice=(businessStore.invoices||[]).find(x=>x.id===invoiceId);
+  const installments=invoice?.paymentPlan?.installments||[];
+  select.innerHTML='<option value="">Auto-allocate (FIFO)</option>'+installments.map((item,index)=>{
+    const label=item.dueDate ? new Date(item.dueDate).toLocaleDateString() : 'No due date';
+    return '<option value="'+index+'">#'+(index+1)+' — '+label+' — '+money(item.calculatedAmount||item.amount||0)+'</option>';
+  }).join('');
+  select.value=selectedIndex===null||selectedIndex===undefined?'':String(selectedIndex);
+}
+document.getElementById('fInvoiceDueDate').addEventListener('change',()=>{});
+document.getElementById('fPaymentInstallment').addEventListener('change',()=>{});
 function closeCreateDrawer(){
   document.getElementById('detailDrawer').classList.remove('open');
   document.getElementById('detailDrawer').setAttribute('aria-hidden','true');
@@ -560,7 +573,7 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   const isInvoice=pendingType==='invoices';
   const isPayment=pendingType==='payments';
   const paymentAmount=Number(document.getElementById('fPaymentAmount').value)||0;
-  const selectedInvoiceId=relations.invoiceId;
+  const selectedInvoiceId=relations.invoiceId;\n  if(isPayment) populatePaymentInstallments(selectedInvoiceId, document.getElementById('fPaymentInstallment').value==='''?null:Number(document.getElementById('fPaymentInstallment').value));
   if(isPayment){
     if(!selectedInvoiceId || paymentAmount<=0){toast('Ошибка: выберите счёт и укажите сумму платежа');return;}
     const invoice=businessStore.invoices.find(x=>x.id===selectedInvoiceId);
@@ -572,7 +585,7 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     const subtotal=items.reduce((sum,item)=>sum+(Number(item.quantity||0)*Number(item.unitPrice||0)),0);
     const total=subtotal+(subtotal*(Number(invoice.taxRate||0)/100));
     const outstanding=Math.max(total-linkedPaid,0);
-    if(paymentAmount>outstanding+0.0001){toast('Ошибка: платёж превышает остаток счёта');return;}
+    if(paymentAmount>outstanding+0.0001){toast('Ошибка: платёж превышает остаток счёта');return;}\n    const installmentRaw=document.getElementById('fPaymentInstallment').value;\n    const installmentIndex=installmentRaw===''?null:Number(installmentRaw);\n    if(installmentIndex!==null){\n      const allocation=allocatePaymentPlan(invoice,(businessStore.payments||[]).filter(p=>p.id!==editingId),new Date());\n      const target=allocation.installments[installmentIndex];\n      if(!target){toast('Ошибка: выбранный installment не найден');return;}\n      if(paymentAmount>target.outstanding+0.0001){toast('Ошибка: платёж превышает остаток выбранного installment');return;}\n    }
   }
   const invoiceLines=isInvoice?getInvoiceLines():[];
   if(isInvoice){
@@ -615,7 +628,7 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     amount:paymentAmount,
     paymentDate:document.getElementById('fPaymentDate').value||null,
     paymentMethod:document.getElementById('fPaymentMethod').value,
-    reference:document.getElementById('fPaymentReference').value.trim()
+    reference:document.getElementById('fPaymentReference').value.trim(),\n    installmentIndex:(document.getElementById('fPaymentInstallment').value===''?null:Number(document.getElementById('fPaymentInstallment').value))
   }:{};
   const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...projectPatch,...expensePatch,...relations,updatedAt:new Date().toISOString()};
   const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
