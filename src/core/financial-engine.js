@@ -7,7 +7,7 @@ function lineTotal(line) {
   return roundMoney(Number(line.quantity || 0) * Number(line.unitPrice || 0));
 }
 
-function calculateInvoice(invoice) {
+function calculateInvoice(invoice, now = new Date()) {
   const items = Array.isArray(invoice.lineItems) ? invoice.lineItems : [];
   const subtotal = roundMoney(items.reduce((sum, item) => sum + lineTotal(item), 0));
   const tax = roundMoney(subtotal * (Number(invoice.taxRate || 0) / 100));
@@ -19,7 +19,7 @@ function calculateInvoice(invoice) {
   if (status !== 'Cancelled' && status !== 'Draft') {
     if (outstanding <= 0 && total > 0) status = 'Paid';
     else if (paid > 0) status = 'Partially Paid';
-    else if (invoice.dueDate && new Date(invoice.dueDate) < new Date() && total > 0) status = 'Overdue';
+    else if (invoice.dueDate && new Date(invoice.dueDate) < now && total > 0) status = 'Overdue';
     else status = 'Sent';
   }
 
@@ -62,25 +62,39 @@ function calculateBusinessMetrics(store, now = new Date()) {
   const payments = Array.isArray(source.payments) ? source.payments : [];
   const expenses = Array.isArray(source.expenses) ? source.expenses : [];
   const leads = Array.isArray(source.leads) ? source.leads : [];
-  const invoiced = roundMoney(invoices.reduce((sum, invoice) => sum + calculateInvoice(invoice).total, 0));
+
+  const actualExpenses = expenses.filter(expense => expense.status !== 'Planned' && expense.planned !== true);
+  const plannedExpensesList = expenses.filter(expense => expense.status === 'Planned' || expense.planned === true);
+
+  const invoiced = roundMoney(invoices.reduce((sum, invoice) => sum + calculateInvoice(invoice, now).total, 0));
   const paid = roundMoney(payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0));
-  const expensesTotal = roundMoney(expenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
+  const actualExpensesTotal = roundMoney(actualExpenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
+  const plannedExpenses = roundMoney(plannedExpensesList.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
   const pipeline = calculatePipeline(leads);
   const outstanding = roundMoney(Math.max(invoiced - paid, 0));
-  const actualProfit = roundMoney(paid - expensesTotal);
+  const actualProfit = roundMoney(paid - actualExpensesTotal);
+
   const expectedPayments = roundMoney(invoices.filter(invoice => {
     const status = String(invoice.status || '').toLowerCase();
-    return !['paid', 'cancelled'].includes(status) && calculateInvoice(invoice).outstanding > 0;
-  }).reduce((sum, invoice) => sum + calculateInvoice(invoice).outstanding, 0));
-  const plannedExpenses = roundMoney(expenses.filter(expense => expense.status === 'Planned' || expense.planned === true)
-    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
-  const forecastCash = roundMoney(paid + expectedPayments - expensesTotal - plannedExpenses);
-  const overdue = roundMoney(invoices.filter(invoice => invoice.dueDate && new Date(invoice.dueDate) < now && calculateInvoice(invoice).outstanding > 0)
-    .reduce((sum, invoice) => sum + calculateInvoice(invoice).outstanding, 0));
+    return !['paid', 'cancelled'].includes(status) && calculateInvoice(invoice, now).outstanding > 0;
+  }).reduce((sum, invoice) => sum + calculateInvoice(invoice, now).outstanding, 0));
+
+  const forecastCash = roundMoney(paid + expectedPayments - actualExpensesTotal - plannedExpenses);
+  const overdue = roundMoney(invoices.filter(invoice => calculateInvoice(invoice, now).outstanding > 0 && invoice.dueDate && new Date(invoice.dueDate) < now)
+    .reduce((sum, invoice) => sum + calculateInvoice(invoice, now).outstanding, 0));
+
   return {
-    invoiced, paid, outstanding, expenses: expensesTotal, actualProfit,
-    pipeline: pipeline.pipeline, weightedPipeline: pipeline.weightedPipeline,
-    expectedPayments, plannedExpenses, forecastCash, overdue
+    invoiced,
+    paid,
+    outstanding,
+    expenses: actualExpensesTotal,
+    actualProfit,
+    pipeline: pipeline.pipeline,
+    weightedPipeline: pipeline.weightedPipeline,
+    expectedPayments,
+    plannedExpenses,
+    forecastCash,
+    overdue
   };
 }
 
