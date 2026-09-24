@@ -75,16 +75,16 @@
 <div class="card table-card"><table class="data-table"><thead><tr><th>Date</th><th>Client</th><th>Invoice</th><th>Method</th><th>Amount</th></tr></thead><tbody><tr><td>Sep 24</td><td><strong>Nova Studio</strong></td><td>INV-0016</td><td>Bank transfer</td><td><strong>$4,800</strong></td></tr><tr><td>Sep 23</td><td><strong>GreenTech</strong></td><td>INV-0015</td><td>Card</td><td><strong>$2,750</strong></td></tr><tr><td>Sep 21</td><td><strong>Bright Media</strong></td><td>INV-0013</td><td>Bank transfer</td><td><strong>$3,200</strong></td></tr><tr><td>Sep 18</td><td><strong>Luna Agency</strong></td><td>INV-0012</td><td>Card</td><td><strong>$1,990</strong></td></tr></tbody></table></div>
 </div>
 <div id="cashflowScreen" class="screen">
-<div class="page-title"><div><h1 data-i18n="cashflowTitle">Cashflow</h1><p data-i18n="cashflowSub">See what is paid, what is expected and what expenses will reduce available cash.</p></div><button class="secondary">Export report</button></div>
+<div class="page-title"><div><h1 data-i18n="cashflowTitle">Cashflow</h1><p data-i18n="cashflowSub">See what is paid, what is expected and what expenses will reduce available cash.</p></div><button class="secondary" id="exportCashflow" data-ui="exportReport">Export report</button></div>
 <div class="stat-strip">
-<div class="card mini"><span class="muted">Cash received</span><strong id="cashflowReceived">$0</strong></div>
-<div class="card mini"><span class="muted">Outstanding</span><strong id="cashflowOutstanding">$0</strong></div>
-<div class="card mini"><span class="muted">Next 30 days</span><strong id="cashflowForecastNet">$0</strong></div>
-<div class="card mini"><span class="muted">Planned expenses</span><strong id="cashflowPlannedExpenses">$0</strong></div>
+<div class="card mini"><span class="muted" data-ui="cashReceived">Cash received</span><strong id="cashflowReceived">€0</strong></div>
+<div class="card mini"><span class="muted" data-ui="outstanding">Outstanding</span><strong id="cashflowOutstanding">€0</strong></div>
+<div class="card mini"><span class="muted" data-ui="next30">Next 30 days</span><strong id="cashflowForecastNet">€0</strong></div>
+<div class="card mini"><span class="muted" data-ui="plannedExpenses">Planned expenses</span><strong id="cashflowPlannedExpenses">€0</strong></div>
 </div>
 <div class="detail-grid">
-<div class="card wide"><div class="card-title"><h2>Next 30 days</h2><span class="muted" id="cashflowForecastSummary"></span></div><div class="timeline" id="cashflowTimeline"><div class="empty">No scheduled cash movements.</div></div></div>
-<div class="card wide"><div class="card-title"><h2>Money clarity</h2></div><div class="list" id="cashflowClarity"><div class="metric"><span>Current net cash</span><strong id="cashflowCurrentNet">$0</strong></div><div class="metric"><span>Expected inflows</span><strong id="cashflowFutureInflows">$0</strong></div><div class="metric"><span>Expected outflows</span><strong id="cashflowFutureExpenses">$0</strong></div></div></div>
+<div class="card wide"><div class="card-title"><h2 data-ui="next30Title">Next 30 days</h2><span class="muted" id="cashflowForecastSummary"></span></div><div class="timeline" id="cashflowTimeline"><div class="empty" data-ui="noCashMovements">No scheduled cash movements.</div></div></div>
+<div class="card wide"><div class="card-title"><h2 data-ui="moneyClarity">Money clarity</h2></div><div class="list" id="cashflowClarity"><div class="metric"><span data-ui="currentNetCash">Current net cash</span><strong id="cashflowCurrentNet">€0</strong></div><div class="metric"><span data-ui="expectedInflows">Expected inflows</span><strong id="cashflowFutureInflows">€0</strong></div><div class="metric"><span data-ui="expectedOutflows">Expected outflows</span><strong id="cashflowFutureExpenses">€0</strong></div></div></div>
 </div>
 </div>
 <div id="expensesScreen" class="screen">
@@ -397,14 +397,14 @@ function renderCashflow(){
   document.getElementById('cashflowCurrentNet').textContent=money(forecast.currentNetCash);
   document.getElementById('cashflowFutureInflows').textContent=money(forecast.futureInflows);
   document.getElementById('cashflowFutureExpenses').textContent=money(forecast.futureExpenses);
-  document.getElementById('cashflowForecastSummary').textContent=forecast.events.length+' scheduled movements';
+  const summaryCopy={en:'scheduled movements',ru:'запланированных движений',es:'movimientos programados',de:'geplante Bewegungen',fr:'mouvements planifiés'};
+  document.getElementById('cashflowForecastSummary').textContent=forecast.events.length+' '+(summaryCopy[activeLanguage]||summaryCopy.en);
   const timeline=document.getElementById('cashflowTimeline');
+  const labels={en:{expense:'Planned expense',payment:'Expected payment',empty:'No scheduled cash movements in the next 30 days.'},ru:{expense:'Запланированный расход',payment:'Ожидаемый платёж',empty:'Нет запланированных движений денежных средств на ближайшие 30 дней.'},es:{expense:'Gasto previsto',payment:'Pago esperado',empty:'No hay movimientos de efectivo programados en los próximos 30 días.'},de:{expense:'Geplante Ausgabe',payment:'Erwartete Zahlung',empty:'Keine geplanten Cashflow-Bewegungen in den nächsten 30 Tagen.'},fr:{expense:'Dépense planifiée',payment:'Paiement attendu',empty:'Aucun mouvement de trésorerie planifié dans les 30 prochains jours.'}}[activeLanguage]||{expense:'Planned expense',payment:'Expected payment',empty:'No scheduled cash movements in the next 30 days.'};
   timeline.innerHTML=forecast.events.length?forecast.events.map(event=>{
-    const isExpense=event.type==='expense';
-    const sign=isExpense?'−':'+';
-    const label=isExpense?'Planned expense':'Expected payment';
-    return '<div class="event"><span class="event-dot"'+(isExpense?' style="background:var(--red)"':'')+'></span><div><strong>'+escapeHtml(new Date(event.date+'T00:00:00').toLocaleDateString())+' · '+sign+money(event.amount)+'</strong><small class="muted">'+label+' · '+escapeHtml(event.label||'—')+(event.installmentIndex!==null&&event.installmentIndex!==undefined?' · Installment '+(event.installmentIndex+1):'')+'</small></div></div>';
-  }).join(''):'<div class="empty">No scheduled cash movements in the next 30 days.</div>';
+    const isExpense=event.type==='expense'; const sign=isExpense?'−':'+'; const label=isExpense?labels.expense:labels.payment;
+    return '<div class="event"><span class="event-dot"'+(isExpense?' style="background:var(--red)"':'')+'></span><div><strong>'+escapeHtml(new Date(event.date+'T00:00:00').toLocaleDateString())+' · '+sign+money(event.amount)+'</strong><small class="muted">'+label+' · '+escapeHtml(event.label||'—')+(event.installmentIndex!==null&&event.installmentIndex!==undefined?' · '+(activeLanguage==='ru'?'Платёж №':activeLanguage==='fr'?'Versement n°':activeLanguage==='de'?'Rate Nr.':activeLanguage==='es'?'Cuota n.º':'Installment #')+(event.installmentIndex+1):'')+'</small></div></div>';
+  }).join(''):'<div class="empty">'+labels.empty+'</div>';
 }
 function renderDashboardRealData(){
   const followupList=document.getElementById('followups');
@@ -801,6 +801,13 @@ document.getElementById('drawerClose').addEventListener('click',closeCreateDrawe
 document.getElementById('drawerCancel').addEventListener('click',closeCreateDrawer);
 document.getElementById('detailDrawer').addEventListener('click',e=>{if(e.target.id==='detailDrawer')closeCreateDrawer();});
 </script><nav class="mobile-nav" id="mobileNav"><button data-mobile="0" class="active"><span>⌂</span><span data-mobile-label="dashboard">Обзор</span></button><button data-mobile="1"><span>↗</span><span data-mobile-label="leads">Лиды</span></button><button data-mobile="2"><span>◎</span><span data-mobile-label="clients">Клиенты</span></button><button data-mobile="4"><span>▣</span><span data-mobile-label="projects">Проекты</span></button><button data-mobile="5"><span>▤</span><span data-mobile-label="invoices">Счета</span></button></nav><script>document.querySelectorAll('#mobileNav button').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.mobile),map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]).classList.add('active');document.querySelectorAll('#mobileNav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.nav button').forEach((x,j)=>x.classList.toggle('active',j===i));});</script><script>
+const cashflowUiCopy={
+ en:{cashReceived:'Cash received',outstanding:'Outstanding',next30:'Next 30 days',plannedExpenses:'Planned expenses',next30Title:'Next 30 days',moneyClarity:'Money clarity',currentNetCash:'Current net cash',expectedInflows:'Expected inflows',expectedOutflows:'Expected outflows',exportReport:'Export report'},
+ ru:{cashReceived:'Получено',outstanding:'К оплате',next30:'Следующие 30 дней',plannedExpenses:'Плановые расходы',next30Title:'Следующие 30 дней',moneyClarity:'Картина денежных средств',currentNetCash:'Текущий чистый денежный поток',expectedInflows:'Ожидаемые поступления',expectedOutflows:'Ожидаемые расходы',exportReport:'Экспорт отчёта'},
+ es:{cashReceived:'Cobrado',outstanding:'Pendiente',next30:'Próximos 30 días',plannedExpenses:'Gastos previstos',next30Title:'Próximos 30 días',moneyClarity:'Claridad financiera',currentNetCash:'Caja neta actual',expectedInflows:'Entradas esperadas',expectedOutflows:'Salidas esperadas',exportReport:'Exportar informe'},
+ de:{cashReceived:'Eingegangene Zahlungen',outstanding:'Offen',next30:'Nächste 30 Tage',plannedExpenses:'Geplante Ausgaben',next30Title:'Nächste 30 Tage',moneyClarity:'Finanzübersicht',currentNetCash:'Aktueller Netto-Cashflow',expectedInflows:'Erwartete Einnahmen',expectedOutflows:'Erwartete Ausgaben',exportReport:'Bericht exportieren'},
+ fr:{cashReceived:'Encaissements',outstanding:'À encaisser',next30:'30 prochains jours',plannedExpenses:'Dépenses planifiées',next30Title:'30 prochains jours',moneyClarity:'Clarté de trésorerie',currentNetCash:'Trésorerie nette actuelle',expectedInflows:'Entrées attendues',expectedOutflows:'Sorties attendues',exportReport:'Exporter le rapport'}
+};
 const profitUiCopy={
  en:{grossRevenue:'Gross revenue',directCosts:'Direct costs',operatingCosts:'Operating costs',netProfit:'Net profit',exportAnalysis:'Export analysis',costs:'Costs',noProjectData:'No project data'},
  ru:{grossRevenue:'Валовая выручка',directCosts:'Прямые затраты',operatingCosts:'Операционные расходы',netProfit:'Чистая прибыль',exportAnalysis:'Экспорт анализа',costs:'Затраты',noProjectData:'Нет данных по проектам'},
