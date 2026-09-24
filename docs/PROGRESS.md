@@ -316,3 +316,18 @@ B10 остаётся **0%** до полного функционального Q
 - редактирование существующего Payment учитывает его собственный id при расчёте остатка.
 
 Это пока не считается завершённым production QA: B10 остаётся **0%**, B07 — **82%**, B08 — **70%**.
+
+
+## B10.3 — typed project finance fields — 2026-09-24
+
+Project drawer получил финансовую модель:
+
+- Billing type: Fixed Fee / Time and Materials / Retainer / Non-billable;
+- Budget type: Fee / Time;
+- Budget;
+- Revenue;
+- Actual costs;
+- Actual hours;
+- Labour cost/hour.
+
+Это отражает рыночную модель project billing/budget/profitability, но не считается завершённым QA. B10 остаётся **0%**, B07 — **82%**, B08 — **70%**.
