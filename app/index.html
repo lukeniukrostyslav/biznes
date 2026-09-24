@@ -201,6 +201,16 @@ function renderStoredRecords(){
   });
   renderLeads();
 }
+function validateStoredRelationships(store){
+  const rules={leads:{clientId:'clients'},proposals:{clientId:'clients',leadId:'leads'},projects:{clientId:'clients',proposalId:'proposals'},invoices:{clientId:'clients',projectId:'projects'},payments:{invoiceId:'invoices',clientId:'clients'},expenses:{projectId:'projects',clientId:'clients'}};
+  const errors=[];
+  Object.entries(rules).forEach(([type,fields])=>{
+    (store[type]||[]).forEach(record=>Object.entries(fields).forEach(([field,target])=>{
+      if(record[field]&&!((store[target]||[]).some(x=>x.id===record[field])))errors.push(type+'.'+field);
+    }));
+  });
+  return errors;
+}
 function deleteRecord(type,id){
   const record=(businessStore[type]||[]).find(x=>x.id===id);
   if(!record)return;
