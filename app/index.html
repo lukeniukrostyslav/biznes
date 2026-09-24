@@ -56,8 +56,8 @@
 <div id="projectsScreen" class="screen">
 <div class="page-title"><div><h1 data-i18n="projectsTitle">Projects</h1><p data-i18n="projectsSub">Control delivery, cost and margin before profit leaks.</p></div><button class="primary" data-i18n="newProject">＋ New project</button></div>
 <div class="stat-strip"><div class="card mini"><span class="muted" data-project-ui="activeProjects">Active projects</span><strong id="projectsActiveCount">0</strong></div><div class="card mini"><span class="muted" data-project-ui="contracted">Contracted</span><strong id="projectsContracted">€0</strong></div><div class="card mini"><span class="muted" data-project-ui="expectedProfit">Expected profit</span><strong id="projectsExpectedProfit">€0</strong></div><div class="card mini"><span class="muted" data-project-ui="avgMargin">Avg. margin</span><strong id="projectsAvgMargin">0%</strong></div></div>
-<div class="detail-grid"><div class="card table-card"><table class="data-table"><thead><tr><th>Project</th><th>Progress</th><th>Revenue</th><th>Margin</th></tr></thead><tbody><tr><td><strong>Website Redesign</strong></td><td>82%</td><td>$12,000</td><td class="green">73%</td></tr><tr><td><strong>Brand Identity</strong></td><td>64%</td><td>$5,500</td><td class="green">65%</td></tr><tr><td><strong>Mobile App Design</strong></td><td>48%</td><td>$18,000</td><td class="green">59%</td></tr><tr><td><strong>Marketing Website</strong></td><td>91%</td><td>$8,750</td><td class="green">67%</td></tr></tbody></table></div>
-<div class="card wide"><div class="card-title"><h2>Project health</h2></div><div class="timeline"><div class="event"><span class="event-dot"></span><div><strong>Website Redesign</strong><small class="muted">Margin above target · 73%</small></div></div><div class="event"><span class="event-dot" style="background:var(--orange)"></span><div><strong>Mobile App Design</strong><small class="muted">Hours running 12% above estimate</small></div></div><div class="event"><span class="event-dot" style="background:var(--red)"></span><div><strong>Marketing Website</strong><small class="muted">Invoice due in 3 days</small></div></div></div></div></div>
+<div class="detail-grid"><div class="card table-card"><table class="data-table" id="projectsDataTable"><thead><tr><th>Project</th><th>Progress</th><th>Revenue</th><th>Margin</th></tr></thead><tbody id="projectsTableBody"></tbody></table></div>
+<div class="card wide"><div class="card-title"><h2 data-project-ui="healthTitle">Project health</h2></div><div class="timeline" id="projectHealth"></div></div></div>
 </div>
 <div id="invoicesScreen" class="screen">
 <div class="page-title"><div><h1 data-i18n="invoicesTitle">Invoices</h1><p data-i18n="invoicesSub">See what was billed, paid and still needs attention.</p></div><button class="primary" data-i18n="newInvoice">＋ New invoice</button></div>
@@ -225,6 +225,47 @@ const recordUiCopy={
     fr:{headers:{clients:['Client','Projets','Chiffre d’affaires','À encaisser','Statut'],proposals:['Proposition','Statut','Valeur','Prochaine action','Action','Enregistrement'],projects:['Projet','Statut','Chiffre d’affaires','Profit / Marge','Prévision / Budget','Action'],invoices:['Facture','Statut','Montant','Prochaine action','Enregistrement'],payments:['Paiement','Statut','Montant','Prochaine action','Enregistrement'],expenses:['Dépense','Statut','Montant','Prochaine action','Enregistrement']},forecast:'Prévision',budgetLeft:'Budget restant',edit:'Modifier',delete:'Supprimer',noLeads:'Aucun prospect',opportunity:'Opportunité',nextAction:'Prochaine action'}
   };
 const projectUiCopy={en:{activeProjects:'Active projects',contracted:'Contracted',expectedProfit:'Expected profit',avgMargin:'Avg. margin'},ru:{activeProjects:'Активные проекты',contracted:'По контрактам',expectedProfit:'Ожидаемая прибыль',avgMargin:'Средняя маржа'},es:{activeProjects:'Proyectos activos',contracted:'Contratado',expectedProfit:'Beneficio esperado',avgMargin:'Margen medio'},de:{activeProjects:'Aktive Projekte',contracted:'Vertraglich vereinbart',expectedProfit:'Erwarteter Gewinn',avgMargin:'Durchschnittliche Marge'},fr:{activeProjects:'Projets actifs',contracted:'Sous contrat',expectedProfit:'Profit attendu',avgMargin:'Marge moyenne'}};
+const projectHealthCopy={
+  en:{healthTitle:'Project health',noProjects:'No project data yet.',marginStrong:'Healthy margin',marginWeak:'Margin needs attention',overBudget:'Budget pressure',overdue:'Invoice overdue'},
+  ru:{healthTitle:'Состояние проектов',noProjects:'Пока нет данных по проектам.',marginStrong:'Здоровая маржа',marginWeak:'Маржа требует внимания',overBudget:'Давление на бюджет',overdue:'Просрочен счёт'},
+  es:{healthTitle:'Estado de proyectos',noProjects:'Aún no hay datos de proyectos.',marginStrong:'Margen saludable',marginWeak:'El margen requiere atención',overBudget:'Presión sobre el presupuesto',overdue:'Factura vencida'},
+  de:{healthTitle:'Projektstatus',noProjects:'Noch keine Projektdaten.',marginStrong:'Gesunde Marge',marginWeak:'Marge benötigt Aufmerksamkeit',overBudget:'Budgetdruck',overdue:'Rechnung überfällig'},
+  fr:{healthTitle:'État des projets',noProjects:'Aucune donnée de projet.',marginStrong:'Marge saine',marginWeak:'Marge à surveiller',overBudget:'Pression sur le budget',overdue:'Facture en retard'}
+};
+function renderProjectHealth(){
+  const body=document.getElementById('projectsTableBody');
+  const health=document.getElementById('projectHealth');
+  if(!body||!health)return;
+  const projects=businessStore.projects||[];
+  const copy=projectHealthCopy[activeLanguage]||projectHealthCopy.en;
+  if(!projects.length){
+    body.innerHTML='<tr><td colspan="4" class="empty">'+copy.noProjects+'</td></tr>';
+    health.innerHTML='<div class="empty">'+copy.noProjects+'</div>';
+    return;
+  }
+  const expenses=businessStore.expenses||[];
+  body.innerHTML=projects.map(project=>{
+    const calc=calculateProjectProfit(project,{expenses});
+    const progress=Number(project.progress??project.completion??0);
+    const progressText=Number.isFinite(progress)&&progress>0?Math.round(progress)+'%':'—';
+    return '<tr data-record-type="projects" data-record-id="'+escapeHtml(project.id)+'"><td><strong>'+recordLabel(project)+'</strong></td><td>'+progressText+'</td><td>'+money(calc.revenue)+'</td><td class="green">'+(calc.margin==null?'—':Number(calc.margin).toFixed(1)+'%')+'</td></tr>';
+  }).join('');
+  const healthItems=[];
+  projects.forEach(project=>{
+    const calc=calculateProjectProfit(project,{expenses});
+    const margin=Number(calc.margin);
+    const budget=Number(calc.budget);
+    const budgetRemaining=calc.budgetRemaining;
+    if(Number.isFinite(margin)) healthItems.push({tone:margin>=50?'':'red',label:recordLabel(project),detail:(margin>=50?copy.marginStrong:copy.marginWeak)+' · '+margin.toFixed(1)+'%'});
+    if(Number.isFinite(budget)&&budget>0&&Number(budgetRemaining)<0) healthItems.push({tone:'red',label:recordLabel(project),detail:copy.overBudget+' · '+money(Math.abs(Number(budgetRemaining)))});
+    const invoices=(businessStore.invoices||[]).filter(i=>i.projectId===project.id);
+    const overdue=invoices.some(i=>calculateInvoicePaymentStatus(i,businessStore.payments||[],new Date()).status==='Overdue');
+    if(overdue) healthItems.push({tone:'red',label:recordLabel(project),detail:copy.overdue});
+  });
+  health.innerHTML=healthItems.length?healthItems.slice(0,6).map(item=>'<div class="event"><span class="event-dot"'+(item.tone==='red'?' style="background:var(--red)"':'')+'></span><div><strong>'+item.label+'</strong><small class="muted">'+item.detail+'</small></div></div>').join(''):'<div class="empty">'+copy.noProjects+'</div>';
+  body.querySelectorAll('tr[data-record-id]').forEach(row=>row.addEventListener('click',()=>{const rec=projects.find(p=>p.id===row.dataset.recordId);if(rec)openEditDrawer('projects',rec);}));
+}
+
 function refreshProjectMetrics(){
   const projects=businessStore.projects||[];
   const terminal=new Set(['won','lost','closed','cancelled','completed']);
@@ -238,6 +279,7 @@ function refreshProjectMetrics(){
   Object.entries(ids).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});
   const copy=projectUiCopy[activeLanguage]||projectUiCopy.en;
   document.querySelectorAll('[data-project-ui]').forEach(el=>{const key=el.dataset.projectUi;if(copy[key])el.textContent=copy[key];});
+  renderProjectHealth();
 }
 function renderLeads(){
   const screen=document.getElementById('leadsScreen');
@@ -309,7 +351,7 @@ function renderStoredRecords(){
     if(!tbody||!thead)return;
     thead.innerHTML=tc.headers[type].map(h=>'<th>'+h+'</th>').join('');
     const records=businessStore[type]||[];
-    if(!records.length){tbody.innerHTML='';return;}
+    if(!records.length){tbody.innerHTML='<tr><td colspan="'+tc.headers[type].length+'" class="empty">'+(uiLabels[activeLanguage]?.noData||uiLabels.en.noData)+'</td></tr>';return;}
     tbody.innerHTML=records.map(record=>{
       let cells;
       if(type==='clients'){
