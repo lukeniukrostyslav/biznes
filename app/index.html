@@ -175,6 +175,28 @@ function applyUiCopy(lang){
   if(document.getElementById('brandTagline'))document.getElementById('brandTagline').textContent=sidebar.brand;
   if(document.getElementById('workspaceLabel'))document.getElementById('workspaceLabel').textContent=sidebar.workspace;
   if(document.getElementById('workspaceMode'))document.getElementById('workspaceMode').textContent=sidebar.mode;
+  const optionCopy={
+    en:{discount:{none:'None',percent:'Percentage',fixed:'Fixed amount'},billing:{'Fixed Fee':'Fixed Fee','Time and Materials':'Time and Materials','Retainer':'Retainer','Non-billable':'Non-billable'},budget:{Fee:'Fee',Time:'Time'},payment:{'Bank transfer':'Bank transfer',Card:'Card',Cash:'Cash',Other:'Other'},expense:{Software:'Software',Contractor:'Contractor',Travel:'Travel',Marketing:'Marketing',Equipment:'Equipment',Other:'Other'},billable:{false:'No',true:'Yes'},plan:{equal:'Equal',percent:'Percentage',fixed:'Fixed'}},
+    ru:{discount:{none:'Нет',percent:'Процент',fixed:'Фиксированная сумма'},billing:{'Fixed Fee':'Фиксированная оплата','Time and Materials':'Почасовая + расходы','Retainer':'Ретейнер','Non-billable':'Без биллинга'},budget:{Fee:'Деньги',Time:'Время'},payment:{'Bank transfer':'Банковский перевод',Card:'Карта',Cash:'Наличные',Other:'Другое'},expense:{Software:'ПО',Contractor:'Подрядчик',Travel:'Поездки',Marketing:'Маркетинг',Equipment:'Оборудование',Other:'Другое'},billable:{false:'Нет',true:'Да'},plan:{equal:'Равные',percent:'Процент',fixed:'Фиксированная сумма'}},
+    es:{discount:{none:'Ninguno',percent:'Porcentaje',fixed:'Importe fijo'},billing:{'Fixed Fee':'Precio fijo','Time and Materials':'Tiempo y materiales','Retainer':'Retainer','Non-billable':'No facturable'},budget:{Fee:'Importe',Time:'Tiempo'},payment:{'Bank transfer':'Transferencia bancaria',Card:'Tarjeta',Cash:'Efectivo',Other:'Otro'},expense:{Software:'Software',Contractor:'Contratista',Travel:'Viajes',Marketing:'Marketing',Equipment:'Equipamiento',Other:'Otro'},billable:{false:'No',true:'Sí'},plan:{equal:'Iguales',percent:'Porcentaje',fixed:'Fijo'}},
+    de:{discount:{none:'Keine',percent:'Prozent',fixed:'Fester Betrag'},billing:{'Fixed Fee':'Festpreis','Time and Materials':'Zeit & Material','Retainer':'Retainer','Non-billable':'Nicht abrechenbar'},budget:{Fee:'Betrag',Time:'Zeit'},payment:{'Bank transfer':'Banküberweisung',Card:'Karte',Cash:'Bargeld',Other:'Andere'},expense:{Software:'Software',Contractor:'Auftragnehmer',Travel:'Reisen',Marketing:'Marketing',Equipment:'Ausrüstung',Other:'Andere'},billable:{false:'Nein',true:'Ja'},plan:{equal:'Gleich',percent:'Prozent',fixed:'Fest'}},
+    fr:{discount:{none:'Aucune',percent:'Pourcentage',fixed:'Montant fixe'},billing:{'Fixed Fee':'Forfait','Time and Materials':'Temps et matériaux','Retainer':'Forfait récurrent','Non-billable':'Non facturable'},budget:{Fee:'Montant',Time:'Temps'},payment:{'Bank transfer':'Virement bancaire',Card:'Carte',Cash:'Espèces',Other:'Autre'},expense:{Software:'Logiciels',Contractor:'Prestataire',Travel:'Déplacements',Marketing:'Marketing',Equipment:'Équipement',Other:'Autre'},billable:{false:'Non',true:'Oui'},plan:{equal:'Égal',percent:'Pourcentage',fixed:'Fixe'}}
+  }[lang]||null;
+  if(optionCopy){
+    const sets=[
+      ['fInvoiceDiscountType',optionCopy.discount],
+      ['fProjectBillingType',optionCopy.billing],
+      ['fProjectBudgetType',optionCopy.budget],
+      ['fPaymentMethod',optionCopy.payment],
+      ['fExpenseCategory',optionCopy.expense],
+      ['fExpenseBillable',optionCopy.billable],
+      ['fPaymentInstallment',null]
+    ];
+    sets.forEach(([id,map])=>{const el=document.getElementById(id);if(!el||!map)return;Array.from(el.options).forEach(o=>{if(Object.prototype.hasOwnProperty.call(map,o.value))o.textContent=map[o.value];});});
+  }
+  const planHelp={en:'Types: Fixed, %, Equal. Plan total must equal Invoice total.',ru:'Типы: фиксированная сумма, %, равные. Итог плана должен совпадать с итогом счёта.',es:'Tipos: fijo, %, iguales. El total del plan debe coincidir con el total de la factura.',de:'Typen: fest, %, gleich. Die Plansumme muss dem Rechnungsbetrag entsprechen.',fr:'Types : fixe, %, égal. Le total du plan doit correspondre au total de la facture.'}[lang];
+  const planHint=document.querySelector('#fInvoicePlanLines')?.parentElement?.querySelector('small.muted'); if(planHint&&planHelp)planHint.textContent=planHelp;
+  const reference=document.getElementById('fPaymentReference'); if(reference){reference.placeholder={en:'Transaction reference',ru:'Назначение / ссылка на платёж',es:'Referencia de la transacción',de:'Transaktionsreferenz',fr:'Référence de transaction'}[lang]||'Transaction reference';}
 }
 let activeLanguage='en';
 function render(lang){activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();}
