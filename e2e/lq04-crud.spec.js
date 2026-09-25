@@ -38,6 +38,10 @@ async function cancelEditAndVerify(page, screen, currentName) {
   await page.locator('#fName').fill('SHOULD NOT BE SAVED');
   await page.locator('#drawerCancel').click();
   await expect(page.locator('#detailDrawer')).not.toHaveClass(/open/);
+  if (screen === '2') {
+    await page.locator('#entityBack').click();
+    await expect(page.locator('#entityScreen')).not.toHaveClass(/active/);
+  }
   await expect(page.locator('[data-record-id]').filter({ hasText: currentName }).first()).toBeVisible();
   await expect(page.locator('[data-record-id]').filter({ hasText: 'SHOULD NOT BE SAVED' })).toHaveCount(0);
 }
