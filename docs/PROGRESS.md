@@ -515,3 +515,48 @@ B14 полностью подтверждён фактическим выпол�
 - Production redeployed and verified READY on Vercel.
 - New production deployment: `dpl_DwNAWsDSAMUonCNzp7eCnPsFCviS`.
 - ND.25 remains **0%** until live manual acceptance of the actual clickable product.
+
+
+## 2026-09-25 — VISUAL REDESIGN V2 / REFERENCE REBUILD
+
+После визуальной проверки референса зафиксировано, что предыдущие проценты NEW DESIGN отражали техническое наличие CSS/QA, а не фактическое визуальное соответствие. Начат новый честный визуальный цикл V2.
+
+### V2 progress
+| Блок | Содержание | Прогресс |
+|---|---|---:|
+| V2.1 | Разбор целевого референса и визуальной иерархии | 100% |
+| V2.2 | Новый global product shell / identity / sidebar / topbar | 75% |
+| V2.3 | Полная композиция Dashboard | 70% |
+| V2.4 | Все product modules visual system | 30% |
+| V2.5 | Responsive / mobile composition | 55% |
+| V2.6 | EN / RU / ES / DE / FR для нового слоя | 65% |
+| V2.7 | Dashboard module navigation / interaction wiring | 60% |
+| V2.8 | B14 + Core + Design Regression после V2 | 0% — выполняется |
+| V2.9 | Реальная live visual acceptance | 0% |
+
+**V2 overall: 48%**.
+
+### Фактически сделано
+- Dashboard перестроен структурно, а не только через CSS.
+- Добавлен новый product identity header.
+- Добавлен premium hero с визуальной сценой.
+- KPI получили новую иерархию.
+- Revenue & Profit получил отдельную chart composition.
+- Cashflow получил отдельную финансовую композицию.
+- Follow-ups / Overdue / Project Profitability получили новую нижнюю сетку.
+- Добавлена рабочая module rail, использующая существующие product screens.
+- Global product surfaces получили единый V2 visual language.
+- Новый слой локализован для EN/RU/ES/DE/FR.
+- Бизнес-логика, store и финансовые расчёты не менялись.
+
+### GitHub
+- Dashboard/shell commit: `d8f53885d81ec387e58f5d372d18b9b631d9c9da`
+- V2 visual system commit: `833db0e4adf089377627deaccf5a24303359eaee`
+- V2 localization commit: `94ac5a533dc55ff2c62e39463840097b6aa93cba`
+
+### Production
+- Vercel deployment: `dpl_E6er6sbdA1D5dkCsfV9FoZBJa9mC`
+- Status: READY
+- Production alias: `business-os-lukeniukrostyslav.vercel.app`
+
+Важно: V2 не будет поднят до 100% только по наличию CSS. Финальные проценты будут повышаться после фактической проверки UI, responsive поведения, локализации, кликов и регрессии.
