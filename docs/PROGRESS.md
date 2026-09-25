@@ -560,3 +560,22 @@ B14 полностью подтверждён фактическим выпол�
 - Production alias: `business-os-lukeniukrostyslav.vercel.app`
 
 Важно: V2 не будет поднят до 100% только по наличию CSS. Финальные проценты будут повышаться после фактической проверки UI, responsive поведения, локализации, кликов и регрессии.
+
+
+### V2 continuation — module surfaces + CI repair
+- V2.2 Global shell: **85%**
+- V2.3 Dashboard composition: **90%**
+- V2.4 All product module visual surfaces: **55%**
+- V2.5 Responsive/mobile composition: **70%**
+- V2.6 EN/RU/ES/DE/FR V2 layer: **75%**
+- V2.7 Existing navigation wiring for new dashboard module rail: **75%**
+- V2.8 Regression: **0% until current runs finish**
+- V2.9 Live visual acceptance: **0%**
+
+**Current V2 overall: 61%**.
+
+Additional work completed:
+- all major product module surfaces received a distinct V2 visual treatment: Leads, Clients, Proposals, Projects, Invoices, Payments, Expenses, Profit, Cashflow, Settings, Entity and Drawer;
+- stat strips, tables, pipeline, entity cards, forms and action surfaces were visually unified with the new reference direction;
+- fixed Design Regression CI configuration: repository has no lockfile, so the workflow now uses npm install and no npm cache dependency;
+- current validation runs are executing against the latest commit.
