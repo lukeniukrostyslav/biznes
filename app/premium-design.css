@@ -283,3 +283,9 @@ img,svg,canvas{max-width:100%;height:auto}
 @media(max-width:820px){.content-grid,.two-col,.three-col{grid-template-columns:1fr}.page-header,.page-title{gap:12px}.filters{flex-wrap:wrap}.filters>*{min-width:0}}
 @media(max-width:720px){.desktop-only{display:none!important}.mobile-only{display:block!important}.page-header,.page-title{align-items:flex-start;flex-direction:column}.page-actions{width:100%;display:flex;gap:8px;flex-wrap:wrap}.page-actions .btn{flex:1 1 160px}.table-wrap,.table-responsive{margin-inline:-1px}.data-table{min-width:640px}.pipeline{grid-template-columns:1fr!important;overflow:visible}.deal,.stage{min-width:0}.drawer,.modal,.dialog{width:calc(100vw - 16px)!important}.toast{max-width:calc(100vw - 24px)}}
 @media(min-width:721px){.mobile-only{display:none!important}}
+
+/* ND.20 — five-language visual safety */
+[data-i18n],#nav button,.lang,.mobile-nav button,.badge,.btn,.primary,.secondary{overflow-wrap:anywhere}
+.page-title h1,.page-title p,.card-header h2,.data-table th,.data-table td{word-break:normal;overflow-wrap:anywhere}
+.lang{min-width:72px;max-width:110px}
+@media(max-width:720px){.page-title p{max-width:100%;line-height:1.45}.data-table th,.data-table td{white-space:normal}}
