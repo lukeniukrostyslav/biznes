@@ -1,6 +1,6 @@
 # BUSINESS OS — ПРОГРЕСС
 
-Последнее обновление: 2026-09-25 — B12 закрыт на 100% после persistence integration + GitHub Actions
+Последнее обновление: 2026-09-25 — B14 закрыт на 100% после полного Playwright E2E + GitHub Actions
 
 ## Текущий рабочий baseline
 
@@ -20,7 +20,7 @@
 | B11 | Cashflow / Dashboard / Analytics | 100% |
 | B12 | Persistence / Export / Import | 100% |
 | B13 | Technical UI / Localization / Responsive | 100% |
-| B14 | Functional / E2E QA | 0% |
+| B14 | Functional / E2E QA | 100% |
 | NEW DESIGN | Новый Premium Design с нуля | 0% |
 | B15 | Commercial Packaging | 0% |
 | B16 | Sales / Marketplaces | 0% |
@@ -265,34 +265,53 @@ GitHub Actions **Run #100 — success**.
 
 Следующий технический приоритет — **B14 Functional / E2E QA**.
 
-## B14 — ПОДБЛОКИ И ТЕКУЩЕЕ СОСТОЯНИЕ
+## B14 — ПОДБЛОКИ И ФАКТИЧЕСКОЕ ЗАКРЫТИЕ
 
 | Подблок | Название | Прогресс |
 |---|---|---:|
 | B14.1 | Test infrastructure / Playwright setup | 100% |
-| B14.2 | Application startup & runtime smoke | 0% |
-| B14.3 | Navigation & core UI flows | 0% |
-| B14.4 | Leads / CRM functional E2E | 0% |
-| B14.5 | Projects functional E2E | 0% |
-| B14.6 | Proposals functional E2E | 0% |
-| B14.7 | Invoices & Payments E2E | 0% |
-| B14.8 | Expenses / Profit calculations E2E | 0% |
-| B14.9 | Cashflow E2E | 0% |
-| B14.10 | Dashboard / Analytics E2E | 0% |
-| B14.11 | Localization EN / ES / DE / FR / RU | 0% |
-| B14.12 | Currency / money formatting E2E | 0% |
-| B14.13 | Export / Import / Persistence E2E | 0% |
-| B14.14 | Responsive / Mobile functional E2E | 0% |
-| B14.15 | Validation / empty states / error states | 0% |
-| B14.16 | Cross-module workflow E2E | 0% |
-| B14.17 | Browser console / runtime error audit | 0% |
-| B14.18 | Full regression suite | 0% |
-| B14.19 | CI / GitHub Actions verification | 0% |
-| B14.20 | Final B14 acceptance & evidence | 0% |
+| B14.2 | Application startup & runtime smoke | 100% |
+| B14.3 | Navigation & core UI flows | 100% |
+| B14.4 | Leads / CRM functional E2E | 100% |
+| B14.5 | Projects functional E2E | 100% |
+| B14.6 | Proposals functional E2E | 100% |
+| B14.7 | Invoices & Payments E2E | 100% |
+| B14.8 | Expenses / Profit calculations E2E | 100% |
+| B14.9 | Cashflow E2E | 100% |
+| B14.10 | Dashboard / Analytics E2E | 100% |
+| B14.11 | Localization EN / ES / DE / FR / RU | 100% |
+| B14.12 | Currency / money formatting E2E | 100% |
+| B14.13 | Export / Import / Persistence E2E | 100% |
+| B14.14 | Responsive / Mobile functional E2E | 100% |
+| B14.15 | Validation / empty states / error states | 100% |
+| B14.16 | Cross-module workflow E2E | 100% |
+| B14.17 | Browser console / runtime error audit | 100% |
+| B14.18 | Full regression suite | 100% |
+| B14.19 | CI / GitHub Actions verification | 100% |
+| B14.20 | Final B14 acceptance & evidence | 100% |
 
-### B14 — текущая работа
+### B14 закрыт на 100%
 
-Добавлен Playwright smoke suite: e2e/b14-smoke.spec.js, включающий запуск Dashboard, browser runtime errors, все 5 языков, Dashboard period filter, Export/Import wiring и mobile navigation. Добавлен npm run test:e2e и отдельный GitHub Actions workflow .github/workflows/b14-e2e.yml.
+B14 полностью подтверждён фактическим выполнением, а не только наличием тестового кода.
 
-Правило процента сохраняется: B14 не повышается только за наличие тестов. После фактического успешного выполнения CI проценты будут повышаться по подтверждённым подблокам.
+Финальная GitHub Actions acceptance:
+- B14 E2E Run #22 — success
+- Core Tests Run #145 — success
+- B14 E2E: 28/28 тестов прошли
+- Core regression: 126/126 тестов прошли
+- B14 workflow: все шаги завершены успешно
+- Playwright report artifact успешно загружен
+- PR #3 "B14 final validation after E2E fixes" успешно merged в main
 
+В ходе финальной валидации были исправлены реальные проблемы:
+- scope runtime error в legacy UI scripts;
+- отсутствие module-scoped typeUiCopy в create flows;
+- устаревшие ссылки на удалённые invoice fields;
+- детерминированная mobile navigation в E2E;
+- корректная проверка пустого payment-plan контейнера через фактически отрисованный installment;
+- assertions для Profit/Cashflow привязаны к активному экрану;
+- mobile overflow тесты больше не пытаются кликать скрытую desktop navigation.
+
+После исправлений финальный E2E стал полностью зелёным: 28/28.
+
+Следующий технический приоритет — NEW DESIGN.
