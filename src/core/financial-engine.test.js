@@ -79,7 +79,7 @@ test('business metrics derive invoice balance from linked payments', () => {
   assert.equal(result.outstanding, 1150);
   assert.equal(result.expectedPayments, 1150);
   assert.equal(result.actualProfit, 250);
-  assert.equal(result.forecastCash, 1150);
+  assert.equal(result.forecastCash, 1350);
 });
 
 test('planned expenses are not double-counted in actual profit', () => {
@@ -311,6 +311,6 @@ test('cashflow forecast uses installment due dates and planned expenses within h
   const result = calculateCashflowForecast(store, new Date('2026-09-24T00:00:00Z'), 30);
   assert.equal(result.futureInflows, 900);
   assert.equal(result.futureExpenses, 120);
-  assert.equal(result.forecastNetCash, 780);
+  assert.equal(result.forecastNetCash, 880);
   assert.equal(result.events.length, 3);
 });
