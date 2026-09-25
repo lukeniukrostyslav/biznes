@@ -227,7 +227,85 @@
 <div class="field"><label data-ui="nextAction">Next action</label><input id="fAction" placeholder="Follow up" data-ui-placeholder="followUp"></div>
 <div class="field full"><label data-ui="notes">Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…" data-ui-placeholder="notesPlaceholder"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
-<script>let activeLanguage='en';window.activeLanguage=activeLanguage;</script>
+<script>let activeLanguage='en';window.activeLanguage=activeLanguage;</script><script>
+/* BUSINESS OS boot fallback: keeps navigation and language functional if the deferred runtime fails. */
+(function(){
+  const LANGS=['en','ru','es','de','fr'];
+  const navMap={
+    en:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings'],
+    ru:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки'],
+    es:['Resumen','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes'],
+    de:['Übersicht','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen'],
+    fr:['Aperçu','Prospects','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Profit','Trésorerie','Paramètres']
+  };
+  const copy={
+    en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',period:['This month','This quarter','This year','All time'],k:['Revenue','Outstanding','Pipeline','Profit'],chart:'Revenue & Profit',cash:'Cashflow Overview',income:'Total Income',expenses:'Total Expenses',net:'Net Profit',bank:'Cash in Bank',follow:'Follow-ups Today',overdue:'Overdue Invoices',projects:'Active Projects',profitability:'Project Profitability'},
+    ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',period:['Этот месяц','Этот квартал','Этот год','Всё время'],k:['Выручка','К оплате','Воронка','Прибыль'],chart:'Выручка и прибыль',cash:'Денежный поток',income:'Всего поступило',expenses:'Всего расходов',net:'Чистая прибыль',bank:'Деньги в банке',follow:'Задачи на сегодня',overdue:'Просроченные счета',projects:'Активные проекты',profitability:'Прибыльность проектов'},
+    es:{g:'Buenos días',s:'Esto es lo que ocurre hoy en tu negocio.',search:'⌕ Buscar clientes, proyectos, facturas…',period:['Este mes','Este trimestre','Este año','Todo el tiempo'],k:['Ingresos','Pendiente','Pipeline','Beneficio'],chart:'Ingresos y beneficio',cash:'Flujo de caja',income:'Ingresos totales',expenses:'Gastos totales',net:'Beneficio neto',bank:'Dinero en banco',follow:'Seguimientos de hoy',overdue:'Facturas vencidas',projects:'Proyectos activos',profitability:'Rentabilidad de proyectos'},
+    de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',period:['Dieser Monat','Dieses Quartal','Dieses Jahr','Gesamte Zeit'],k:['Umsatz','Offen','Pipeline','Gewinn'],chart:'Umsatz & Gewinn',cash:'Cashflow-Übersicht',income:'Gesamte Einnahmen',expenses:'Gesamte Ausgaben',net:'Nettogewinn',bank:'Geld auf dem Konto',follow:'Heutige Follow-ups',overdue:'Überfällige Rechnungen',projects:'Aktive Projekte',profitability:'Projektprofitabilität'},
+    fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',period:['Ce mois-ci','Ce trimestre','Cette année','Toute la période'],k:['Chiffre d’affaires','À encaisser','Pipeline','Profit'],chart:'Chiffre d’affaires & profit',cash:'Vue de trésorerie',income:'Total des entrées',expenses:'Total des dépenses',net:'Bénéfice net',bank:'Trésorerie en banque',follow:'Suivis du jour',overdue:'Factures en retard',projects:'Projets actifs',profitability:'Rentabilité des projets'}
+  };
+  function setText(sel,value){document.querySelectorAll(sel).forEach(el=>{el.textContent=value;});}
+  function apply(lang){
+    if(!LANGS.includes(lang))lang='en';
+    const c=copy[lang];
+    const nav=document.getElementById('nav');
+    if(nav && !nav.children.length){
+      nav.innerHTML=navMap[lang].map((x,i)=>'<button type="button" data-screen="'+i+'">'+x+'</button>').join('');
+      bindNav();
+    }else if(nav){
+      nav.querySelectorAll('button').forEach((b,i)=>{if(navMap[lang][i])b.textContent=navMap[lang][i];});
+    }
+    document.documentElement.lang=lang;
+    const langEl=document.getElementById('lang'); if(langEl)langEl.value=lang;
+    const g=document.getElementById('greeting'); if(g)g.textContent=c.g;
+    const s=document.getElementById('subtitle'); if(s)s.textContent=c.s;
+    const search=document.getElementById('search'); if(search)search.textContent=c.search;
+    const period=document.getElementById('dashboardPeriod'); if(period)period.querySelectorAll('option').forEach((o,i)=>{if(c.period[i])o.textContent=c.period[i];});
+    const k=['revenueLabel','outstandingLabel','pipelineLabel','profitLabel'];
+    k.forEach((key,i)=>setText('[data-ui="'+key+'"]',c.k[i]));
+    setText('[data-ui="revenueProfitTitle"]',c.chart);
+    setText('[data-ui="cashflowOverview"]',c.cash);
+    setText('[data-ui="totalIncome"]',c.income);
+    setText('[data-ui="totalExpenses"]',c.expenses);
+    setText('[data-ui="netProfit"]',c.net);
+    setText('[data-v2="cashInBank"]',c.bank);
+    setText('[data-ui="followupsToday"]',c.follow);
+    setText('[data-ui="overdueInvoices"]',c.overdue);
+    setText('[data-v2="activeProjectsTitle"]',c.projects);
+    setText('[data-ui="projectProfitability"]',c.profitability);
+    setText('[data-ui="revenueProfitTitle"]',c.chart);
+    localStorage.setItem('business-os-lang',lang);
+    window.activeLanguage=lang;
+  }
+  function bindNav(){
+    document.querySelectorAll('#nav button').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const i=Number(btn.dataset.screen);
+        const ids=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];
+        const target=document.getElementById(ids[i]); if(!target)return;
+        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+        target.classList.add('active');
+        document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b===btn));
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+    });
+  }
+  document.addEventListener('DOMContentLoaded',()=>{
+    const saved=localStorage.getItem('business-os-lang')||'en';
+    apply(saved);
+    const lang=document.getElementById('lang');
+    if(lang && !lang.dataset.fallbackBound){
+      lang.dataset.fallbackBound='1';
+      lang.addEventListener('change',e=>apply(e.target.value));
+    }
+    setTimeout(()=>{
+      const nav=document.getElementById('nav');
+      if(nav && !nav.children.length){apply(localStorage.getItem('business-os-lang')||'en');}
+    },0);
+  });
+})();
+</script>
 <script type="module">
 /* BUSINESS OS runtime bundle: core modules inlined for reliable production/mobile loading. */
 
