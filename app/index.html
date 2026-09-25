@@ -639,8 +639,8 @@ function renderDashboardRealData(){
   const cols=lower.querySelectorAll('.wide');
   const follow=businessStore.leads||[];
   const followHtml=follow.length?follow.slice(0,5).map(x=>'<div class="row"><span class="dot"></span><div><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.nextAction||x.notes||'Follow up')+'</small></div><span class="amount">'+recordAmount(x)+'</span></div>').join(''):'<div class="empty">'+t.none+'</div>';
-  const overdue=(businessStore.invoices||[]).map(i=>({i,status:calculateInvoicePaymentStatus(i,businessStore.payments||[],new Date())})).filter(x=>x.status.status==='Overdue');
-  const overdueHtml=overdue.length?overdue.slice(0,5).map(x=>'<div class="row"><span class="dot" style="background:#dc3c4c"></span><div><strong>'+recordLabel(x.i)+'</strong><small>'+escapeHtml(x.i.dueDate||'')+'</small></div><span class="amount danger">'+recordAmount(x.i)+'</span></div>').join(''):'<div class="empty">'+t.none+'</div>';
+  const dashboardOverdue=(businessStore.invoices||[]).map(i=>({i,status:calculateInvoicePaymentStatus(i,businessStore.payments||[],new Date())})).filter(x=>x.status.status==='Overdue');
+  const overdueHtml=dashboardOverdue.length?dashboardOverdue.slice(0,5).map(x=>'<div class="row"><span class="dot" style="background:#dc3c4c"></span><div><strong>'+recordLabel(x.i)+'</strong><small>'+escapeHtml(x.i.dueDate||'')+'</small></div><span class="amount danger">'+recordAmount(x.i)+'</span></div>').join(''):'<div class="empty">'+t.none+'</div>';
   const projects=businessStore.projects||[];
   const projectHtml=projects.length?projects.slice(0,5).map(p=>{const pr=calculateProjectProfit(p,{expenses:businessStore.expenses||[]});return '<tr><td>'+recordLabel(p)+'</td><td>'+money(pr.revenue)+'</td><td class="green">'+money(pr.profit)+'</td><td>'+escapeHtml(pr.margin!=null?pr.margin+'%':'—')+'</td></tr>';}).join(''):'<tr><td colspan="4" class="empty">'+t.none+'</td></tr>';
   if(cols[0])cols[0].innerHTML='<div class="card-title"><h2>'+t.follow+'</h2><span class="muted">'+follow.length+'</span></div><div class="list">'+followHtml+'</div>';
