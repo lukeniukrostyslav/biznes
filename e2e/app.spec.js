@@ -87,3 +87,28 @@ test('B14 reload preserves persisted records', async ({ page }) => {
   const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('business-os-store-v1')));
   expect(stored.leads.some(x => x.name === 'Reload Test')).toBeTruthy();
 });
+
+
+test('B14 accessibility smoke: named controls and keyboard activation', async ({ page }) => {
+  const unnamedButtons = await page.locator('button').evaluateAll(buttons =>
+    buttons.filter(button => {
+      const text = (button.innerText || '').trim();
+      const aria = (button.getAttribute('aria-label') || '').trim();
+      const title = (button.getAttribute('title') || '').trim();
+      return !text && !aria && !title;
+    }).length
+  );
+  expect(unnamedButtons).toBe(0);
+
+  await page.locator('#nav button[data-screen="1"]').focus();
+  await expect(page.locator('#nav button[data-screen="1"]')).toBeFocused();
+  await page.locator('#nav button[data-screen="1"]').press('Enter');
+  await expect(page.locator('#leadsScreen')).toHaveClass(/active/);
+
+  const newLead = page.locator('button[data-i18n="newLead"]');
+  await newLead.focus();
+  await newLead.press('Enter');
+  await expect(page.locator('#detailDrawer')).toHaveClass(/open/);
+  await expect(page.locator('label[for="fName"]')).toBeVisible();
+  await page.locator('#drawerCancel').click();
+});
