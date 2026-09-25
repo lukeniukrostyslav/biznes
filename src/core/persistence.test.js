@@ -223,3 +223,17 @@ test('restoreRecord rejects malformed archived collection metadata',()=>{
   assert.throws(()=>restoreRecord(store,'arch1'),/Unknown BUSINESS OS collection/);
   assert.equal(store.archivedRecords.length,1);
 });
+
+
+test('validateStore rejects malformed archived records and duplicate archived ids',()=>{
+  const store=createEmptyStore();
+  store.archivedRecords=[
+    {id:'arch1',collection:'unknown',name:'Broken'},
+    {id:'arch2',collection:'clients',name:'One'},
+    {id:'arch2',collection:'clients',name:'Duplicate'}
+  ];
+  const validation=validateStore(store);
+  assert.equal(validation.valid,false);
+  assert.ok(validation.errors.some(error=>error.includes('invalid collection')));
+  assert.ok(validation.errors.some(error=>error.includes('duplicate archived id')));
+});
