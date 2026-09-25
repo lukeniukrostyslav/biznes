@@ -328,9 +328,9 @@ B14 полностью подтверждён фактическим выпол�
 | ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 95% |
 | ND.5 | Core component system | 90% |
 | ND.6 | Overview / Dashboard redesign | 85% |
-| ND.7 | Leads / CRM redesign | 70% |
-| ND.8 | Clients redesign | 35% |
-| ND.9 | Proposals redesign | 0% |
+| ND.7 | Leads / CRM redesign | 85% |
+| ND.8 | Clients redesign | 100% |
+| ND.9 | Proposals redesign | 35% |
 | ND.10 | Projects redesign | 0% |
 | ND.11 | Invoices redesign | 0% |
 | ND.12 | Payments redesign | 0% |
@@ -393,3 +393,10 @@ B14 полностью подтверждён фактическим выпол�
 - ND.7: 70% — pipeline/stage/deal visual hierarchy refined, responsive behavior and empty-state treatment added; final functional/browser regression remains.
 - ND.8: 35% — Clients table/card surface, page hierarchy, status badges, hover behavior and mobile table handling added.
 - GitHub commit: `70752651ae86177a585ddf9474238de5c492758f`.
+
+
+### Design checkpoint — Clients completed / Proposals started
+- ND.7: 85% — Leads/CRM visual system substantially complete; final browser/functional verification remains.
+- ND.8: 100% — Clients premium surface completed: hierarchy, table treatment, statuses, actions and mobile behavior.
+- ND.9: 35% — Proposals premium surface started with table hierarchy, status treatment, actions and responsive handling.
+- GitHub commit: `822dd5434f09dcafc66af9da3fb3baea71b47c40`.
