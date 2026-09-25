@@ -155,7 +155,7 @@ export function getDashboardLabels(language = 'en') {
   const labels = {
     en: { month: 'This month', quarter: 'This quarter', year: 'This year', all: 'All time', empty: 'No financial data for this period.' },
     ru: { month: 'Этот месяц', quarter: 'Этот квартал', year: 'Этот год', all: 'Всё время', empty: 'За этот период нет финансовых данных.' },
-    es: { month: 'Este mes', quarter: 'Este trimestre', year: 'Este año', all: 'Todo el время', empty: 'No hay datos financieros para este periodo.' },
+    es: { month: 'Este mes', quarter: 'Este trimestre', year: 'Este año', all: 'Todo el tiempo', empty: 'No hay datos financieros para este periodo.' },
     de: { month: 'Dieser Monat', quarter: 'Dieses Quartal', year: 'Dieses Jahr', all: 'Gesamtzeitraum', empty: 'Keine Finanzdaten für diesen Zeitraum.' },
     fr: { month: 'Ce mois', quarter: 'Ce trimestre', year: 'Cette année', all: 'Toute la période', empty: 'Aucune donnée financière pour cette période.' }
   };
