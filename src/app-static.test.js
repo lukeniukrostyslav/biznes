@@ -37,3 +37,52 @@ test('dashboard and cashflow render functions stay explicitly wired', () => {
   assert.match(html, /refreshDashboardVisuals\(\);/);
   assert.match(html, /renderDashboardRealData\(\);/);
 });
+
+
+test('B13 responsive layout covers desktop, tablet and mobile breakpoints', () => {
+  assert.match(html, /@media\(max-width:1050px\)/);
+  assert.match(html, /@media\(max-width:900px\)/);
+  assert.match(html, /@media\(max-width:720px\)/);
+  assert.match(html, /@media\(max-width:600px\)/);
+  assert.match(html, /\.table-card\{overflow:auto\}/);
+  assert.match(html, /\.pipeline\{[^}]*overflow:auto/);
+});
+
+test('B13 focus and form accessibility hooks are present', () => {
+  assert.match(html, /:focus-visible/);
+  assert.match(html, /<label[^>]*data-ui="nameLabel"/);
+  assert.match(html, /<input[^>]*type="email"/);
+  assert.match(html, /<input[^>]*type="tel"/);
+  assert.match(html, /<input[^>]*type="date"/);
+  assert.match(html, /aria-label="Dashboard period"/);
+  assert.match(html, /aria-label="Search leads"/);
+  assert.match(html, /aria-label="Lead stage filter"/);
+});
+
+test('B13 localization covers all five required languages', () => {
+  for (const lang of ['en','ru','es','de','fr']) {
+    assert.match(html, new RegExp(lang + ':\\{'));
+  }
+  assert.match(html, /document\.documentElement\.lang=lang/);
+});
+
+test('B13 UI localization is wired across primary screens', () => {
+  for (const key of ['dashboard','leadsTitle','clientsTitle','proposalsTitle','projectsTitle','invoicesTitle','paymentsTitle','expensesTitle','profitTitle','cashflowTitle','settingsTitle']) {
+    assert.match(html, new RegExp('data-i18n="' + key + '"'));
+  }
+});
+
+test('B13 long content and data tables remain horizontally safe', () => {
+  assert.match(html, /overflow:auto/);
+  assert.match(html, /overflow-x:auto|overflow:auto/);
+  assert.match(html, /word-break|overflow-wrap|white-space:nowrap/);
+});
+
+test('B13 semantic form controls have explicit input types and labels', () => {
+  const inputs = [...html.matchAll(/<input\b[^>]*>/g)].map(m => m[0]);
+  assert.ok(inputs.some(x => /type="email"/.test(x)));
+  assert.ok(inputs.some(x => /type="tel"/.test(x)));
+  assert.ok(inputs.some(x => /type="date"/.test(x)));
+  assert.ok(inputs.some(x => /type="number"/.test(x)));
+  assert.match(html, /<label[^>]*>Name<\/label>|data-ui="nameLabel"/);
+});
