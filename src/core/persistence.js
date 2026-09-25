@@ -96,6 +96,16 @@ function validateStore(input) {
     }
   }
 
+  for (const record of archived) {
+    if (!record?.id || !COLLECTIONS.includes(record.collection)) continue;
+    const active = Array.isArray(source[record.collection])
+      ? source[record.collection].some(item => item?.id === record.id)
+      : false;
+    if (active) {
+      errors.push('archived record conflicts with active record: ' + record.collection + ':' + record.id);
+    }
+  }
+
   const validateMoneyField = (collection, field) => {
     for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
       if (record?.[field] == null || record[field] === '') continue;
