@@ -466,3 +466,8 @@ B14 полностью подтверждён фактическим выпол�
 ### Design checkpoint — ND.20 completed
 - ND.20: 100% — Verified the five localization maps (EN/RU/ES/DE/FR), including entity labels, UI labels and toast/validation copy; added visual safety for long localized strings and mobile wrapping.
 - GitHub commit: `390d51901412c3ae2bfe66f62a0f965bec87c53a`.
+
+
+### Design checkpoint — ND.21 completed
+- ND.21: 100% — Accessibility polish finalized: visible focus states, disabled-state treatment, high-contrast support and reduced-motion behavior.
+- GitHub commit: `46a4b02d9ccd34f296edcb6bcab2212a4753c1bd`.
