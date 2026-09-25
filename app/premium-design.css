@@ -1461,3 +1461,36 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   #dashboardScreen .dashboard-chart-card{min-height:235px!important}
   #dashboardScreen .dashboard-cash-card{min-height:260px!important}
 }
+
+
+/* V2.35 — remove non-reference decorative layers and tighten approved composition */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-hero{position:relative!important;display:flex!important;align-items:center!important;min-height:62px!important;padding:0!important;margin:0 0 11px!important}
+  #dashboardScreen .dashboard-hero .eyebrow,
+  #dashboardScreen .dashboard-hero .hero-proof,
+  #dashboardScreen .dashboard-hero-art{display:none!important}
+  #dashboardScreen .dashboard-hero-copy{padding:0!important}
+  #dashboardScreen .dashboard-hero h1{margin:0 0 3px!important;font-size:24px!important;line-height:1.05!important}
+  #dashboardScreen .dashboard-hero p{margin:0!important;font-size:12px!important}
+  #dashboardScreen .dashboard-date{position:absolute!important;right:195px!important;top:8px!important;font-size:11px!important;color:#66758a!important}
+  #dashboardScreen .hero-period{margin-left:auto!important;width:145px!important}
+  #dashboardScreen .dashboard-card-title p{display:none!important}
+  #dashboardScreen .dashboard-chart-card .card-title{min-height:31px!important}
+  #dashboardScreen .dashboard-cash-card .card-title{min-height:31px!important}
+  #dashboardScreen .dashboard-lower-grid .dashboard-card-title{min-height:31px!important}
+  #dashboardScreen .dashboard-kpi .kpi-trend:empty{display:none!important}
+  #dashboardScreen .dashboard-kpi:not(.has-kpi-data) .kpi-trend{visibility:hidden!important}
+  #dashboardScreen .dashboard-kpi:not(.has-kpi-data) .kpi-foot{visibility:hidden!important}
+}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-hero .eyebrow,
+  #dashboardScreen .dashboard-hero .hero-proof,
+  #dashboardScreen .dashboard-hero-art{display:none!important}
+  #dashboardScreen .dashboard-hero{min-height:62px!important;padding:0!important;margin-bottom:8px!important}
+  #dashboardScreen .dashboard-hero h1{font-size:20px!important;margin-bottom:3px!important}
+  #dashboardScreen .dashboard-hero p{font-size:11px!important}
+  #dashboardScreen .dashboard-date{display:block!important;margin-top:3px!important;font-size:10px!important}
+  #dashboardScreen .dashboard-card-title p{display:none!important}
+  #dashboardScreen .dashboard-kpi:not(.has-kpi-data) .kpi-trend{visibility:hidden!important}
+  #dashboardScreen .dashboard-kpi:not(.has-kpi-data) .kpi-foot{visibility:hidden!important}
+}
