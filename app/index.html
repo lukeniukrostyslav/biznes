@@ -608,7 +608,7 @@ function renderDashboardRealData(){
 }
 
   const metrics=calculateBusinessMetrics(businessStore);
-  const paid=Number(metrics.paid||0), expenses=Number(metrics.actualExpenses||0), profit=Number(metrics.actualProfit||0);
+  const paid=Number(metrics.paid||0), expenses=Number(metrics.expenses||0), profit=Number(metrics.actualProfit||0);
   const incomeEl=document.getElementById('dashIncome'), expEl=document.getElementById('dashExpenses'), profitEl=document.getElementById('dashNetProfit');
   if(incomeEl)incomeEl.textContent=money(paid);
   if(expEl)expEl.textContent=money(expenses);
