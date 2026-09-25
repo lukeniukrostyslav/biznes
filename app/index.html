@@ -83,6 +83,13 @@
 <div class="card wide"><div class="card-title"><h2 data-ui="moneyClarity">Money clarity</h2></div><div class="list" id="cashflowClarity"><div class="metric"><span data-ui="currentNetCash">Current net cash</span><strong id="cashflowCurrentNet">€0</strong></div><div class="metric"><span data-ui="expectedInflows">Expected inflows</span><strong id="cashflowFutureInflows">€0</strong></div><div class="metric"><span data-ui="expectedOutflows">Expected outflows</span><strong id="cashflowFutureExpenses">€0</strong></div></div></div>
 </div>
 </div>
+<div id="settingsScreen" class="screen">
+<div class="page-title"><div><h1 id="settingsTitle">Settings</h1><p id="settingsSub">Local workspace data, import/export and archived records.</p></div></div>
+<div class="card wide">
+<div class="card-title"><h2 id="archiveTitle">Archived records</h2><span class="muted" id="archiveCount">0</span></div>
+<div id="archiveList" class="list"></div>
+</div>
+</div>
 <div id="expensesScreen" class="screen">
 <div class="page-title"><div><h1 data-i18n="expensesTitle">Expenses</h1><p data-i18n="expensesSub">Know where delivery and operating costs reduce your margin.</p></div><button class="primary" data-i18n="addExpense">＋ Add expense</button></div>
 <div class="stat-strip"><div class="card mini"><span class="muted" data-ui="thisMonthExpense">This month</span><strong id="expensesThisMonth">€0</strong></div><div class="card mini"><span class="muted" data-ui="projectCosts">Project costs</span><strong id="expensesProjectCosts">€0</strong></div><div class="card mini"><span class="muted" data-ui="operatingCosts">Operating</span><strong id="expensesOperating">€0</strong></div><div class="card mini"><span class="muted" data-ui="unassigned">Unassigned</span><strong id="expensesUnassigned">€0</strong></div></div>
@@ -140,7 +147,7 @@
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus, calculateInvoice } from "../src/core/financial-engine.js";
-import { archiveRecord, validateStore, exportStore, importStore, loadStore as loadPersistentStore, saveStore as savePersistentStore } from "../src/core/persistence.js";
+import { archiveRecord, validateStore, exportStore, importStore, restoreRecord, loadStore as loadPersistentStore, saveStore as savePersistentStore } from "../src/core/persistence.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres']}};
 
 const screenCopy={
@@ -196,8 +203,8 @@ function applyUiCopy(lang){
   const reference=document.getElementById('fPaymentReference'); if(reference){reference.placeholder={en:'Transaction reference',ru:'Назначение / ссылка на платёж',es:'Referencia de la transacción',de:'Transaktionsreferenz',fr:'Référence de transaction'}[lang]||'Transaction reference';}
 }
 let activeLanguage='en';
-function render(lang){activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();}
-function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
+function render(lang){activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();renderArchive();}
+function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
 
 const STORE_KEY='business-os-store-v1';
 const defaultStore={schemaVersion:2,clients:[],leads:[],proposals:[],projects:[],invoices:[],payments:[],expenses:[],archivedRecords:[]};
@@ -488,6 +495,29 @@ function createInvoiceFromProject(projectId){
   toast(t('invoiceCreated'));
   refreshDashboardMetrics();
   renderStoredRecords();
+}
+function renderArchive(){
+  const copy={
+    en:{none:'No archived records.',restore:'Restore',confirm:'Restore this record?',success:'Record restored',blocked:'Restore blocked by current relationships'},
+    ru:{none:'Архив пуст.',restore:'Восстановить',confirm:'Восстановить эту запись?',success:'Запись восстановлена',blocked:'Восстановление заблокировано из-за текущих связей'},
+    es:{none:'No hay registros archivados.',restore:'Restaurar',confirm:'¿Restaurar este registro?',success:'Registro restaurado',blocked:'Restauración bloqueada por las relaciones actuales'},
+    de:{none:'Keine archivierten Datensätze.',restore:'Wiederherstellen',confirm:'Diesen Datensatz wiederherstellen?',success:'Datensatz wiederhergestellt',blocked:'Wiederherstellung wegen aktueller Beziehungen blockiert'},
+    fr:{none:'Aucun enregistrement archivé.',restore:'Restaurer',confirm:'Restaurer cet enregistrement ?',success:'Enregistrement restauré',blocked:'Restauration bloquée par les relations actuelles'}
+  }[activeLanguage]||{};
+  const list=document.getElementById('archiveList'), items=businessStore.archivedRecords||[];
+  document.getElementById('archiveCount').textContent=items.length;
+  if(!items.length){list.innerHTML='<div class="empty">'+copy.none+'</div>';return;}
+  list.innerHTML=items.map(item=>'<div class="action-item"><div><strong>'+escapeHtml(recordLabel(item))+'</strong><small>'+escapeHtml(item.collection)+' · '+escapeHtml(item.archivedAt||'')+'</small></div><button class="secondary archive-restore" data-id="'+escapeHtml(item.id)+'" data-collection="'+escapeHtml(item.collection)+'">'+copy.restore+'</button></div>').join('');
+  list.querySelectorAll('.archive-restore').forEach(btn=>btn.addEventListener('click',()=>{
+    if(!confirm(copy.confirm))return;
+    try{
+      businessStore=saveStore(restoreRecord(businessStore,btn.dataset.id));
+      toast(copy.success);
+      refreshDashboardMetrics();
+      renderStoredRecords();
+      renderArchive();
+    }catch(error){toast(copy.blocked);}
+  }));
 }
 function validateStoredRelationships(store){
   return validateStore(store).errors;
