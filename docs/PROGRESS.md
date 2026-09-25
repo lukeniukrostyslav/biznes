@@ -699,3 +699,20 @@ Latest commits:
 - a8f498af986256c0eef9f86101abe990cfbe4384 — reference sidebar/dashboard polish
 
 **V2 overall: 76%** — live acceptance intentionally remains 0% until final deployment inspection.
+
+
+### V2 continuation — V2.17 internal screen premium pass
+- V2.2 Global shell: **96%**
+- V2.3 Dashboard composition: **98%**
+- V2.4 All product module visual surfaces: **82%**
+- V2.5 Responsive/mobile composition: **87%**
+- V2.6 EN / RU / ES / DE / FR V2 layer: **82%**
+- V2.7 Existing navigation wiring: **76%**
+- V2.8 B14 + Core + Design Regression: **100%**
+- V2.9 Live visual acceptance: **0%**
+
+V2.17 completed the shared premium treatment for internal screens: page headers, KPI strips, tables, toolbars, pipeline cards, Profit/Cashflow cards, Settings cards, hover states and mobile table handling. Business logic and existing data models were not changed.
+
+Design commit: d278d8eb3c3b1a440397d04b341b80361e7661b2
+
+**V2 overall: 81%** — final visual acceptance remains intentionally pending.
