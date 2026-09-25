@@ -776,3 +776,29 @@ Design commit: 01cc27dc49c5f91b2ae4ec590470681d044c9057
 Production deployment: dpl_C8ndWvi7iMi1XC8XtGUn49NYGRnz — READY.
 
 **V2 overall: 87%** — live visual acceptance remains intentionally pending final manual inspection across desktop/mobile and all product screens.
+
+
+### Design checkpoint — V2.23 / approved reference parity pass — 2026-09-25
+
+Reference target re-confirmed from the approved desktop + mobile reference:
+- compact dark desktop sidebar with clear navigation icons and active state;
+- clean white topbar with search, primary New action, notifications and language;
+- dashboard greeting/date/period placed directly above the KPI row;
+- four balanced KPI cards with distinct semantic icon surfaces;
+- Revenue & Profit and Cashflow Overview as the primary two-column financial surface;
+- three operational cards below: Follow-ups, Overdue Invoices, Active Projects;
+- full-width Project Profitability table below;
+- mobile composition kept as a separate compact system with 2×2 KPI grid and bottom navigation.
+
+Implemented in the premium visual layer only:
+- removed the desktop-only identity strip from the visual flow;
+- reduced dashboard hero height and removed decorative hero artwork from the desktop composition;
+- tightened shell, KPI, financial-card and lower-grid proportions toward the approved reference;
+- refined semantic KPI icon surfaces and financial meters;
+- restored the reference-style 3-column operational row + full-width profitability table;
+- preserved existing business logic, data model, navigation behavior and responsive/mobile architecture.
+
+GitHub commit:
+- `e9b2aac113e98deb5c849ff41f96bea2c73888f1` — design: bring dashboard to approved reference level
+
+**Acceptance rule:** this pass is implemented but not counted as final visual acceptance until the fresh deployment is READY and the live desktop/mobile screens are manually checked. Therefore the NEW DESIGN percentage remains unchanged until that verification.
