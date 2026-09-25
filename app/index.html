@@ -48,23 +48,23 @@
   <section class="kpis dashboard-kpis" aria-label="Business overview">
     <article class="card kpi dashboard-kpi revenue-kpi">
       <div class="kpi-top"><span class="kpi-label" data-ui="revenueLabel">Revenue</span><span class="kpi-icon">▥</span></div>
-      <div class="kpi-value-row"><h3 id="metricRevenue">€0</h3><span class="kpi-trend">↗ —</span></div>
-      <div class="kpi-bottom"><span class="kpi-foot">vs. last month</span><svg class="kpi-spark" viewBox="0 0 92 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="2,23 14,20 25,22 36,14 48,17 60,10 72,13 90,3"/></svg></div>
+      <div class="kpi-value-row"><h3 id="metricRevenue">€0</h3><span class="kpi-trend" data-kpi-trend="revenue">—</span></div>
+      <div class="kpi-bottom"><span class="kpi-foot">—</span></div>
     </article>
     <article class="card kpi dashboard-kpi outstanding-kpi">
       <div class="kpi-top"><span class="kpi-label" data-ui="outstandingLabel">Outstanding</span><span class="kpi-icon">▣</span></div>
-      <div class="kpi-value-row"><h3 id="metricOutstanding">€0</h3><span class="kpi-trend neutral">↘ -8%</span></div>
-      <div class="kpi-bottom"><span class="kpi-foot">vs. last month</span><svg class="kpi-spark" viewBox="0 0 92 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="2,5 14,10 26,8 38,15 50,12 62,18 74,14 90,22"/></svg></div>
+      <div class="kpi-value-row"><h3 id="metricOutstanding">€0</h3><span class="kpi-trend neutral" data-kpi-trend="outstanding">—</span></div>
+      <div class="kpi-bottom"><span class="kpi-foot">—</span></div>
     </article>
     <article class="card kpi dashboard-kpi pipeline-kpi">
       <div class="kpi-top"><span class="kpi-label" data-ui="pipelineLabel">Pipeline</span><span class="kpi-icon">◆</span></div>
-      <div class="kpi-value-row"><h3 id="metricPipeline">€0</h3><span class="kpi-trend purple">↗ +24%</span></div>
-      <div class="kpi-bottom"><span class="kpi-foot">vs. last month</span><svg class="kpi-spark" viewBox="0 0 92 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="2,22 14,20 25,17 36,19 48,12 60,15 72,7 90,3"/></svg></div>
+      <div class="kpi-value-row"><h3 id="metricPipeline">€0</h3><span class="kpi-trend purple" data-kpi-trend="pipeline">—</span></div>
+      <div class="kpi-bottom"><span class="kpi-foot">—</span></div>
     </article>
     <article class="card kpi dashboard-kpi profit-kpi">
       <div class="kpi-top"><span class="kpi-label" data-ui="profitLabel">Profit</span><span class="kpi-icon">◔</span></div>
-      <div class="kpi-value-row"><h3 id="metricProfit">€0</h3><span class="kpi-trend green">↗ +18%</span></div>
-      <div class="kpi-bottom"><span class="kpi-foot">vs. last month</span><svg class="kpi-spark" viewBox="0 0 92 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="2,22 14,18 26,20 38,12 50,15 62,8 74,10 90,2"/></svg></div>
+      <div class="kpi-value-row"><h3 id="metricProfit">€0</h3><span class="kpi-trend green" data-kpi-trend="profit">—</span></div>
+      <div class="kpi-bottom"><span class="kpi-foot">—</span></div>
     </article>
   </section>
 
@@ -326,7 +326,7 @@ function mapScreenIndex(screenId){return ['dashboardScreen','leadsScreen','clien
 const STORE_KEY='business-os-store-v1';
 const defaultStore={schemaVersion:2,clients:[],leads:[],proposals:[],projects:[],invoices:[],payments:[],expenses:[],archivedRecords:[]};
 function loadStore(){return loadPersistentStore(localStorage)}
-function saveStore(store){return savePersistentStore(localStorage,store)}
+function saveStore(store){const next=savePersistentStore(localStorage,store);document.dispatchEvent(new Event("business-store-updated"));return next}
 function uid(prefix){return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
 let businessStore=loadStore();
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1800)}
@@ -1306,5 +1306,27 @@ refreshMobileNavLabels();
 refreshProfitLabels();
 refreshCashflowLabels();
 document.querySelectorAll('[data-dashboard-screen]').forEach(el=>el.addEventListener('click',()=>{const i=Number(el.dataset.dashboardScreen);const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];const target=document.getElementById(map[i]);if(!target)return;document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));target.classList.add('active');document.querySelectorAll('.nav button').forEach((b,j)=>b.classList.toggle('active',j===i));window.scrollTo({top:0,behavior:'smooth'});}));
+</script><script>
+function updateKpiTrendsFromRealData(){
+  const now=new Date(), curStart=new Date(now.getFullYear(),now.getMonth(),1), prevStart=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const prevEnd=curStart;
+  const inRange=(v,a,b)=>{if(!v)return false;const d=new Date(v);return Number.isFinite(d.getTime())&&d>=a&&d<b;};
+  const sum=(items,dateFields,valueFn,a,b)=>items.reduce((s,x)=>{const date=dateFields.map(k=>x?.[k]).find(Boolean);return s+(inRange(date,a,b)?Number(valueFn(x)||0):0)},0);
+  const payments=Array.isArray(businessStore?.payments)?businessStore.payments:[];
+  const invoices=Array.isArray(businessStore?.invoices)?businessStore.invoices:[];
+  const expenses=Array.isArray(businessStore?.expenses)?businessStore.expenses:[];
+  const leads=Array.isArray(businessStore?.leads)?businessStore.leads:[];
+  const revenueNow=sum(payments,['paymentDate','date','createdAt'],x=>x.amount,curStart,new Date(now.getFullYear(),now.getMonth()+1,1));
+  const revenuePrev=sum(payments,['paymentDate','date','createdAt'],x=>x.amount,prevStart,prevEnd);
+  const expenseNow=sum(expenses,['expenseDate','date','createdAt'],x=>x.amount,curStart,new Date(now.getFullYear(),now.getMonth()+1,1));
+  const expensePrev=sum(expenses,['expenseDate','date','createdAt'],x=>x.amount,prevStart,prevEnd);
+  const outstandingNow=invoices.reduce((s,inv)=>s+Math.max(Number(inv.amount??inv.value??0)-payments.filter(p=>p.invoiceId===inv.id).reduce((a,p)=>a+Number(p.amount||0),0),0),0);
+  const profitNow=revenueNow-expenseNow, profitPrev=revenuePrev-expensePrev;
+  const pipelineNow=leads.filter(l=>!['Won','Lost','Closed','Cancelled'].includes(String(l.status))).reduce((s,l)=>s+Number(l.value||0),0);
+  const set=(key,current,previous,kind)=>{const el=document.querySelector('[data-kpi-trend="'+key+'"]');if(!el)return;if(!previous){el.textContent='—';return;}const pct=Math.round(((current-previous)/Math.abs(previous))*100);el.textContent=(pct>=0?'↗ +':'↘ ')+pct+'%';};
+  set('revenue',revenueNow,revenuePrev); set('outstanding',outstandingNow,0); set('pipeline',pipelineNow,0); set('profit',profitNow,profitPrev);
+}
+document.addEventListener('business-store-updated',updateKpiTrendsFromRealData);
+updateKpiTrendsFromRealData();
 </script></body>
 </html>
