@@ -514,3 +514,11 @@ GitHub commits: `7b934bc81efee820e6ca144c2f66d02915f6ab52`, `14d32d38f02a74e8c5b
 GitHub commits: `50c87eff7508136c863de270630fe3eb6b72f551`, `0803807790b471060038d7aed92551a67f4efbf7`.
 
 Процент пока не повышен без подтверждённого полного запуска тестов. **B07 = 89%.**
+
+## B07 — upsert normalization fix + valid-path regression — 2026-09-25
+
+После дополнительной проверки обнаружен и сразу исправлен дефект в новом validation-path: `upsertRecord()` теперь корректно нормализует store перед построением candidate state. Добавлен тест на валидное создание и обновление записи, чтобы защищать не только error-path, но и обычный CRUD-path.
+
+GitHub commits: `b5fd5545a06bd7fe44987c73b38d7f3fee52ceb3`, `219d0fca84b72fba82e0947d34a8b35c4a7562e4`.
+
+Процент B07 не повышен: **89%**, до подтверждённого полного test execution.
