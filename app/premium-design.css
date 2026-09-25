@@ -972,6 +972,7 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   .screen:not(#dashboardScreen) .content,.screen:not(#dashboardScreen){min-width:0!important}.screen:not(#dashboardScreen) .page-title{padding:3px 1px 12px!important}.screen:not(#dashboardScreen) .page-title h1{font-size:21px!important}.screen:not(#dashboardScreen) .stat-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.screen:not(#dashboardScreen) .stat-strip .mini{min-height:76px!important}.screen:not(#dashboardScreen) .data-table{min-width:650px!important}.screen:not(#dashboardScreen) .toolbar{gap:6px!important}
 }
 
-/* V2.20 — give module titles breathing room from the accent rail */
-@media(max-width:720px){.screen:not(#dashboardScreen) .page-title{padding-left:10px!important}.screen:not(#dashboardScreen) .page-title>div:first-child{padding-left:2px!important}}
+/* V2.21 — clearly separate module titles from the accent rail */
+@media(min-width:721px){.screen:not(#dashboardScreen) .page-title{padding-left:26px!important}.screen:not(#dashboardScreen) .page-title>div:first-child{padding-left:0!important}}
+@media(max-width:720px){.screen:not(#dashboardScreen) .page-title{padding-left:16px!important}.screen:not(#dashboardScreen) .page-title>div:first-child{padding-left:0!important}}
 @media(max-width:420px){.content{padding-left:10px!important;padding-right:10px!important}.dashboard-kpi{min-height:96px!important}.dashboard-kpi .kpi-value{font-size:18px!important}#mobileNav{left:6px!important;right:6px!important;bottom:6px!important}.mobile-nav-add{width:42px!important;max-width:42px!important;flex-basis:42px!important}}
