@@ -18,3 +18,7 @@ jobs:
           node-version: 20
       - name: Run core tests
         run: npm test
+      - name: Install Playwright
+        run: npx -y playwright@1.55.0 install --with-deps chromium
+      - name: Run browser E2E tests
+        run: npx -y playwright@1.55.0 test
