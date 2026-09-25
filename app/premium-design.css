@@ -976,3 +976,36 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 @media(min-width:721px){.screen:not(#dashboardScreen) .page-title{padding-left:26px!important}.screen:not(#dashboardScreen) .page-title>div:first-child{padding-left:0!important}}
 @media(max-width:720px){.screen:not(#dashboardScreen) .page-title{padding-left:16px!important}.screen:not(#dashboardScreen) .page-title>div:first-child{padding-left:0!important}}
 @media(max-width:420px){.content{padding-left:10px!important;padding-right:10px!important}.dashboard-kpi{min-height:96px!important}.dashboard-kpi .kpi-value{font-size:18px!important}#mobileNav{left:6px!important;right:6px!important;bottom:6px!important}.mobile-nav-add{width:42px!important;max-width:42px!important;flex-basis:42px!important}}
+
+
+/* V2.22 — approved reference fidelity pass: navigation + dashboard hierarchy */
+@media(min-width:721px){
+  .sidebar{width:230px!important;padding:20px 12px 14px!important;background:linear-gradient(180deg,#071a35 0%,#08162c 100%)!important;gap:16px!important}
+  .brand{padding:4px 10px 17px!important;border-bottom:1px solid rgba(255,255,255,.10)!important}
+  .brand strong{font-size:14px!important;letter-spacing:-.02em!important}
+  .brand small{font-size:9px!important;color:#8293ad!important;margin-top:3px!important}
+  .nav{gap:4px!important}
+  .sidebar .nav button{position:relative!important;min-height:40px!important;padding:9px 11px 9px 40px!important;border-radius:9px!important;font-size:12px!important;font-weight:650!important;color:#b8c6da!important}
+  .sidebar .nav button::before{position:absolute!important;left:13px!important;top:50%!important;transform:translateY(-50%)!important;width:18px!important;text-align:center!important;font-size:13px!important;color:#9fb0c8!important;opacity:.95!important}
+  .sidebar .nav button:nth-child(1)::before{content:"⌂"}.sidebar .nav button:nth-child(2)::before{content:"♧"}.sidebar .nav button:nth-child(3)::before{content:"♙"}.sidebar .nav button:nth-child(4)::before{content:"▤"}.sidebar .nav button:nth-child(5)::before{content:"▱"}.sidebar .nav button:nth-child(6)::before{content:"▣"}.sidebar .nav button:nth-child(7)::before{content:"◫"}.sidebar .nav button:nth-child(8)::before{content:"◇"}.sidebar .nav button:nth-child(9)::before{content:"◔"}.sidebar .nav button:nth-child(10)::before{content:"◷"}.sidebar .nav button:nth-child(11)::before{content:"⚙"}
+  .sidebar .nav button.active{background:linear-gradient(90deg,#176be9,#2563eb)!important;box-shadow:0 8px 22px rgba(23,107,233,.20)!important;color:#fff!important}
+  .sidebar .nav button.active::before{color:#fff!important}
+  .sidebar .user{padding:14px 10px 2px!important;color:#dce6f5!important}
+  .sidebar .user small{color:#7f91aa!important}
+  .topbar{height:64px!important;padding:0 26px!important}
+  #dashboardScreen .dashboard-hero{min-height:144px!important;border-radius:14px!important;margin-bottom:12px!important}
+  #dashboardScreen .dashboard-kpis{gap:12px!important}
+  #dashboardScreen .dashboard-kpi{min-height:126px!important;padding:15px!important;border-radius:13px!important}
+  #dashboardScreen .dashboard-kpi h3{font-size:24px!important}
+  #dashboardScreen .dashboard-main-grid{gap:12px!important}
+  #dashboardScreen .dashboard-main-grid>.card{min-height:280px!important}
+  #dashboardScreen .dashboard-lower-grid{gap:12px!important}
+  #dashboardScreen .dashboard-lower-grid>.card{min-height:222px!important}
+  #dashboardScreen .dashboard-profit-card{grid-column:1/-1!important}
+  #dashboardScreen .dashboard-profit-card .profit-table td{height:42px!important}
+  #dashboardScreen .dashboard-module-section{display:block!important;margin-top:18px!important}
+}
+@media(max-width:720px){
+  .sidebar{display:none!important}
+  #dashboardScreen .dashboard-module-section{display:block!important}
+}
