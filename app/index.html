@@ -928,7 +928,7 @@ function normalizeStore(input) {
   };
 }
 
-function loadStore(storage) {
+function loadPersistentStore(storage) {
   const raw = storage.getItem(STORAGE_KEY);
   if (!raw) return createEmptyStore();
   try {
@@ -943,7 +943,7 @@ function loadStore(storage) {
   }
 }
 
-function saveStore(storage, store) {
+function savePersistentStore(storage, store) {
   const normalized = normalizeStore(store);
   const validation = validateStore(normalized);
   if (!validation.valid) {
