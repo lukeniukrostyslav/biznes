@@ -333,10 +333,10 @@ B14 полностью подтверждён фактическим выпол�
 | ND.9 | Proposals redesign | 100% |
 | ND.10 | Projects redesign | 100% |
 | ND.11 | Invoices redesign | 100% |
-| ND.12 | Payments redesign | 55% |
-| ND.13 | Expenses redesign | 55% |
-| ND.14 | Profit redesign | 0% |
-| ND.15 | Cashflow redesign | 0% |
+| ND.12 | Payments redesign | 100% |
+| ND.13 | Expenses redesign | 100% |
+| ND.14 | Profit redesign | 65% |
+| ND.15 | Cashflow redesign | 65% |
 | ND.16 | Settings / persistence / export-import redesign | 0% |
 | ND.17 | Forms / drawers / dialogs / validation states | 0% |
 | ND.18 | Empty / zero / error / success / loading states | 0% |
@@ -421,3 +421,11 @@ B14 полностью подтверждён фактическим выпол�
 - ND.12: 55% — Payments premium surface implemented through table hierarchy, status/action treatment, amount emphasis, empty state and responsive handling.
 - ND.13: 55% — Expenses premium surface implemented through table hierarchy, amount emphasis, status/action treatment, empty state and responsive handling.
 - GitHub commit: `bcd9e80a3a0dffb1660fa8e2ea844717a9ed6c64`.
+
+
+### Design checkpoint — Payments + Expenses completed / Profit + Cashflow advanced
+- ND.12: 100% — Payments premium surface completed: hierarchy, amounts, statuses/actions, empty state, responsive behavior and mobile header treatment.
+- ND.13: 100% — Expenses premium surface completed: hierarchy, amounts, statuses/actions, empty state, responsive behavior and mobile header treatment.
+- ND.14: 65% — Profit premium surface added with KPI/stat hierarchy, analysis table treatment, empty state and responsive layout.
+- ND.15: 65% — Cashflow premium surface added with KPI/stat hierarchy, table treatment, empty state and responsive layout.
+- GitHub commit: `9c75fd6e6d6ecf4ba0d85e18faf896003f323771`.
