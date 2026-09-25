@@ -117,3 +117,36 @@ html,body{background:var(--nd-bg);color:var(--nd-text)}body{font-family:Inter,ui
 #invoicesScreen .badge{white-space:nowrap}
 #invoicesScreen .actions{white-space:nowrap}
 @media(max-width:720px){#invoicesScreen .page-title{align-items:flex-start;flex-direction:column}#invoicesScreen .page-title .primary{width:100%}#invoicesScreen .card{overflow:auto}}
+
+/* ND.11 — Invoices completion */
+#invoicesScreen .card-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#invoicesScreen .card-header h2{margin:0;font-size:15px;font-weight:750}
+#invoicesScreen .empty{min-height:180px;display:grid;place-items:center}
+#invoicesScreen .invoice-total{font-variant-numeric:tabular-nums;font-weight:750}
+@media(max-width:720px){#invoicesScreen .card-header{align-items:flex-start;flex-direction:column}#invoicesScreen .card-header .btn{width:100%}}
+/* ND.12 — Payments premium surface */
+#paymentsScreen .page-title h1{font-weight:800}
+#paymentsScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm);overflow:hidden}
+#paymentsScreen .data-table tbody tr{transition:background .15s ease}
+#paymentsScreen .data-table tbody tr:hover{background:#f8faff}
+#paymentsScreen .data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--nd-muted);font-weight:700}
+#paymentsScreen .data-table td{vertical-align:middle}
+#paymentsScreen .data-table td:first-child{font-weight:750;color:var(--nd-text)}
+#paymentsScreen .badge{white-space:nowrap}
+#paymentsScreen .actions{white-space:nowrap}
+#paymentsScreen .empty{min-height:180px;display:grid;place-items:center}
+#paymentsScreen .payment-amount{font-variant-numeric:tabular-nums;font-weight:750}
+@media(max-width:720px){#paymentsScreen .page-title{align-items:flex-start;flex-direction:column}#paymentsScreen .page-title .primary{width:100%}#paymentsScreen .card{overflow:auto}}
+/* ND.13 — Expenses premium surface */
+#expensesScreen .page-title h1{font-weight:800}
+#expensesScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm);overflow:hidden}
+#expensesScreen .data-table tbody tr{transition:background .15s ease}
+#expensesScreen .data-table tbody tr:hover{background:#f8faff}
+#expensesScreen .data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--nd-muted);font-weight:700}
+#expensesScreen .data-table td{vertical-align:middle}
+#expensesScreen .data-table td:first-child{font-weight:750;color:var(--nd-text)}
+#expensesScreen .badge{white-space:nowrap}
+#expensesScreen .actions{white-space:nowrap}
+#expensesScreen .empty{min-height:180px;display:grid;place-items:center}
+#expensesScreen .expense-amount{font-variant-numeric:tabular-nums;font-weight:750}
+@media(max-width:720px){#expensesScreen .page-title{align-items:flex-start;flex-direction:column}#expensesScreen .page-title .primary{width:100%}#expensesScreen .card{overflow:auto}}
