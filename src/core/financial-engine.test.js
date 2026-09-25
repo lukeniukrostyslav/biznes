@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateBusinessMetrics, lineTotal, allocatePaymentPlan, calculateCashflowForecast, calculatePaymentPlan } from './financial-engine.js';
 
+
 test('line total', () => assert.equal(lineTotal({ quantity: 3, unitPrice: 120 }), 360));
 
 test('invoice subtotal, tax and outstanding', () => {
@@ -28,6 +29,20 @@ test('weighted pipeline', () => {
   const result = calculatePipeline([{ value: 10000, probability: 60 }, { value: 5000, probability: 20 }]);
   assert.equal(result.pipeline, 15000);
   assert.equal(result.weightedPipeline, 7000);
+});
+
+
+test('cashflow derives invoice totals from line items and excludes planned expenses', () => {
+  const result = calculateCashflow(
+    [{ lineItems: [{ quantity: 2, unitPrice: 500 }], taxRate: 20 }],
+    [{ amount: 600 }],
+    [{ amount: 100, status: 'Paid' }, { amount: 300, status: 'Planned' }]
+  );
+  assert.equal(result.invoiced, 1200);
+  assert.equal(result.paid, 600);
+  assert.equal(result.outstanding, 600);
+  assert.equal(result.expenses, 100);
+  assert.equal(result.profit, 500);
 });
 
 test('cashflow separates paid and outstanding', () => {
