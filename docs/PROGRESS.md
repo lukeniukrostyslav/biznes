@@ -490,3 +490,11 @@ GitHub commit: `e0cf4ed76b4c7b28183550352cd657a304f511cc`.
 Рабочий порядок: **B07 → B08 → B09 → B10 → B11 → B12 → B13 → B14 → NEW FINAL DESIGN → B15 → B16**.
 
 Проценты существующих блоков не изменяются этим решением.
+
+## B07 — relationship-safe remove checkpoint — 2026-09-25
+
+Усилен core persistence API: `removeRecord()` теперь не может удалить родительскую запись, если после удаления остаются активные foreign-key ссылки. Candidate store проходит `validateStore()`; при нарушении целостности операция отклоняется. Добавлены regression tests для удаления записи с зависимостями и удаления leaf-record.
+
+GitHub commits: `3aad70292d31cfbedb6498bfd909cf1293088d0b`, `528c1a74624291836e9fb3762fa91369e710af6d`.
+
+Это фактическое усиление B07, но процент пока не повышается: нужен подтверждённый полный test execution. **B07 остаётся 89%.**
