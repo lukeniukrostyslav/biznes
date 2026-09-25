@@ -45,8 +45,9 @@ test.describe('B14 Functional / E2E smoke', () => {
 
   test('export and import controls are wired', async ({ page }) => {
     await page.goto('/app/index.html');
-    await expect(page.locator('#exportData')).toBeVisible();
-    await expect(page.locator('#importData')).toBeVisible();
+    await page.locator('#nav button[data-screen="10"]').click();
+    await expect(page.locator('#settingsExportData')).toBeVisible();
+    await expect(page.locator('#settingsImportData')).toBeVisible();
     await expect(page.locator('#importDataInput')).toHaveAttribute('accept', 'application/json');
   });
 
