@@ -322,6 +322,7 @@
     }
     window.activeLanguage=lang;
     localStorage.setItem('business-os-lang',lang);
+    window.applyRussianStatic=applyRussianStatic;
     if(lang==='ru') applyRussianStatic();
   }
   function bindCreateFallback(){
@@ -2311,6 +2312,7 @@ window.setBusinessOSLanguage=function(nextLang){
   try{window.refreshMobileNavLabels?.();}catch(e){}
   try{window.refreshProfitLabels?.();}catch(e){}
   try{window.refreshCashflowLabels?.();}catch(e){}
+  try{if(lang==='ru')window.applyRussianStatic?.();}catch(e){}
   return lang;
 };
 
