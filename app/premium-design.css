@@ -296,3 +296,17 @@ button:disabled,input:disabled,select:disabled,textarea:disabled{cursor:not-allo
 [aria-disabled=true]{cursor:not-allowed}
 @media(prefers-contrast:more){.card,.table-card,.stat-card,.btn,.filter,.data-table td,.data-table th{border-color:#8792a5}.muted,.data-table th,.setting-help{color:#465267}}
 @media(prefers-reduced-motion:reduce){.skeleton::after{animation:none}.btn,.deal,.project-card,.stat-card{transition:none!important}}
+
+/* ND.22 — cross-module consistency closure */
+.screen .page-title h1{letter-spacing:-.02em;line-height:1.15}
+.screen .page-title p{line-height:1.45;color:var(--nd-muted)}
+.screen .primary,.screen .secondary,.screen .btn{font-size:13px;line-height:1.2}
+.screen .card,.screen .table-card{border-radius:var(--nd-radius-md);box-shadow:var(--nd-shadow-sm)}
+.screen .data-table thead th{background:#fbfcfe}
+.screen .data-table tbody tr:last-child td{border-bottom:0}
+.screen .toolbar{flex-wrap:wrap}
+.screen .toolbar .filter{min-height:40px}
+.screen .badge.green{background:#eaf8f0;color:var(--nd-success)}
+.screen .badge.red{background:#fff0f1;color:var(--nd-danger)}
+.screen .empty{border-radius:var(--nd-radius-md);line-height:1.5}
+.screen .card-title,.screen .card-header{min-height:24px}
