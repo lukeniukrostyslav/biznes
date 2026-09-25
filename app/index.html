@@ -24,7 +24,7 @@
 <header class="topbar"><div class="search" id="search">⌕ Search clients, projects, invoices…</div><div class="top-actions"><button class="secondary" id="exportData">Export</button><button class="secondary" id="importData">Import</button><button class="new" id="newTopAction">＋ New</button><span>🔔</span><select class="lang" id="lang"><option value="en">EN</option><option value="ru">RU</option><option value="es">ES</option><option value="de">DE</option><option value="fr">FR</option></select></div></header>
 <section class="content">
 <div id="dashboardScreen" class="screen active">
-<div class="heading"><div><h1 id="greeting">Good morning</h1><p id="subtitle">Here’s what’s happening with your business today.</p></div><button class="period" id="dashboardPeriod">This month ▾</button></div>
+<div class="heading"><div><h1 id="greeting">Good morning</h1><p id="subtitle">Here’s what’s happening with your business today.</p></div><select class="period" id="dashboardPeriod" aria-label="Dashboard period"><option value="month">This month</option><option value="quarter">This quarter</option><option value="year">This year</option><option value="all">All time</option></select></div>
 <div class="kpis">
 <div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="revenueLabel">Revenue</span><span class="icon">↗</span></div><h3 id="metricRevenue">$0</h3><span class="muted" data-ui-label="actual">Actual</span></div>
 <div class="card kpi"><div class="kpi-top"><span class="muted" data-ui="outstandingLabel">Outstanding</span><span class="icon">▣</span></div><h3 id="metricOutstanding">$0</h3><span class="muted" data-ui="actualMetric">Actual</span></div>
@@ -153,6 +153,7 @@
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus, calculateInvoice } from "../src/core/financial-engine.js";
+import { calculateDashboardAnalytics, buildDashboardSeries, getDashboardLabels } from "../src/core/b11-analytics-engine.js";
 import { buildProjectFromProposal, buildInvoiceFromProject } from "../src/core/b10-lifecycle-engine.js";
 import { DEFAULT_PIPELINE_STAGES, calculateCrmPipeline, convertLeadToClient } from "../src/core/crm-engine.js";
 import { archiveRecord, validateStore, exportStore, importStore, restoreRecord, loadStore as loadPersistentStore, saveStore as savePersistentStore } from "../src/core/persistence.js";
@@ -211,6 +212,7 @@ function applyUiCopy(lang){
   const reference=document.getElementById('fPaymentReference'); if(reference){reference.placeholder={en:'Transaction reference',ru:'Назначение / ссылка на платёж',es:'Referencia de la transacción',de:'Transaktionsreferenz',fr:'Référence de transaction'}[lang]||'Transaction reference';}
 }
 let activeLanguage='en';
+let dashboardPeriod='month';
 function render(lang){const currentScreen=document.querySelector('.screen.active')?.id||'dashboardScreen';activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(mapScreenIndex(currentScreen)===i?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);refreshSettingsLabels();bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();renderArchive();}
 function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
 function mapScreenIndex(screenId){return ['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'].indexOf(screenId);}
@@ -555,7 +557,8 @@ function deleteRecord(type,id){
 }
 function renderCashflow(){
 function refreshDashboardVisuals(){
-  const metrics=calculateBusinessMetrics(businessStore);
+  const analytics=calculateDashboardAnalytics(businessStore,dashboardPeriod,new Date());
+  const metrics=analytics;
   const forecast=calculateCashflowForecast(businessStore,new Date(),30);
   document.getElementById('cashflowReceived').textContent=money(metrics.paid);
   document.getElementById('cashflowOutstanding').textContent=money(metrics.outstanding);
@@ -614,13 +617,13 @@ function renderDashboardRealData(){
   [['dashIncomeFill',paid],['dashExpensesFill',expenses],['dashProfitFill',Math.max(0,profit)]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.style.width=Math.min(100,Math.round(v/base*100))+'%';});
   const chart=document.getElementById('chart');
   if(chart){
-    const payments=businessStore.payments||[];
-    const expensesRows=businessStore.expenses||[];
-    const months=Array.from({length:12},(_,i)=>{const d=new Date();d.setMonth(d.getMonth()-11+i);return {y:d.getFullYear(),m:d.getMonth(),v:0};});
-    payments.forEach(p=>{const d=new Date(p.date||p.paymentDate||p.createdAt);if(!isNaN(d)){const bucket=months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth());if(bucket)bucket.v+=Number(p.amount||0);}});
-    expensesRows.filter(e=>e.status!=='Planned'&&e.planned!==true).forEach(e=>{const d=new Date(e.date||e.expenseDate||e.createdAt);if(!isNaN(d)){const bucket=months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth());if(bucket)bucket.v-=Number(e.amount||0);}});
-    const vals=months.map(x=>Math.max(0,x.v)); const max=Math.max(...vals,0);
-    chart.innerHTML=max?vals.map(v=>'<div class="bar" title="'+money(v)+'" style="height:'+Math.max(8,Math.round(v/max*190))+'px"></div>').join(''):'<div class="empty" style="width:100%">No financial history yet.</div>';
+    const series=buildDashboardSeries(businessStore,dashboardPeriod==='month'?'month':dashboardPeriod==='quarter'?'quarter':'year',new Date());
+    const vals=series.map(x=>Math.max(0,x.net));
+    const max=Math.max(...vals,0);
+    const labels=getDashboardLabels(activeLanguage);
+    chart.innerHTML=max
+      ? series.map((x,i)=>'<div class="bar" title="'+escapeHtml(x.label)+' · '+money(x.net)+'" aria-label="'+escapeHtml(x.label)+' · '+money(x.net)+'" style="height:'+Math.max(8,Math.round(vals[i]/max*190))+'px"></div>').join('')
+      : '<div class="empty" style="width:100%">'+escapeHtml(labels.empty)+'</div>';
   }
   const lower=document.querySelector('.lower');
   if(!lower)return;
@@ -706,7 +709,7 @@ function renderProfitRealData(){
   body.innerHTML=projectRows.length?projectRows.map(({project,calc})=>'<tr><td><strong>'+escapeHtml(project.name||'Project')+'</strong></td><td>'+money(calc.revenue)+'</td><td>'+money(calc.actualCosts)+'</td><td>'+money(calc.profit)+'</td><td>'+ (calc.margin===null?'—':calc.margin.toFixed(1)+'%') +'</td></tr>').join(''):'<tr><td colspan="5" class="empty">No project data</td></tr>';
 }
 function refreshDashboardMetrics(){
-  const metrics=calculateBusinessMetrics(businessStore);
+  const metrics=calculateDashboardAnalytics(businessStore,dashboardPeriod,new Date());
   document.getElementById('metricRevenue').textContent=money(metrics.paid);
   document.getElementById('metricOutstanding').textContent=money(metrics.outstanding);
   document.getElementById('metricPipeline').textContent=money(metrics.pipeline);
@@ -717,6 +720,9 @@ function refreshDashboardMetrics(){
   refreshDashboardVisuals();
   renderProfitRealData();
   renderDashboardRealData();
+  const labels=getDashboardLabels(activeLanguage);
+  const periodEl=document.getElementById('dashboardPeriod');
+  if(periodEl) periodEl.setAttribute('aria-label',labels[dashboardPeriod]||labels.year);
 }
 function downloadTextFile(filename,content,mime='text/csv;charset=utf-8'){
   const blob=new Blob([content],{type:mime});
@@ -803,6 +809,10 @@ refreshDashboardMetrics();
 renderStoredRecords();
 const saved=localStorage.getItem('business-os-lang')||'en';document.getElementById('lang').value=saved;render(saved);document.getElementById('lang').addEventListener('change',e=>{localStorage.setItem('business-os-lang',e.target.value);render(e.target.value)});
 applyUiCopy(saved);
+document.getElementById('dashboardPeriod')?.addEventListener('change',e=>{
+  dashboardPeriod=e.target.value||'month';
+  refreshDashboardMetrics();
+});
 document.getElementById('exportData').addEventListener('click',exportBusinessData);
 document.getElementById('exportCashflow')?.addEventListener('click',exportCashflowReport);
 document.getElementById('exportProfitAnalysis')?.addEventListener('click',exportProfitAnalysis);
