@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateBusinessMetrics, lineTotal, allocatePaymentPlan, calculateCashflowForecast, calculatePaymentPlan } from './financial-engine.js';
+import { calculateInvoice, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateBusinessMetrics, lineTotal, allocatePaymentPlan, calculateCashflowForecast, calculatePaymentPlan, calculatePricingEngine, calculateFinancialAlerts, formatMoney, roundMoney } from './financial-engine.js';
 
 
 test('line total', () => assert.equal(lineTotal({ quantity: 3, unitPrice: 120 }), 360));
@@ -328,4 +328,78 @@ test('cashflow forecast uses installment due dates and planned expenses within h
   assert.equal(result.futureExpenses, 120);
   assert.equal(result.forecastNetCash, 880);
   assert.equal(result.events.length, 3);
+});
+
+
+test('pricing engine returns transparent hourly and daily guidance', () => {
+  const result = calculatePricingEngine({
+    targetAnnualIncome: 60000,
+    annualBusinessCosts: 12000,
+    taxReserveRate: 20,
+    workingWeeks: 48,
+    hoursPerWeek: 40,
+    billableUtilisation: 50,
+    targetProfitMargin: 20
+  });
+  assert.equal(result.billableHours, 960);
+  assert.equal(result.minimumHourlyRate, 75);
+  assert.equal(result.targetHourlyRate, 125);
+  assert.equal(result.premiumHourlyRate, 156.25);
+  assert.equal(result.dailyRate, 1000);
+  assert.match(result.assumptions.targetFormula, /tax\/reserve/);
+});
+
+test('pricing engine safely handles zero billable capacity', () => {
+  const result = calculatePricingEngine({ targetAnnualIncome: 50000, workingWeeks: 0, hoursPerWeek: 40, billableUtilisation: 50 });
+  assert.equal(result.billableHours, 0);
+  assert.equal(result.minimumHourlyRate, null);
+  assert.equal(result.targetHourlyRate, null);
+  assert.equal(result.dailyRate, null);
+});
+
+test('financial alerts detect overdue, due soon, low margin and cost over estimate', () => {
+  const alerts = calculateFinancialAlerts({
+    invoices: [{ id: 'inv-alert', lineItems: [{ quantity: 1, unitPrice: 1000 }], status: 'Sent', dueDate: '2026-09-20' }],
+    payments: [],
+    projects: [{ id: 'p-alert', revenue: 5000, actualCosts: 1200, actualHours: 50, labourRate: 80, estimatedCosts: 1000 }]
+  }, new Date('2026-09-25'), { targetMargin: 20 });
+  assert.ok(alerts.some(x => x.type === 'overdue-invoice'));
+  assert.ok(alerts.some(x => x.type === 'low-project-margin'));
+  assert.ok(alerts.some(x => x.type === 'project-cost-over-estimate'));
+});
+
+test('financial alerts detect invoice due soon', () => {
+  const alerts = calculateFinancialAlerts({
+    invoices: [{ id: 'inv-soon', lineItems: [{ quantity: 1, unitPrice: 500 }], status: 'Sent', dueDate: '2026-09-30' }]
+  }, new Date('2026-09-25'), { dueSoonDays: 7 });
+  assert.equal(alerts.length, 1);
+  assert.equal(alerts[0].type, 'invoice-due-soon');
+});
+
+test('financial alerts detect negative forecast cashflow', () => {
+  const alerts = calculateFinancialAlerts({
+    payments: [{ amount: 100 }],
+    expenses: [{ amount: 500, status: 'Planned', expenseDate: '2026-09-28' }]
+  }, new Date('2026-09-25'), { horizonDays: 30 });
+  assert.ok(alerts.some(x => x.type === 'low-upcoming-cashflow'));
+});
+
+test('financial alerts detect pipeline concentration', () => {
+  const alerts = calculateFinancialAlerts({
+    leads: [
+      { id: 'l1', value: 9000, probability: 50, status: 'New' },
+      { id: 'l2', value: 1000, probability: 50, status: 'New' }
+    ]
+  }, new Date('2026-09-25'), { pipelineConcentrationThreshold: 0.5 });
+  assert.ok(alerts.some(x => x.type === 'pipeline-concentration'));
+});
+
+test('money precision and currency formatting stay bounded and locale aware', () => {
+  assert.equal(roundMoney(1.005), 1.01);
+  const formatted = formatMoney(1234.5, 'EUR', 'de-DE');
+  assert.match(formatted, /1\.234,50/);
+});
+
+test('invalid currency falls back safely to EUR', () => {
+  assert.match(formatMoney(10, 'invalid', 'en-US'), /€10\.00/);
 });
