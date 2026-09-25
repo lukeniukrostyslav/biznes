@@ -24,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Playwright browser matrix
+        run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Run unit and static regression
         run: npm test
