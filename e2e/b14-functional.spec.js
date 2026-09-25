@@ -113,6 +113,21 @@ test.describe('B14 functional acceptance flows', () => {
     }
   });
 
+  test('Russian operational UI translates static table headers', async ({ page }) => {
+    await page.locator('#lang').selectOption('ru');
+    const expected = [
+      ['4', ['Проект', 'Прогресс', 'Выручка', 'Маржа']],
+      ['5', ['Счёт', 'Клиент', 'Срок оплаты', 'Итого', 'Статус']],
+      ['3', ['Предложение', 'Клиент', 'Сумма', 'Отправлено', 'Следующее действие', 'Статус']],
+      ['6', ['Дата', 'Клиент', 'Счёт', 'Способ оплаты', 'Сумма']],
+      ['7', ['Расход', 'Категория', 'Дата']]
+    ];
+    for (const [index, labels] of expected) {
+      await page.locator(`#nav button[data-screen="${index}"]`).click();
+      for (const label of labels) await expect(page.locator('.screen.active')).toContainText(label);
+    }
+  });
+
   test('no horizontal overflow across primary mobile screens', async ({ page }) => {
     await page.setViewportSize({ width: 1200, height: 900 });
     for (const index of ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']) {
