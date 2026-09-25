@@ -1171,3 +1171,22 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   #dashboardScreen .dashboard-kpi .kpi-bottom{display:none!important}
   #dashboardScreen .dashboard-kpi .kpi-trend{font-size:9px!important}
 }
+
+
+/* V2.27 — dashboard card header fidelity */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-main-grid .dashboard-card-title p,
+  #dashboardScreen .dashboard-lower-grid .dashboard-card-title p{display:none!important}
+  #dashboardScreen .dashboard-card-title{display:flex!important;align-items:center!important;justify-content:space-between!important}
+  #dashboardScreen .dashboard-card-actions{display:flex!important;align-items:center!important;gap:10px!important;margin-left:auto!important}
+  #dashboardScreen .dashboard-card-actions .text-action{white-space:nowrap!important}
+  #dashboardScreen .dashboard-list-card{min-height:250px!important}
+  #dashboardScreen .dashboard-lower-grid{align-items:stretch!important}
+  #dashboardScreen .dashboard-profit-card{min-height:174px!important}
+  #dashboardScreen .dashboard-list-card .premium-list{margin-top:3px!important}
+}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-main-grid .dashboard-card-title p,
+  #dashboardScreen .dashboard-lower-grid .dashboard-card-title p{display:none!important}
+  #dashboardScreen .dashboard-card-actions{display:flex!important;align-items:center!important;gap:7px!important}
+}
