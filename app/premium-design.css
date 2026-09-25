@@ -1423,3 +1423,41 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   #dashboardScreen .dashboard-module-section{display:none!important}
   #dashboardScreen .dashboard-profit-card .profit-table{min-width:640px!important}
 }
+
+
+/* V2.34 — reference polish pass: spacing, typography, card density, responsive fidelity */
+:root{--ref-navy:#071a35;--ref-blue:#176bea;--ref-bg:#f4f7fb;--ref-line:#e3e9f2}
+@media(min-width:721px){
+  body,.main{background:var(--ref-bg)!important}
+  .sidebar{width:230px!important}
+  .main{margin-left:230px!important}
+  .topbar{height:58px!important;padding:0 26px!important}
+  .content{padding:18px 26px 28px!important;max-width:none!important}
+  #dashboardScreen .dashboard-hero{padding:0 2px!important;margin-bottom:12px!important;min-height:74px!important}
+  #dashboardScreen .dashboard-hero h1{font-weight:800!important;letter-spacing:-.035em!important}
+  #dashboardScreen .dashboard-hero p{font-size:12px!important;color:#718096!important}
+  #dashboardScreen .dashboard-hero .hero-period{height:38px!important;border:1px solid #dce4ee!important;border-radius:9px!important;background:#fff!important}
+  #dashboardScreen .dashboard-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+  #dashboardScreen .dashboard-kpi{height:130px!important;min-height:130px!important;padding:14px!important;border:1px solid #e1e7ef!important;box-shadow:0 2px 8px rgba(25,44,72,.04)!important}
+  #dashboardScreen .dashboard-kpi .kpi-top{align-items:center!important}
+  #dashboardScreen .dashboard-kpi .kpi-icon{width:40px!important;height:40px!important;border-radius:10px!important}
+  #dashboardScreen .dashboard-kpi h3{font-size:25px!important;font-weight:800!important;letter-spacing:-.03em!important}
+  #dashboardScreen .dashboard-main-grid{grid-template-columns:minmax(0,1.58fr) minmax(330px,.92fr)!important;gap:10px!important;margin-top:10px!important}
+  #dashboardScreen .dashboard-main-grid>.card{border:1px solid #e1e7ef!important;border-radius:11px!important;box-shadow:0 2px 8px rgba(25,44,72,.035)!important}
+  #dashboardScreen .dashboard-chart-card{padding:14px 15px!important}
+  #dashboardScreen .dashboard-cash-card{padding:14px 16px!important}
+  #dashboardScreen .dashboard-lower-grid{gap:10px!important;margin-top:10px!important}
+  #dashboardScreen .dashboard-lower-grid>.card{border:1px solid #e1e7ef!important;border-radius:11px!important;box-shadow:0 2px 8px rgba(25,44,72,.035)!important}
+  #dashboardScreen .dashboard-list-card{min-height:214px!important;padding:14px!important}
+  #dashboardScreen .dashboard-profit-card{padding:13px 14px!important}
+}
+@media(max-width:720px){
+  .content{padding:10px 10px 78px!important}
+  #dashboardScreen .dashboard-hero{margin-bottom:9px!important}
+  #dashboardScreen .dashboard-kpis{gap:8px!important}
+  #dashboardScreen .dashboard-kpi{min-height:112px!important;height:112px!important}
+  #dashboardScreen .dashboard-main-grid,#dashboardScreen .dashboard-lower-grid{gap:8px!important}
+  #dashboardScreen .dashboard-main-grid>.card,#dashboardScreen .dashboard-lower-grid>.card{border-radius:11px!important}
+  #dashboardScreen .dashboard-chart-card{min-height:235px!important}
+  #dashboardScreen .dashboard-cash-card{min-height:260px!important}
+}
