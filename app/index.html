@@ -1546,6 +1546,13 @@ fr:{export:'Exporter',import:'Importer',newTop:'＋ Nouveau',chartRevenue:'Chiff
 };
 function applyUiCopy(lang){
   const c=uiCopy[lang]||uiCopy.en;
+  const aliases={
+    revenueLabel:'revenue',outstandingLabel:'outstanding',pipelineLabel:'pipeline',profitLabel:'profit',
+    revenueProfitTitle:'revenueProfit',chartRevenue:'revenue',chartProfit:'profit',
+    clientLabel:'client',leadLabel:'lead',proposalLabel:'proposal',projectLabel:'project',
+    invoiceLabel:'invoice',nameLabel:'name',statusLabel:'status',budgetLabel:'budget'
+  };
+  Object.entries(aliases).forEach(([alias,key])=>{if(!c[alias]&&c[key])c[alias]=c[key];});
   const textMap={exportData:'export',importData:'import',newTopAction:'newTop'};
   Object.entries(textMap).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.textContent=c[key];});
   const periodLabels={
