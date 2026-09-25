@@ -590,3 +590,25 @@ Additional work completed:
 - V2.9 Live visual acceptance remains **0%** until the actual deployed UI is checked.
 
 **Current V2 overall: 62%**.
+
+
+### V2 continuation — regression green + shell finishing pass
+- V2.2 Global shell: **95%**
+- V2.3 Dashboard composition: **93%**
+- V2.4 All product module visual surfaces: **55%**
+- V2.5 Responsive/mobile composition: **75%**
+- V2.6 EN / RU / ES / DE / FR V2 layer: **75%**
+- V2.7 Existing navigation wiring: **75%**
+- V2.8 B14 + Core + Design Regression: **100%** — all three latest runs passed on d344abd
+- V2.9 Live visual acceptance: **0%** — intentionally held until the deployed UI is visually checked.
+
+Completed validation:
+- Core Tests #211: **SUCCESS**
+- B14 E2E #88: **SUCCESS**
+- Design Regression #26: **SUCCESS**
+- Latest validation commit: d344abdc6c6b9d73b97e91f3c4d651e68c876e4b
+
+New design commit:
+- 719d006d9098a3261a805e0c699f1bbed347f759 — premium shell, topbar, identity rail, dashboard density and responsive finishing pass.
+
+**V2 overall: 66%** — not inflated by live acceptance; V2.9 remains 0% until the deployed interface is actually checked.
