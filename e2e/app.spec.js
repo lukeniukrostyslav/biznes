@@ -62,7 +62,7 @@ test('B14 dashboard period selector remains functional', async ({ page }) => {
 
 test('B14 responsive mobile surface remains usable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole('button', { name: 'Leads', exact: true }).click();
+  await page.locator('#mobileNav button[data-mobile="1"]').click();
   await expect(page.locator('#leadsScreen')).toBeVisible();
   await page.getByRole('button', { name: /New lead/i }).click();
   await expect(page.locator('#detailDrawer')).toBeVisible();
