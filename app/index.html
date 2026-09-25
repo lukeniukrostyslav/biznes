@@ -42,7 +42,7 @@
 </div>
 </div>
 <div id="leadsScreen" class="screen">
-<div class="page-title"><div><h1 data-i18n="leadsTitle">Leads</h1><p data-i18n="leadsSub">Move opportunities forward without losing the next action.</p></div><div class="toolbar"><select class="filter" id="leadStageFilter" aria-label="Lead stage filter"><option value="">All stages</option><option>New</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option></select><button class="primary" data-i18n="newLead">＋ New lead</button></div></div>
+<div class="page-title"><div><h1 data-i18n="leadsTitle">Leads</h1><p data-i18n="leadsSub">Move opportunities forward without losing the next action.</p></div><div class="toolbar"><input id="leadSearch" class="filter" placeholder="Search leads..." aria-label="Search leads"><select class="filter" id="leadStageFilter" aria-label="Lead stage filter"><option value="">All stages</option><option>New</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option></select><button class="primary" data-i18n="newLead">＋ New lead</button></div></div>
 <div class="card" style="padding:14px"><div class="pipeline" id="leadsPipeline"></div></div>
 </div>
 <div id="clientsScreen" class="screen">
@@ -345,7 +345,8 @@ function renderLeads(){
   const pipeline=screen?.querySelector('.pipeline');
   if(!pipeline)return;
   const filter=document.getElementById('leadStageFilter');
-  const result=calculateCrmPipeline(businessStore.leads||[],{stage:filter?.value||''});
+  const search=document.getElementById('leadSearch');
+  const result=calculateCrmPipeline(businessStore.leads||[],{stage:filter?.value||'',query:search?.value||''});
   const copy=recordUiCopy[activeLanguage]||recordUiCopy.en;
   pipeline.innerHTML=result.stages.map(stage=>{
     const items=result.byStage[stage]||[];
@@ -354,6 +355,7 @@ function renderLeads(){
       '</div>';
   }).join('');
   if(filter)filter.onchange=renderLeads;
+  if(search)search.oninput=renderLeads;
   pipeline.querySelectorAll('.lead-convert').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();convertLeadToClientInUi(btn.closest('.deal')?.dataset.recordId);}));
   pipeline.querySelectorAll('.deal').forEach(el=>el.addEventListener('click',()=>{
     const rec=(businessStore.leads||[]).find(x=>x.id===el.dataset.recordId);
