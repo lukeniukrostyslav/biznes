@@ -53,3 +53,23 @@ html,body{background:var(--nd-bg);color:var(--nd-text)}body{font-family:Inter,ui
 #clientsScreen .data-table td:first-child{font-weight:700;color:var(--nd-text)}
 #clientsScreen .badge{white-space:nowrap}
 @media(max-width:720px){#clientsScreen .page-title{align-items:flex-start;flex-direction:column}#clientsScreen .page-title .primary{width:100%}#clientsScreen .table-card{overflow:auto}}
+
+/* ND.8 — Clients completion pass */
+#clientsScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm)}
+#clientsScreen .card-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#clientsScreen .card-header h2{margin:0;font-size:15px;font-weight:750}
+#clientsScreen .client-name{font-weight:750;color:var(--nd-text)}
+#clientsScreen .client-meta{color:var(--nd-muted);font-size:12px}
+#clientsScreen .data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--nd-muted);font-weight:700}
+#clientsScreen .data-table td{vertical-align:middle}
+#clientsScreen .data-table .actions{white-space:nowrap}
+@media(max-width:720px){#clientsScreen .card-header{align-items:flex-start;flex-direction:column}#clientsScreen .card-header .btn{width:100%}}
+/* ND.9 — Proposals premium surface */
+#proposalsScreen .page-title h1{font-weight:800}
+#proposalsScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm);overflow:hidden}
+#proposalsScreen .data-table tbody tr{transition:background .15s ease}
+#proposalsScreen .data-table tbody tr:hover{background:#f8faff}
+#proposalsScreen .data-table td:first-child{font-weight:700;color:var(--nd-text)}
+#proposalsScreen .badge{white-space:nowrap}
+#proposalsScreen .actions{white-space:nowrap}
+@media(max-width:720px){#proposalsScreen .page-title{align-items:flex-start;flex-direction:column}#proposalsScreen .page-title .primary{width:100%}#proposalsScreen .card{overflow:auto}}
