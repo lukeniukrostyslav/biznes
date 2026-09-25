@@ -450,3 +450,9 @@ B14 полностью подтверждён фактическим выпол�
 - ND.5: 100% — Unified component system closure: buttons, cards, badges, tables, focus and shared component sizing/interaction rules finalized.
 - ND.6: 100% — Dashboard closure: KPI grid, dashboard composition, responsive breakpoints, mobile behavior and reduced-motion treatment finalized.
 - GitHub commit: `51a462e31de80dcb40b3fb02cb48df2841b30c30`.
+
+
+### Design checkpoint — ND.17 / ND.18 completed
+- ND.17: 100% — Unified form grid, modal/dialog/drawer structure, headers/bodies/footers, validation/focus treatment and mobile action behavior finalized.
+- ND.18: 100% — Empty, loading, error, success, skeleton and toast states finalized as a shared visual system.
+- GitHub commit: `4c72c16c17ce5de03364421d2fed49537aa08a27`.
