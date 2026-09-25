@@ -538,3 +538,11 @@ GitHub commits: `19557ac5baaaf6c02bfb6c22cf21079dde3c70f4`, `2193b2a94cc790c1dd8
 GitHub commits: `32ff73eaa4204466421baee84f6c062a35b49052`, `1255bdaf9ebd50b6929e27deff1a9230802be97a`.
 
 Процент не повышен без подтверждения полного test execution. **B07 = 89%.**
+
+## B07 — active/archive ID collision checkpoint — 2026-09-25
+
+Усилена целостность архива: `validateStore()` теперь отклоняет состояние, где архивная запись имеет тот же `collection:id`, что и активная запись. Это предотвращает конфликт при последующем restore.
+
+GitHub commits: `4efed03d0ae1e285928f9b6963d8e189f81702ee`, `4a9007238e674d170af135049fbf570a4a731ca0`.
+
+Процент не повышен без подтверждения полного test execution. **B07 = 89%.**
