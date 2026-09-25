@@ -251,6 +251,13 @@ document.getElementById('entityBack').addEventListener('click',()=>{document.que
 document.getElementById('entityEdit').addEventListener('click',()=>{const screen=document.getElementById('entityScreen');if(screen.dataset.entityType&&screen.dataset.entityId){const rec=(businessStore[screen.dataset.entityType]||[]).find(x=>x.id===screen.dataset.entityId);if(rec)openEditDrawer(screen.dataset.entityType,rec);}});
 
 const UI_CURRENCY='EUR';
+const typeUiCopy={
+ en:{clients:'Client',leads:'Lead',proposals:'Proposal',projects:'Project',invoices:'Invoice',payments:'Payment',expenses:'Expense'},
+ ru:{clients:'Клиент',leads:'Лид',proposals:'Предложение',projects:'Проект',invoices:'Счёт',payments:'Платёж',expenses:'Расход'},
+ es:{clients:'Cliente',leads:'Lead',proposals:'Propuesta',projects:'Proyecto',invoices:'Factura',payments:'Pago',expenses:'Gasto'},
+ de:{clients:'Kunde',leads:'Lead',proposals:'Angebot',projects:'Projekt',invoices:'Rechnung',payments:'Zahlung',expenses:'Ausgabe'},
+ fr:{clients:'Client',leads:'Prospect',proposals:'Proposition',projects:'Projet',invoices:'Facture',payments:'Paiement',expenses:'Dépense'}
+};
 const uiLabels={en:{actual:'Actual',project:'Project',revenue:'Revenue',profit:'Profit',margin:'Margin',noData:'No data yet.',search:'Search'},ru:{actual:'Факт',project:'Проект',revenue:'Выручка',profit:'Прибыль',margin:'Маржа',noData:'Пока нет данных.',search:'Поиск'},es:{actual:'Real',project:'Proyecto',revenue:'Ingresos',profit:'Beneficio',margin:'Margen',noData:'Aún no hay datos.',search:'Buscar'},de:{actual:'Ist',project:'Projekt',revenue:'Umsatz',profit:'Gewinn',margin:'Marge',noData:'Noch keine Daten.',search:'Suche'},fr:{actual:'Réel',project:'Projet',revenue:'Chiffre d’affaires',profit:'Profit',margin:'Marge',noData:'Aucune donnée.',search:'Rechercher'}};
 function money(value){
   return new Intl.NumberFormat(undefined,{style:'currency',currency:UI_CURRENCY,maximumFractionDigits:0}).format(Number(value)||0);
