@@ -925,3 +925,14 @@ External quality references used for the gate:
 - Therefore LQ01 is no longer pending a syntax re-run.
 
 **Next gate:** LQ02 Runtime boot / no page errors — remains 0% until the current production deployment is checked with explicit page-error monitoring.
+
+
+### Launch QA checkpoint — LQ03 closed — 2026-09-25
+
+- **LQ03 Navigation: all 11 modules: 100%**
+- Current B14 E2E #190 on main commit `4a3dad2499b4083afbbeed2f74cd65b38c6a698d`: **SUCCESS**.
+- `e2e/b14-modules.spec.js` explicitly opens all 11 primary navigation targets (Dashboard, Leads, Clients, Proposals, Projects, Invoices, Payments, Expenses, Profit, Cashflow, Settings) and verifies the corresponding screen becomes active.
+- The same suite also verifies lead search/filter interaction and core Dashboard/Profit/Cashflow/Settings surfaces.
+- No navigation mapping change was introduced after that validated commit.
+
+**Next gate:** LQ04 Create / edit / save / cancel flows — remains 0% until the current-gate flow matrix is explicitly verified for Lead, Client, Proposal, Project, Invoice, Payment and Expense.
