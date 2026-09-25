@@ -1494,3 +1494,35 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   #dashboardScreen .dashboard-kpi:not(.has-kpi-data) .kpi-trend{visibility:hidden!important}
   #dashboardScreen .dashboard-kpi:not(.has-kpi-data) .kpi-foot{visibility:hidden!important}
 }
+
+
+/* V2.36 — reference-grade chart, cashflow and action-card finishing */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-main-grid{grid-template-columns:minmax(0,1.62fr) minmax(320px,.90fr)!important}
+  #dashboardScreen .dashboard-chart-card{min-height:274px!important}
+  #dashboardScreen .dashboard-chart-card .chart-shell{height:208px!important;margin-top:3px!important}
+  #dashboardScreen .dashboard-chart-card .chart{height:208px!important}
+  #dashboardScreen .dashboard-chart-card .chart-legend{font-size:10px!important;gap:8px!important}
+  #dashboardScreen .dashboard-chart-card .chart-y-labels{font-size:9px!important}
+  #dashboardScreen .dashboard-chart-card .chart-label{font-size:9px!important}
+  #dashboardScreen .dashboard-cash-card{min-height:274px!important}
+  #dashboardScreen .dashboard-cash-card .cash{padding-top:8px!important}
+  #dashboardScreen .dashboard-cash-card .cash-row{padding:10px 0!important}
+  #dashboardScreen .dashboard-cash-card .cash-row-head{font-size:11px!important}
+  #dashboardScreen .dashboard-cash-card .cash-row-head strong{font-size:12px!important}
+  #dashboardScreen .dashboard-cash-card .meter{height:7px!important;border-radius:99px!important;margin-top:7px!important}
+  #dashboardScreen .dashboard-lower-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  #dashboardScreen .dashboard-list-card{height:218px!important;min-height:218px!important}
+  #dashboardScreen .dashboard-list-card .premium-list{overflow:hidden!important}
+  #dashboardScreen .dashboard-list-card .row{min-height:40px!important;padding:8px 0!important}
+  #dashboardScreen .dashboard-profit-card{height:174px!important;min-height:174px!important}
+}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-chart-card .chart-shell{height:190px!important}
+  #dashboardScreen .dashboard-chart-card .chart{height:190px!important}
+  #dashboardScreen .dashboard-cash-card .cash-row{padding:7px 0!important}
+  #dashboardScreen .dashboard-list-card{height:auto!important}
+}
+
+/* Empty-state integrity: never imitate reference activity with invented rows. */
+#dashboardScreen .empty{color:#8b97aa!important;background:#fbfcfe!important;border:1px dashed #e5eaf1!important;border-radius:8px!important;padding:24px 12px!important;text-align:center!important}
