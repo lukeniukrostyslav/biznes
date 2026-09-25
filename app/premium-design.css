@@ -1009,3 +1009,97 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   .sidebar{display:none!important}
   #dashboardScreen .dashboard-module-section{display:block!important}
 }
+
+
+/* V2.23 — approved dashboard reference parity pass
+   Target: match the approved BUSINESS OS desktop/mobile reference composition.
+   Visual-only layer: no business logic, data model or navigation behavior changes.
+*/
+@media(min-width:721px){
+  .product-identity-bar{display:none!important}
+  .topbar{height:64px!important;padding:0 26px!important}
+  .topbar .search{height:36px!important;max-width:430px!important;border-radius:10px!important;background:#fbfcfe!important;color:#91a0b4!important}
+  .top-actions{gap:10px!important}
+  #exportData,#importData{display:none!important}
+  .top-actions .new{height:38px!important;min-width:96px!important;border-radius:10px!important;padding:0 15px!important}
+  .content{padding:24px 26px 32px!important;max-width:1320px!important}
+  #dashboardScreen .dashboard-hero{
+    min-height:86px!important;height:auto!important;margin:0 0 14px!important;padding:4px 2px 12px!important;
+    border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;
+    display:flex!important;align-items:flex-end!important;justify-content:space-between!important;
+  }
+  #dashboardScreen .dashboard-hero-copy{position:relative!important;z-index:2!important}
+  #dashboardScreen .dashboard-hero-art{display:none!important}
+  #dashboardScreen .dashboard-hero .eyebrow{display:none!important}
+  #dashboardScreen .dashboard-hero h1{font-size:25px!important;line-height:1.12!important;letter-spacing:-.035em!important;margin:0!important;font-weight:800!important;color:#101b32!important}
+  #dashboardScreen .dashboard-hero p{font-size:12px!important;margin:5px 0 0!important;color:#6d7c91!important}
+  #dashboardScreen .dashboard-date{display:block!important;font-size:11px!important;color:#63728a!important;margin-top:7px!important}
+  #dashboardScreen .dashboard-hero .hero-proof{display:none!important}
+  #dashboardScreen .dashboard-hero .hero-period{
+    position:relative!important;right:auto!important;bottom:auto!important;min-width:145px!important;height:38px!important;
+    margin-left:auto!important;border:1px solid #dfe6ef!important;border-radius:9px!important;background:#fff!important;
+    color:#26364d!important;font-size:11px!important;font-weight:700!important;box-shadow:0 3px 10px rgba(20,42,76,.035)!important
+  }
+
+  #dashboardScreen .dashboard-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin-bottom:12px!important}
+  #dashboardScreen .dashboard-kpi{
+    min-height:124px!important;padding:14px 15px!important;border:1px solid #e0e7f0!important;border-radius:12px!important;
+    background:#fff!important;box-shadow:0 5px 18px rgba(20,42,76,.045)!important
+  }
+  #dashboardScreen .dashboard-kpi .kpi-label{font-size:11px!important;font-weight:700!important;color:#25344b!important}
+  #dashboardScreen .dashboard-kpi .kpi-icon{width:38px!important;height:38px!important;border-radius:10px!important;font-size:17px!important}
+  #dashboardScreen .revenue-kpi .kpi-icon{background:#dcf7eb!important;color:#1b9b69!important}
+  #dashboardScreen .outstanding-kpi .kpi-icon{background:#fff0dc!important;color:#df7624!important}
+  #dashboardScreen .pipeline-kpi .kpi-icon{background:#eee7ff!important;color:#7447db!important}
+  #dashboardScreen .profit-kpi .kpi-icon{background:#dcecff!important;color:#2877e8!important}
+  #dashboardScreen .dashboard-kpi h3{font-size:24px!important;letter-spacing:-.035em!important;color:#111c31!important}
+  #dashboardScreen .dashboard-kpi .kpi-trend{font-size:11px!important}
+  #dashboardScreen .dashboard-kpi .kpi-foot{font-size:9px!important;color:#8290a3!important}
+
+  #dashboardScreen .dashboard-main-grid{grid-template-columns:minmax(0,1.62fr) minmax(320px,.92fr)!important;gap:12px!important;margin-top:0!important}
+  #dashboardScreen .dashboard-main-grid>.card{min-height:268px!important;padding:15px!important;border:1px solid #e0e7f0!important;border-radius:12px!important;background:#fff!important;box-shadow:0 5px 18px rgba(20,42,76,.04)!important}
+  #dashboardScreen .dashboard-card-title{margin-bottom:11px!important}
+  #dashboardScreen .dashboard-card-title h2{font-size:14px!important;color:#17263d!important;font-weight:800!important}
+  #dashboardScreen .dashboard-card-title p{font-size:9px!important;color:#8997aa!important;margin:4px 0 0!important}
+  #dashboardScreen .chart-shell{height:214px!important}
+  #dashboardScreen .chart{height:190px!important;padding:18px 8px 10px!important;gap:8px!important;border-top:1px solid #f0f3f7!important}
+  #dashboardScreen .bar{background:linear-gradient(180deg,#2e80ed,#b9d8ff)!important;border-radius:4px 4px 1px 1px!important;min-width:12px!important}
+  #dashboardScreen .chart-legend{font-size:9px!important;color:#607088!important}
+  #dashboardScreen .dashboard-cash-card .cash{gap:13px!important}
+  #dashboardScreen .dashboard-cash-card .cash-row{padding:7px 0!important}
+  #dashboardScreen .dashboard-cash-card .cash-row-head{font-size:10px!important}
+  #dashboardScreen .dashboard-cash-card .cash-row-head strong{font-size:12px!important}
+  #dashboardScreen .dashboard-cash-card .meter{height:7px!important}
+  #dashboardScreen .dashboard-cash-card .income-fill{background:#39c68b!important}
+  #dashboardScreen .dashboard-cash-card .expense-fill{background:#ef5350!important}
+  #dashboardScreen .dashboard-cash-card .profit-fill{background:#287bea!important}
+
+  #dashboardScreen .dashboard-lower-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;margin-top:12px!important
+  }
+  #dashboardScreen .dashboard-lower-grid>.card{
+    min-height:218px!important;padding:15px!important;border:1px solid #e0e7f0!important;border-radius:12px!important;
+    background:#fff!important;box-shadow:0 5px 18px rgba(20,42,76,.04)!important
+  }
+  #dashboardScreen .dashboard-active-projects-card{grid-column:auto!important}
+  #dashboardScreen .dashboard-profit-card{grid-column:1/-1!important;min-height:174px!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th{font-size:8px!important;color:#8391a5!important;padding:7px 8px!important}
+  #dashboardScreen .dashboard-profit-card .profit-table td{font-size:9px!important;padding:8px!important;color:#34445b!important;height:34px!important}
+  #dashboardScreen .dashboard-profit-card .profit-table td:first-child{font-weight:750!important;color:#24354c!important}
+  #dashboardScreen .text-action{font-size:9px!important;color:#176be9!important;font-weight:750!important}
+}
+
+@media(max-width:720px){
+  .product-identity-bar{display:flex!important}
+  #dashboardScreen .dashboard-hero-art{display:none!important}
+  #dashboardScreen .dashboard-hero{
+    min-height:auto!important;height:auto!important;margin:0!important;padding:4px 2px 10px!important;
+    border:0!important;background:transparent!important;box-shadow:none!important
+  }
+  #dashboardScreen .dashboard-hero h1{font-size:21px!important}
+  #dashboardScreen .dashboard-hero p{font-size:10px!important}
+  #dashboardScreen .dashboard-kpi{background:#fff!important;border:1px solid #dfe7f0!important;box-shadow:0 5px 16px rgba(20,42,76,.045)!important}
+  #dashboardScreen .dashboard-kpi h3{font-size:19px!important}
+  #dashboardScreen .dashboard-main-grid>.card,#dashboardScreen .dashboard-lower-grid>.card{background:#fff!important;border:1px solid #dfe7f0!important;box-shadow:0 5px 16px rgba(20,42,76,.045)!important}
+  #dashboardScreen .dashboard-list-card .card-title h2,#dashboardScreen .dashboard-profit-card .card-title h2{font-size:13px!important}
+}
