@@ -1,6 +1,6 @@
 # BUSINESS OS — ПРОГРЕСС
 
-Последнее обновление: 2026-09-25 — B07 schema validation hardening
+Последнее обновление: 2026-09-25 — B07 persisted-store load validation hardening
 
 ## Текущий рабочий baseline
 
@@ -35,27 +35,25 @@ B05 / старый визуальный прототип FROZEN. Он остаё
 
 B07 → B08 → B09 → B10 → B11 → B12 → B13 → B14 → NEW DESIGN → B15 → B16
 
-## B07 — schema version validation hardening — 2026-09-25
+## B07 — persisted-store load validation hardening — 2026-09-25
 
-Усилен persistence core:
+Дополнительно усилен persistence core:
 
-- migrateStore() теперь явно отклоняет malformed schema versions;
-- принимаются только целые положительные версии;
-- schemaVersion abc, 0 и 1.5 теперь не проходят миграцию;
-- validateStore() дополнительно требует текущую schema version;
-- importStore() получает защиту через общий migration/validation path;
-- добавлены regression tests для malformed schema versions в migration/import;
-- добавлен test на отказ validateStore() для устаревшей версии.
+- loadStore() теперь после JSON parse и normalizeStore() запускает validateStore();
+- повреждённые persisted relationships больше не принимаются молча;
+- приложение получает явную ошибку вместо возврата потенциально некорректного состояния;
+- добавлен regression test, который проверяет именно ошибку Invalid BUSINESS OS persisted store;
+- сохранён предыдущий защитный механизм от malformed persisted JSON.
 
 GitHub commits:
-- 3c13262e40506bf4b56872d68f70e318aea07fec — fix: validate BUSINESS OS schema versions
-- c331a3c2bf49a4655b23f932abf95ce1e7dc7089 — test: harden schema version validation
+- dcdf82ace44229ec31da0a5b74fd05ed79724ca2 — fix: validate persisted store on load
+- edb7e03660de9724e502f0f371e25c5009f36096 — test: assert persisted relationship validation on load
 
 ### QA status
 
 Изменения проверены source-level через актуальный GitHub source.
 
-Полный npm test и GitHub Actions execution для нового commit пока не подтверждены. Поэтому процент B07 не повышается и остаётся 89%.
+GitHub Actions execution для новых commits пока не подтверждён: workflow runs возвращают пустой список. Поэтому B07 не повышается и остаётся 89%.
 
 ## Правило процентов
 
@@ -63,4 +61,4 @@ GitHub commits:
 
 ## Следующий технический приоритет
 
-Продолжаем B07, пока не будет закрыта оставшаяся core-функциональность и подтверждён полный test execution. После закрытия B07 переходим строго к B08, не перескакивая к новому дизайну.
+Продолжаем B07 до подтверждённого полного test execution. После закрытия B07 переходим строго к B08, не перескакивая к новому дизайну.
