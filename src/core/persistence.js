@@ -212,6 +212,12 @@ function saveStore(storage, store) {
   return normalized;
 }
 
+function assertCollection(collection) {
+  if (!COLLECTIONS.includes(collection)) {
+    throw new Error('Unknown BUSINESS OS collection: ' + collection);
+  }
+}
+
 function archiveRecord(store, collection, id) {
   assertCollection(collection);
   const normalized = normalizeStore(store);
