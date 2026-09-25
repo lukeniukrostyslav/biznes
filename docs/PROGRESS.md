@@ -19,7 +19,7 @@
 | B10 | Projects / Proposals / Invoices / Payments | 100% |
 | B11 | Cashflow / Dashboard / Analytics | 100% |
 | B12 | Persistence / Export / Import | 100% |
-| B13 | Technical UI / Localization / Responsive | 15% |
+| B13 | Technical UI / Localization / Responsive | 100% |
 | B14 | Functional / E2E QA | 0% |
 | NEW DESIGN | Новый Premium Design с нуля | 0% |
 | B15 | Commercial Packaging | 0% |
@@ -255,3 +255,12 @@ B12.1–B12.32 реализованы и сохранены в GitHub. Доба�
 GitHub Actions Run #94: **success — 110/110 тестов, 0 ошибок**.
 
 Следующий технический приоритет — **B13 Technical UI / Localization / Responsive**.
+
+
+## B13 — ПОДБЛОКИ И ФАКТИЧЕСКОЕ ЗАКРЫТИЕ
+
+Все **B13.1–B13.44 = 100%**. Верифицированы responsive breakpoints, navigation, forms, tables, localization EN/RU/ES/DE/FR, focus states, semantic controls, overflow protection, export wiring и static UI regression coverage.
+
+GitHub Actions **Run #100 — success**.
+
+Следующий технический приоритет — **B14 Functional / E2E QA**.
