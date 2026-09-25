@@ -227,7 +227,7 @@
 <div class="field"><label data-ui="nextAction">Next action</label><input id="fAction" placeholder="Follow up" data-ui-placeholder="followUp"></div>
 <div class="field full"><label data-ui="notes">Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…" data-ui-placeholder="notesPlaceholder"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
-<script>let activeLanguage='en';window.activeLanguage=activeLanguage;</script><script>
+<script>window.activeLanguage='en';</script><script>
 /* BUSINESS OS boot fallback: keeps navigation and language functional if the deferred runtime fails. */
 (function(){
   const LANGS=['en','ru','es','de','fr'];
@@ -285,9 +285,18 @@
     };
     const sf=screenFallback[lang];
     const screenFields=['leadsTitle','leadsSub','newLead','clientsTitle','clientsSub','newClient','proposalsTitle','proposalsSub','newProposal','projectsTitle','projectsSub','newProject','invoicesTitle','invoicesSub','newInvoice','paymentsTitle','paymentsSub','recordPayment','expensesTitle','expensesSub','addExpense','profitTitle','profitSub','cashflowTitle','cashflowSub'];
-    screenFields.forEach(key=>{const el=document.getElementById(key);if(el&&sf[key])el.textContent=sf[key];});
+    screenFields.forEach(key=>{document.querySelectorAll('[data-i18n="'+key+'"]').forEach(el=>{if(sf[key])el.textContent=sf[key];});});
 localStorage.setItem('business-os-lang',lang);
     window.activeLanguage=lang;
+  }
+  function bindCreateFallback(){
+    const createMap={newLead:'leads',newClient:'clients',newProposal:'proposals',newProject:'projects',newInvoice:'invoices',recordPayment:'payments',addExpense:'expenses'};
+    document.addEventListener('click',e=>{
+      const btn=e.target.closest('[data-i18n]');
+      if(!btn)return;
+      const type=createMap[btn.dataset.i18n];
+      if(type && typeof window.openCreateDrawer==='function') window.openCreateDrawer(type);
+    },true);
   }
   function bindNav(){
     document.querySelectorAll('#nav button').forEach(btn=>{
@@ -313,6 +322,7 @@ localStorage.setItem('business-os-lang',lang);
         else apply(e.target.value);
       });
     }
+    bindCreateFallback();
     setTimeout(()=>{
       const nav=document.getElementById('nav');
       if(nav && !nav.children.length){apply(localStorage.getItem('business-os-lang')||'en');}
@@ -320,8 +330,8 @@ localStorage.setItem('business-os-lang',lang);
   });
 })();
 </script>
-<script type="module">
-/* BUSINESS OS runtime bundle: core modules inlined for reliable production/mobile loading. */
+<script>
+/* BUSINESS OS runtime bundle: core modules inlined as a classic runtime so the production UI cannot silently skip initialization. */
 
 function roundMoney(value, decimals = 2) {
   const factor = 10 ** decimals;
