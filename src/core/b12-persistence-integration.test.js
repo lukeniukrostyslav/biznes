@@ -28,9 +28,10 @@ test('B12 relationship edits persist only when the edited chain remains valid', 
   const storage = memoryStorage();
   let store = createEmptyStore();
   store.clients = [{ id: 'c1' }, { id: 'c2' }];
-  store.projects = [{ id: 'p1', clientId: 'c1' }];
+  store.proposals = [{ id: 'pr1', clientId: 'c1' }];
+  store.projects = [{ id: 'p1', clientId: 'c1', proposalId: 'pr1' }];
   saveStore(storage, store);
-  assert.throws(() => upsertRecord(store, 'projects', { id: 'p1', clientId: 'c2' }), /Cannot upsert invalid BUSINESS OS store/);
+  assert.throws(() => upsertRecord(store, 'projects', { id: 'p1', clientId: 'c2', proposalId: 'pr1' }), /Cannot upsert invalid BUSINESS OS store/);
   assert.equal(loadStore(storage).projects[0].clientId, 'c1');
 });
 
