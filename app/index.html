@@ -32,7 +32,7 @@
     <div class="dashboard-hero-copy">
       <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-v2="heroEyebrow">BUSINESS COMMAND CENTER</span></div>
       <h1 id="greeting">Good morning</h1>
-      <p id="subtitle">Here’s what’s happening with your business today.</p>
+      <p id="subtitle">Here’s what’s happening with your business today.</p><span class="dashboard-date" id="dashboardDate"></span>
       <div class="hero-proof"><span>●</span> <span data-v2="heroProof">Local-first workspace • EUR reporting • 5 languages</span></div>
     </div>
     <div class="dashboard-hero-art" aria-hidden="true">
@@ -310,7 +310,12 @@ function applyDashboardV2Copy(lang){
  const c=dashboardV2Copy[lang]||dashboardV2Copy.en;
  document.querySelectorAll('[data-v2]').forEach(el=>{const key=el.dataset.v2;if(c[key])el.textContent=c[key];});
 }
-function render(lang){const currentScreen=document.querySelector('.screen.active')?.id||'dashboardScreen';activeLanguage=lang;window.activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(mapScreenIndex(currentScreen)===i?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);refreshSettingsLabels();bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();renderArchive();}
+function updateDashboardDate(lang){
+ const el=document.getElementById('dashboardDate'); if(!el)return;
+ const localeMap={en:'en-GB',ru:'ru-RU',es:'es-ES',de:'de-DE',fr:'fr-FR'};
+ el.textContent=new Intl.DateTimeFormat(localeMap[lang]||'en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).format(new Date());
+}
+function render(lang){const currentScreen=document.querySelector('.screen.active')?.id||'dashboardScreen';activeLanguage=lang;window.activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;updateDashboardDate(lang);document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(mapScreenIndex(currentScreen)===i?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);refreshSettingsLabels();bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();renderArchive();}
 function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
 function mapScreenIndex(screenId){return ['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'].indexOf(screenId);}
 
