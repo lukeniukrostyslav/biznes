@@ -153,6 +153,7 @@
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus, calculateInvoice } from "../src/core/financial-engine.js";
+import { buildProjectFromProposal, buildInvoiceFromProject } from "../src/core/b10-lifecycle-engine.js";
 import { DEFAULT_PIPELINE_STAGES, calculateCrmPipeline, convertLeadToClient } from "../src/core/crm-engine.js";
 import { archiveRecord, validateStore, exportStore, importStore, restoreRecord, loadStore as loadPersistentStore, saveStore as savePersistentStore } from "../src/core/persistence.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres']}};
@@ -456,75 +457,46 @@ function renderStoredRecords(){
 function convertProposalToProject(proposalId){
   const proposal=(businessStore.proposals||[]).find(x=>x.id===proposalId);
   if(!proposal){toast(t('proposalNotFound'));return;}
-  const status=String(proposal.status||'').toLowerCase();
-  if(!['won','accepted'].includes(status)){toast(t('proposalAccepted'));return;}
-  const existing=(businessStore.projects||[]).find(x=>x.proposalId===proposal.id);
-  if(existing){toast(t('projectExists'));return;}
-  if(!proposal.clientId){toast(t('proposalClient'));return;}
-
-  const value=Number(proposal.value||proposal.amount||0);
-  const now=new Date().toISOString();
-  const project={
-    id:uid('project'),
-    createdAt:now,
-    updatedAt:now,
-    name:(proposal.name||proposal.title||'Untitled proposal')+' Project',
-    status:'Active',
-    clientId:proposal.clientId,
-    proposalId:proposal.id,
-    revenue:value,
-    budget:value,
-    budgetType:'Fee',
-    billingType:'Fixed Fee',
-    actualCosts:0,
-    actualHours:0,
-    labourRate:0,
-    nextAction:proposal.nextAction||'Define project kickoff',
-    notes:proposal.notes||''
-  };
-  const candidate={...businessStore,projects:[...(businessStore.projects||[]),project]};
-  const errors=validateStoredRelationships(candidate);
-  if(errors.length){toast(t('conversionBlocked'));return;}
-  businessStore=saveStore(candidate);
-  toast(t('projectCreated'));
-  refreshDashboardMetrics();
-  renderStoredRecords();
+  try{
+    const project=buildProjectFromProposal(proposal,businessStore.projects||[],uid,new Date());
+    const candidate={...businessStore,projects:[...(businessStore.projects||[]),project]};
+    const errors=validateStoredRelationships(candidate);
+    if(errors.length){toast(t('conversionBlocked'));return;}
+    businessStore=saveStore(candidate);
+    toast(t('projectCreated'));
+    refreshDashboardMetrics();
+    renderStoredRecords();
+  }catch(error){
+    const messages={
+      'proposal-not-accepted':'proposalAccepted',
+      'proposal-client-required':'proposalClient',
+      'project-already-exists':'projectExists',
+      'proposal-value-required':'projectAmount'
+    };
+    toast(t(messages[error.message]||'conversionBlocked'));
+  }
 }
 function createInvoiceFromProject(projectId){
   const project=(businessStore.projects||[]).find(x=>x.id===projectId);
   if(!project){toast(t('projectNotFound'));return;}
-  if(String(project.billingType||'').toLowerCase()==='non-billable'){
-    toast(t('nonBillable'));return;
+  try{
+    const invoice=buildInvoiceFromProject(project,businessStore.invoices||[],uid,new Date());
+    const candidate={...businessStore,invoices:[...(businessStore.invoices||[]),invoice]};
+    const errors=validateStoredRelationships(candidate);
+    if(errors.length){toast(t('invoiceBlocked'));return;}
+    businessStore=saveStore(candidate);
+    toast(t('invoiceCreated'));
+    refreshDashboardMetrics();
+    renderStoredRecords();
+  }catch(error){
+    const messages={
+      'project-non-billable':'nonBillable',
+      'invoice-already-exists':'invoiceExists',
+      'project-client-required':'projectClient',
+      'project-amount-required':'projectAmount'
+    };
+    toast(t(messages[error.message]||'invoiceBlocked'));
   }
-  const existing=(businessStore.invoices||[]).find(x=>x.projectId===project.id);
-  if(existing){toast(t('invoiceExists'));return;}
-  if(!project.clientId){toast(t('projectClient'));return;}
-  const amount=Number(project.revenue||project.budget||0);
-  if(amount<=0){toast(t('projectAmount'));return;}
-  const now=new Date().toISOString();
-  const invoice={
-    id:uid('invoice'),
-    createdAt:now,
-    updatedAt:now,
-    name:(project.name||'Project')+' Invoice',
-    status:'Draft',
-    clientId:project.clientId,
-    projectId:project.id,
-    value:amount,
-    amount:amount,
-    taxRate:0,
-    dueDate:null,
-    lineItems:[{description:project.name||'Project services',quantity:1,unitPrice:amount}],
-    nextAction:'Send invoice',
-    notes:project.notes||''
-  };
-  const candidate={...businessStore,invoices:[...(businessStore.invoices||[]),invoice]};
-  const errors=validateStoredRelationships(candidate);
-  if(errors.length){toast(t('invoiceBlocked'));return;}
-  businessStore=saveStore(candidate);
-  toast(t('invoiceCreated'));
-  refreshDashboardMetrics();
-  renderStoredRecords();
 }
 const settingsUiCopy={
   en:{title:'Settings',sub:'Local workspace data, import/export and archived records.',archive:'Archived records'},
