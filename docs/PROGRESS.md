@@ -436,3 +436,10 @@ B14 полностью подтверждён фактическим выпол�
 - ND.15: 100% — Cashflow premium surface completed with KPI hierarchy, table treatment, positive/negative metric treatment, empty state and responsive behavior.
 - ND.16: 55% — Settings/persistence surface started with settings grid, persistence controls, archive area, danger-zone treatment and mobile layout.
 - GitHub commit: `cafa1411a8395e3d84e216eaacc72244fde8cb2f`.
+
+
+### Design checkpoint — Settings completed / Forms + States advanced
+- ND.16: 100% — Settings/persistence surface completed with archive, import/export controls, danger-zone treatment, responsive layout and interaction polish.
+- ND.17: 70% — Unified premium form/dialog/drawer treatment added with focus, validation-error and action-row styling.
+- ND.18: 55% — Shared empty/loading/error/success state system added for consistent product-wide feedback.
+- GitHub commit: `d26bea129c70a4b8dd755b44798a5d95ffdc7231`.
