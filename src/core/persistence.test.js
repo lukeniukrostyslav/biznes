@@ -204,3 +204,14 @@ test('upsertRecord rejects a relationship-breaking edit',()=>{
   );
   assert.equal(store.projects[0].clientId,'c1');
 });
+
+
+test('upsertRecord accepts a valid create and update',()=>{
+  let store=createEmptyStore();
+  store=upsertRecord(store,'clients',{id:'c1',name:'Alpha'});
+  assert.equal(store.clients.length,1);
+  assert.equal(store.clients[0].name,'Alpha');
+  store=upsertRecord(store,'clients',{id:'c1',name:'Beta'});
+  assert.equal(store.clients.length,1);
+  assert.equal(store.clients[0].name,'Beta');
+});
