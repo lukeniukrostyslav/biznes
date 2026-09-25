@@ -1209,3 +1209,73 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   #dashboardScreen .dashboard-cash-card .cash-summary{display:none!important}
   #dashboardScreen .dashboard-cash-card .bank-fill{background:#7447df!important}
 }
+
+
+/* V2.29 — approved reference fidelity: robust mobile composition + zero-demo visual state */
+@media(max-width:720px){
+  html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+  .app,.main,.content,#dashboardScreen{width:100%!important;max-width:100%!important;min-width:0!important}
+  .content{box-sizing:border-box!important;padding:14px 12px 82px!important}
+  .topbar{width:100%!important;box-sizing:border-box!important}
+  .product-identity-bar{width:100%!important;box-sizing:border-box!important;min-width:0!important}
+  #dashboardScreen .dashboard-hero{width:100%!important;box-sizing:border-box!important;min-width:0!important}
+  #dashboardScreen .dashboard-hero-copy{min-width:0!important;max-width:100%!important}
+  #dashboardScreen .dashboard-hero .hero-period{min-width:0!important;width:138px!important;flex:0 0 138px!important}
+  #dashboardScreen .dashboard-kpis{
+    width:100%!important;min-width:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;margin:0 0 10px!important
+  }
+  #dashboardScreen .dashboard-kpi{
+    width:100%!important;min-width:0!important;max-width:none!important;
+    min-height:116px!important;padding:13px!important;overflow:hidden!important
+  }
+  #dashboardScreen .dashboard-kpi .kpi-value-row{min-width:0!important;gap:5px!important}
+  #dashboardScreen .dashboard-kpi h3{font-size:20px!important;white-space:nowrap!important}
+  #dashboardScreen .dashboard-kpi .kpi-trend{font-size:9px!important;white-space:nowrap!important}
+  #dashboardScreen .dashboard-kpi .kpi-spark{display:none!important}
+  #dashboardScreen .dashboard-kpi .kpi-bottom{display:block!important;min-height:14px!important}
+  #dashboardScreen .dashboard-kpi .kpi-foot{font-size:9px!important}
+  #dashboardScreen .dashboard-main-grid{
+    width:100%!important;min-width:0!important;grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;margin:0!important
+  }
+  #dashboardScreen .dashboard-main-grid>.card,
+  #dashboardScreen .dashboard-lower-grid>.card,
+  #dashboardScreen .dashboard-profit-card{
+    width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important
+  }
+  #dashboardScreen .dashboard-main-grid>.card{min-height:0!important}
+  #dashboardScreen .dashboard-chart-card .chart-shell{min-width:0!important;width:100%!important}
+  #dashboardScreen .dashboard-chart-card .chart{min-width:0!important;width:100%!important}
+  #dashboardScreen .dashboard-cash-card .cash{min-width:0!important;width:100%!important}
+  #dashboardScreen .dashboard-lower-grid{
+    width:100%!important;min-width:0!important;grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;margin-top:10px!important
+  }
+  #dashboardScreen .dashboard-lower-grid>.card{min-height:0!important}
+  #dashboardScreen .dashboard-profit-card{grid-column:auto!important}
+  #dashboardScreen .dashboard-profit-card .profit-table{min-width:0!important;width:100%!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th,
+  #dashboardScreen .dashboard-profit-card .profit-table td{padding:7px 5px!important;font-size:9px!important}
+  #dashboardScreen .dashboard-card-title{min-width:0!important}
+  #dashboardScreen .dashboard-card-title h2{white-space:nowrap!important}
+  #dashboardScreen .dashboard-card-actions{flex-shrink:0!important}
+}
+
+/* On empty business state, trend microcharts are intentionally hidden rather than presenting decorative demo data. */
+#dashboardScreen .dashboard-kpi .kpi-spark{display:none!important}
+#dashboardScreen .dashboard-kpi .kpi-foot{visibility:hidden!important}
+#dashboardScreen .dashboard-kpi .kpi-foot::after{content:"No previous-period data";visibility:visible}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-kpi .kpi-foot::after{content:"Нет данных за период"}
+}
+
+/* V2.29 desktop reference proportions */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-kpis{align-items:stretch!important}
+  #dashboardScreen .dashboard-kpi{overflow:hidden!important}
+  #dashboardScreen .dashboard-main-grid{min-width:0!important}
+  #dashboardScreen .dashboard-main-grid>.card{min-width:0!important}
+  #dashboardScreen .dashboard-lower-grid{min-width:0!important}
+  #dashboardScreen .dashboard-lower-grid>.card{min-width:0!important}
+}
