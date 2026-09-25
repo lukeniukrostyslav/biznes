@@ -2082,7 +2082,7 @@ function renderDashboardRealData(){
           return '<div class="chart-series">'+series.map((x)=>{
             const incomeH=Math.max(5,Math.round((x.income||0)/peak*160));
             const expenseH=Math.max(4,Math.round((x.expenses||0)/peak*160));
-            return '<div class="chart-point" title="'+escapeHtml(x.label)+' · Revenue '+money(x.income||0)+' · Profit '+money(x.net||0)+' · Expenses '+money(x.expenses||0)+'">'+
+            return '<div class="chart-point" title="'+escapeHtml(x.label)+' · '+({en:'Revenue',ru:'Выручка',es:'Ingresos',de:'Umsatz',fr:'Chiffre d’affaires'}[activeLanguage]||'Revenue')+' '+money(x.income||0)+' · '+({en:'Profit',ru:'Прибыль',es:'Beneficio',de:'Gewinn',fr:'Profit'}[activeLanguage]||'Profit')+' '+money(x.net||0)+' · '+({en:'Expenses',ru:'Расходы',es:'Gastos',de:'Ausgaben',fr:'Dépenses'}[activeLanguage]||'Expenses')+' '+money(x.expenses||0)+'">'+
               '<div class="chart-bars"><i class="bar bar-revenue" style="height:'+incomeH+'px"></i><i class="bar bar-expense" style="height:'+expenseH+'px"></i><span class="profit-line-point" data-profit="'+Math.round(Math.max(0,x.net||0)/peak*160)+'"><b></b></span></div>'+
               '<span class="chart-label">'+escapeHtml(x.label)+'</span></div>';
           }).join('')+'</div><svg class="profit-line-svg" viewBox="0 0 1200 160" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+series.map((x,i)=>{const y=160-Math.round(Math.max(0,x.net||0)/peak*160);const xx=(i+.5)*100;return xx+','+y;}).join(' ')+'"/></svg>';
