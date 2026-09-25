@@ -676,3 +676,26 @@ Latest reference-detail work:
 Latest design commit: a3af146a5b38d68f9d800eacdffcd44bdcc0c46b
 
 **V2 overall: 75%** — intentionally not final until deployment is visually inspected and all modules are checked against the reference level.
+
+
+### V2 continuation — V2.16 reference polish
+- V2.2 Global shell: **96%**
+- V2.3 Dashboard composition: **98%**
+- V2.4 All product module visual surfaces: **70%**
+- V2.5 Responsive/mobile composition: **85%**
+- V2.6 EN / RU / ES / DE / FR V2 layer: **82%**
+- V2.7 Existing navigation wiring: **76%**
+- V2.8 B14 + Core + Design Regression: **100%**
+- V2.9 Live visual acceptance: **0%**
+
+Reference polish completed:
+- sidebar record-count badges now use real existing Lead/Proposal/Project/Invoice counts;
+- active sidebar state and badge treatment refined to match the reference;
+- New action received the reference dropdown affordance;
+- dashboard operational rows, count badges and profitability table spacing refined.
+
+Latest commits:
+- e13bde2562ff0f1cd7326839a6c023324cae8733 — data-driven sidebar badges
+- a8f498af986256c0eef9f86101abe990cfbe4384 — reference sidebar/dashboard polish
+
+**V2 overall: 76%** — live acceptance intentionally remains 0% until final deployment inspection.
