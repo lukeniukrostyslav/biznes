@@ -332,9 +332,9 @@ B14 полностью подтверждён фактическим выпол�
 | ND.8 | Clients redesign | 100% |
 | ND.9 | Proposals redesign | 100% |
 | ND.10 | Projects redesign | 100% |
-| ND.11 | Invoices redesign | 35% |
-| ND.12 | Payments redesign | 0% |
-| ND.13 | Expenses redesign | 0% |
+| ND.11 | Invoices redesign | 100% |
+| ND.12 | Payments redesign | 55% |
+| ND.13 | Expenses redesign | 55% |
 | ND.14 | Profit redesign | 0% |
 | ND.15 | Cashflow redesign | 0% |
 | ND.16 | Settings / persistence / export-import redesign | 0% |
@@ -414,3 +414,10 @@ B14 полностью подтверждён фактическим выпол�
 - ND.10: 100% — Projects premium surface completed: cards, metadata, progress/metrics, actions, table hierarchy, empty state and mobile behavior.
 - ND.11: 35% — Invoices premium surface started with table hierarchy, status/action treatment and responsive handling.
 - GitHub commit: `23c9fa3411ce39b15a08891aad3a74d2c619eaef`.
+
+
+### Design checkpoint — Invoices completed / Payments + Expenses advanced
+- ND.11: 100% — Invoices premium surface completed: table hierarchy, totals, statuses/actions, empty state, responsive behavior and mobile header treatment.
+- ND.12: 55% — Payments premium surface implemented through table hierarchy, status/action treatment, amount emphasis, empty state and responsive handling.
+- ND.13: 55% — Expenses premium surface implemented through table hierarchy, amount emphasis, status/action treatment, empty state and responsive handling.
+- GitHub commit: `bcd9e80a3a0dffb1660fa8e2ea844717a9ed6c64`.
