@@ -140,6 +140,7 @@
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus } from "../src/core/financial-engine.js";
+import { archiveRecord } from "../src/core/persistence.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres']}};
 
 const screenCopy={
@@ -515,13 +516,16 @@ function validateStoredRelationships(store){
 function deleteRecord(type,id){
   const record=(businessStore[type]||[]).find(x=>x.id===id);
   if(!record)return;
-  const dependencies={clients:[['leads','clientId'],['proposals','clientId'],['projects','clientId'],['invoices','clientId'],['payments','clientId'],['expenses','clientId']],leads:[['proposals','leadId']],proposals:[['projects','proposalId']],projects:[['invoices','projectId'],['expenses','projectId']],invoices:[['payments','invoiceId']]};
-  const blocked=(dependencies[type]||[]).some(([collection,field])=>(businessStore[collection]||[]).some(x=>x[field]===id));
-  if(blocked){toast(({en:'Archive blocked: linked records exist',ru:'Архивация заблокирована: есть связанные записи',es:'Archivado bloqueado: existen registros vinculados',de:'Archivierung blockiert: verknüpfte Datensätze vorhanden',fr:'Archivage bloqué : des enregistrements liés existent'}[activeLanguage]||'Archive blocked: linked records exist'));return;}
   const confirmText={en:'Archive this record?',ru:'Архивировать эту запись?',es:'¿Archivar este registro?',de:'Diesen Datensatz archivieren?',fr:'Archiver cet enregistrement ?'}[activeLanguage]||'Archive this record?';
   if(!confirm(confirmText))return;
-  businessStore=saveStore({...businessStore,[type]:(businessStore[type]||[]).filter(x=>x.id!==id),archivedRecords:[...(businessStore.archivedRecords||[]),{...record,collection:type,archivedAt:new Date().toISOString()}]});
-  toast(({en:'Record archived locally',ru:'Запись перемещена в архив',es:'Registro archivado localmente',de:'Datensatz lokal archiviert',fr:'Enregistrement archivé localement'}[activeLanguage]||'Record archived locally'));
+  try{
+    businessStore=saveStore(archiveRecord(businessStore,type,id));
+  }catch(error){
+    const blockedText={en:'Archive blocked: linked records exist',ru:'Архивация заблокирована: есть связанные записи',es:'Archivado bloqueado: existen registros vinculados',de:'Archivierung blockiert: verknüpfte Datensätze vorhanden',fr:'Archivage bloqué : des enregistrements liés existent'}[activeLanguage]||'Archive blocked: linked records exist';
+    toast(blockedText);
+    return;
+  }
+  toast(({en:'Record archived locally',ru:'Запись перемещена в архив',es:'Registro archivado localmente',de:'Datensatz lokal archiviert',fr:'Enregistrement localement archivé'}[activeLanguage]||'Record archived locally'));
   refreshDashboardMetrics();
   renderStoredRecords();
 }
