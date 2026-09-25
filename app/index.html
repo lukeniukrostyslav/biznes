@@ -555,7 +555,8 @@ function deleteRecord(type,id){
   refreshDashboardMetrics();
   renderStoredRecords();
 }
-function renderCashflow(){
+function renderCashflow(){ refreshDashboardVisuals(); }
+
 function refreshDashboardVisuals(){
   const analytics=calculateDashboardAnalytics(businessStore,dashboardPeriod,new Date());
   const metrics=analytics;
