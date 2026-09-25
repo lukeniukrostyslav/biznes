@@ -335,7 +335,11 @@
   }
   function bindRussianRuntimeTranslation(){
     const target=document.querySelector('.content')||document.body;
-    const observer=new MutationObserver(()=>{ if((window.activeLanguage||document.getElementById('lang')?.value)==='ru') applyRussianStatic(); });
+    const observer=new MutationObserver(()=>{
+      if((window.activeLanguage||document.getElementById('lang')?.value)!=='ru') return;
+      observer.disconnect();
+      try{ applyRussianStatic(); } finally { observer.observe(target,{childList:true,subtree:true}); }
+    });
     observer.observe(target,{childList:true,subtree:true});
   }
   function bindNav(){
