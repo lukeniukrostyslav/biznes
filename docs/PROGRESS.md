@@ -836,3 +836,18 @@ Commit:
 - `acefc8b5247e3c487a0eb1f3c17be1ebbbeabfa9` — design: refine KPI and sidebar reference details
 
 Acceptance remains pending until live deployment verification.
+
+
+### Design checkpoint — V2.27 / dashboard card header fidelity — 2026-09-25
+
+Reference-parity refinements:
+- Follow-ups Today now has the reference-style count + View all action.
+- Overdue Invoices now has the reference-style count + View all action.
+- Dashboard operational card subtitles are hidden in the reference presentation so the cards use the tighter hierarchy shown in the approved image.
+- Lower operational cards were given the reference-like vertical density while preserving responsive behavior.
+
+Commits:
+- `e49e910395a4e59cd14c6efe90db96f3b1fcdd5e`
+- `f653ed87e7364768d3ddb1a606265482e0f61f4b`
+
+Live acceptance remains pending.
