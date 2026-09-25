@@ -752,3 +752,27 @@ Mobile navigation commit: 32dde058136cb79043de259baade95ecb5870520
 Mobile localization fix: 1db1142fe8e44d2614b023ec04d8738f3b784897
 
 **V2 overall: 86%** — live visual acceptance remains intentionally pending.
+
+
+### V2.22 — approved reference fidelity pass
+- V2.2 Global shell: **98%**
+- V2.3 Dashboard composition: **99%**
+- V2.4 All product module visual surfaces: **86%**
+- V2.5 Responsive/mobile composition: **94%**
+- V2.6 EN / RU / ES / DE / FR V2 layer: **84%**
+- V2.7 Existing navigation wiring: **78%**
+- V2.8 B14 + Core + Design Regression: **100%** on previously validated baseline
+- V2.9 Live visual acceptance: **0%**
+
+Completed:
+- refined desktop sidebar width, spacing, typography and active-state treatment to match the approved reference;
+- added consistent navigation icon treatment without changing navigation behavior;
+- refined dashboard hero, KPI density, operational-card spacing and profitability table hierarchy;
+- restored the workspace module section visibility after earlier dashboard compression;
+- no business logic or data model changes.
+
+Design commit: 01cc27dc49c5f91b2ae4ec590470681d044c9057
+
+Production deployment: dpl_C8ndWvi7iMi1XC8XtGUn49NYGRnz — READY.
+
+**V2 overall: 87%** — live visual acceptance remains intentionally pending final manual inspection across desktop/mobile and all product screens.
