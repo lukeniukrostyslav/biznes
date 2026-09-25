@@ -47,7 +47,9 @@ test.describe('B14 functional acceptance flows', () => {
     await expect(page.locator('#fInvoiceDiscountType')).toBeVisible();
     await expect(page.locator('#fInvoiceTaxRate')).toBeVisible();
     await expect(page.locator('#fInvoiceDueDate')).toBeVisible();
-    await expect(page.locator('#fInvoicePlanLines')).toBeVisible();
+    await expect(page.locator('#fInvoicePlanLines').locator('xpath=..')).toBeVisible();
+    await page.locator('#addInvoicePlanLine').click();
+    await expect(page.locator('#fInvoicePlanLines .plan-line')).toHaveCount(1);
     await page.locator('#addInvoiceLine').click();
     await expect(page.locator('#fInvoiceLines .invoice-line')).toHaveCount(2);
   });
