@@ -612,3 +612,24 @@ New design commit:
 - 719d006d9098a3261a805e0c699f1bbed347f759 — premium shell, topbar, identity rail, dashboard density and responsive finishing pass.
 
 **V2 overall: 66%** — not inflated by live acceptance; V2.9 remains 0% until the deployed interface is actually checked.
+
+
+### V2 continuation — V2.12 product module consistency
+- V2.2 Global shell: **95%**
+- V2.3 Dashboard composition: **93%**
+- V2.4 All product module visual surfaces: **68%**
+- V2.5 Responsive/mobile composition: **78%**
+- V2.6 EN / RU / ES / DE / FR V2 layer: **75%**
+- V2.7 Existing navigation wiring: **75%**
+- V2.8 B14 + Core + Design Regression: **100%**
+- V2.9 Live visual acceptance: **0%**
+
+Latest validation after V2.11:
+- B14 E2E #90: **SUCCESS**
+- Core Tests #213: **SUCCESS**
+- Design Regression #28: **SUCCESS**
+
+New design commit:
+- 091b3940f5bed8ceb5d59ed78c4d538cf4765808 — unified product-module cards, tables, pipelines, empty states, toolbar hierarchy and mobile overflow handling.
+
+**V2 overall: 71%** — live visual acceptance remains deliberately at 0% until final deployed UI review.
