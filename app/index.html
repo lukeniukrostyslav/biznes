@@ -162,6 +162,10 @@
 <div id="settingsScreen" class="screen">
 <div class="page-title"><div><h1 id="settingsTitle">Settings</h1><p id="settingsSub">Local workspace data, import/export and archived records.</p></div></div>
 <div class="card wide">
+<div class="card-title"><h2 id="settingsDataTitle">Data & persistence</h2></div>
+<div class="toolbar"><button class="secondary" id="settingsExportData" data-ui="export">Export</button><button class="secondary" id="settingsImportData" data-ui="import">Import</button></div>
+</div>
+<div class="card wide">
 <div class="card-title"><h2 id="archiveTitle">Archived records</h2><span class="muted" id="archiveCount">0</span></div>
 <div id="archiveList" class="list"></div>
 </div>
@@ -185,47 +189,47 @@
 <div class="card entity-card"><div class="card-title"><h2 data-ui="nextActions">Next actions</h2></div><div class="action-list" id="entityActions"></div></div></div></div></div>
 </div></section>
 </main><div id="detailDrawer" class="drawer" aria-hidden="true"><aside class="drawer-panel"><div class="drawer-head"><div><div class="muted" id="drawerEyebrow" data-ui="drawerEyebrow">Business OS</div><h2 id="drawerTitle">New record</h2></div><button class="close" id="drawerClose">×</button></div><div class="form-grid">
-<div class="field"><label id="fNameLabel" data-ui="nameLabel">Name</label><input id="fName" placeholder="Record name" data-ui-placeholder="recordName"></div>
-<div class="field"><label data-ui="statusLabel">Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Accepted</option><option>Awaiting</option><option>Viewed</option><option>Sent</option><option>Paid</option><option>Overdue</option><option>Planned</option><option>Draft</option><option>Lost</option><option>Closed</option><option>Cancelled</option></select></div>
-<div class="field relation-field" data-relation="client"><label data-ui="clientLabel">Client</label><select id="fClientId"><option value="">— No client —</option></select></div>
-<div class="field lead-field" style="display:none"><label id="fCompanyLabel">Company</label><input id="fCompany" placeholder="Company"></div>
-<div class="field lead-field" style="display:none"><label id="fEmailLabel">Email</label><input id="fEmail" type="email" placeholder="email@example.com"></div>
-<div class="field lead-field" style="display:none"><label id="fPhoneLabel">Phone</label><input id="fPhone" type="tel" placeholder="+39..."></div>
-<div class="field lead-field" style="display:none"><label id="fSourceLabel">Source</label><input id="fSource" placeholder="Website, referral..."></div>
-<div class="field lead-field" style="display:none"><label id="fProbabilityLabel">Probability %</label><input id="fProbability" type="number" min="0" max="100" step="1" value="0"></div>
-<div class="field lead-field" style="display:none"><label id="fNextActionDateLabel">Next action date</label><input id="fNextActionDate" type="date"></div>
-<div class="field relation-field" data-relation="lead"><label data-ui="leadLabel">Lead</label><select id="fLeadId"><option value="">— No lead —</option></select></div>
-<div class="field relation-field" data-relation="proposal"><label data-ui="proposalLabel">Proposal</label><select id="fProposalId"><option value="">— No proposal —</option></select></div>
-<div class="field relation-field" data-relation="project"><label data-ui="projectLabel">Project</label><select id="fProjectId"><option value="">— No project —</option></select></div>
-<div class="field relation-field" data-relation="invoice"><label data-ui="invoiceLabel">Invoice</label><select id="fInvoiceId"><option value="">— No invoice —</option></select></div>
-<div class="field project-field" style="display:none"><label data-ui="billingType">Billing type</label><select id="fProjectBillingType"><option>Fixed Fee</option><option>Time and Materials</option><option>Retainer</option><option>Non-billable</option></select></div>
-<div class="field project-field" style="display:none"><label data-ui="budgetType">Budget type</label><select id="fProjectBudgetType"><option>Fee</option><option>Time</option></select></div>
-<div class="field project-field" style="display:none"><label data-ui="budgetLabel">Budget</label><input id="fProjectBudget" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field project-field" style="display:none"><label data-ui="revenueField">Revenue</label><input id="fProjectRevenue" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field project-field" style="display:none"><label data-ui="actualCosts">Actual costs</label><input id="fProjectActualCosts" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field project-field" style="display:none"><label data-ui="actualHours">Actual hours</label><input id="fProjectActualHours" type="number" min="0" step="0.01" placeholder="0"></div>
-<div class="field project-field" style="display:none"><label data-ui="labourRate">Labour cost / hour</label><input id="fProjectLabourRate" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field value-field"><label data-ui="value">Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
+<div class="field"><label for="fName" id="fNameLabel" data-ui="nameLabel">Name</label><input id="fName" placeholder="Record name" data-ui-placeholder="recordName"></div>
+<div class="field"><label for="fStatus" data-ui="statusLabel">Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Accepted</option><option>Awaiting</option><option>Viewed</option><option>Sent</option><option>Paid</option><option>Overdue</option><option>Planned</option><option>Draft</option><option>Lost</option><option>Closed</option><option>Cancelled</option></select></div>
+<div class="field relation-field" data-relation="client"><label for="fClientId" data-ui="clientLabel">Client</label><select id="fClientId"><option value="">— No client —</option></select></div>
+<div class="field lead-field" style="display:none"><label for="fCompany" id="fCompanyLabel">Company</label><input id="fCompany" placeholder="Company"></div>
+<div class="field lead-field" style="display:none"><label for="fEmail" id="fEmailLabel">Email</label><input id="fEmail" type="email" placeholder="email@example.com"></div>
+<div class="field lead-field" style="display:none"><label for="fPhone" id="fPhoneLabel">Phone</label><input id="fPhone" type="tel" placeholder="+39..."></div>
+<div class="field lead-field" style="display:none"><label for="fSource" id="fSourceLabel">Source</label><input id="fSource" placeholder="Website, referral..."></div>
+<div class="field lead-field" style="display:none"><label for="fProbability" id="fProbabilityLabel">Probability %</label><input id="fProbability" type="number" min="0" max="100" step="1" value="0"></div>
+<div class="field lead-field" style="display:none"><label for="fNextActionDate" id="fNextActionDateLabel">Next action date</label><input id="fNextActionDate" type="date"></div>
+<div class="field relation-field" data-relation="lead"><label for="fLeadId" data-ui="leadLabel">Lead</label><select id="fLeadId"><option value="">— No lead —</option></select></div>
+<div class="field relation-field" data-relation="proposal"><label for="fProposalId" data-ui="proposalLabel">Proposal</label><select id="fProposalId"><option value="">— No proposal —</option></select></div>
+<div class="field relation-field" data-relation="project"><label for="fProjectId" data-ui="projectLabel">Project</label><select id="fProjectId"><option value="">— No project —</option></select></div>
+<div class="field relation-field" data-relation="invoice"><label for="fInvoiceId" data-ui="invoiceLabel">Invoice</label><select id="fInvoiceId"><option value="">— No invoice —</option></select></div>
+<div class="field project-field" style="display:none"><label for="fProjectBillingType" data-ui="billingType">Billing type</label><select id="fProjectBillingType"><option>Fixed Fee</option><option>Time and Materials</option><option>Retainer</option><option>Non-billable</option></select></div>
+<div class="field project-field" style="display:none"><label for="fProjectBudgetType" data-ui="budgetType">Budget type</label><select id="fProjectBudgetType"><option>Fee</option><option>Time</option></select></div>
+<div class="field project-field" style="display:none"><label for="fProjectBudget" data-ui="budgetLabel">Budget</label><input id="fProjectBudget" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field project-field" style="display:none"><label for="fProjectRevenue" data-ui="revenueField">Revenue</label><input id="fProjectRevenue" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field project-field" style="display:none"><label for="fProjectActualCosts" data-ui="actualCosts">Actual costs</label><input id="fProjectActualCosts" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field project-field" style="display:none"><label for="fProjectActualHours" data-ui="actualHours">Actual hours</label><input id="fProjectActualHours" type="number" min="0" step="0.01" placeholder="0"></div>
+<div class="field project-field" style="display:none"><label for="fProjectLabourRate" data-ui="labourRate">Labour cost / hour</label><input id="fProjectLabourRate" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field value-field"><label for="fValue" data-ui="value">Value</label><input id="fValue" type="number" step="0.01" placeholder="0.00"></div>
 <div class="field full invoice-field" style="display:none">
 <label data-ui="invoiceLineItems">Invoice line items</label>
 <div id="fInvoiceLines" class="invoice-lines"></div>
 <button type="button" class="secondary" id="addInvoiceLine" style="margin-top:8px" data-ui="addLine">＋ Add line</button>
 </div>
-<div class="field invoice-field" style="display:none"><label data-ui="discountType">Discount type</label><select id="fInvoiceDiscountType"><option value="none">None</option><option value="percent">Percentage</option><option value="fixed">Fixed amount</option></select></div>
-<div class="field invoice-field" style="display:none"><label data-ui="discountValue">Discount value</label><input id="fInvoiceDiscountValue" type="number" min="0" step="0.01" value="0"></div>
-<div class="field invoice-field" style="display:none"><label data-ui="taxRate">Tax rate %</label><input id="fInvoiceTaxRate" type="number" min="0" max="100" step="0.01" value="0"></div>
-<div class="field invoice-field" style="display:none"><label data-ui="dueDate">Due date</label><input id="fInvoiceDueDate" type="date"></div>
+<div class="field invoice-field" style="display:none"><label for="fInvoiceDiscountType" data-ui="discountType">Discount type</label><select id="fInvoiceDiscountType"><option value="none">None</option><option value="percent">Percentage</option><option value="fixed">Fixed amount</option></select></div>
+<div class="field invoice-field" style="display:none"><label for="fInvoiceDiscountValue" data-ui="discountValue">Discount value</label><input id="fInvoiceDiscountValue" type="number" min="0" step="0.01" value="0"></div>
+<div class="field invoice-field" style="display:none"><label for="fInvoiceTaxRate" data-ui="taxRate">Tax rate %</label><input id="fInvoiceTaxRate" type="number" min="0" max="100" step="0.01" value="0"></div>
+<div class="field invoice-field" style="display:none"><label for="fInvoiceDueDate" data-ui="dueDate">Due date</label><input id="fInvoiceDueDate" type="date"></div>
 <div class="field full invoice-field" style="display:none"><label data-ui="paymentPlan">Payment plan</label><div id="fInvoicePlanLines" class="invoice-lines"></div><button type="button" class="secondary" id="addInvoicePlanLine" data-ui="addInstallment">＋ Add installment</button><small class="muted">Types: Fixed, %, Equal. Plan total must equal Invoice total.</small></div>
-<div class="field payment-field" style="display:none"><label data-ui="paymentAmount">Payment amount</label><input id="fPaymentAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
-<div class="field payment-field" style="display:none"><label data-ui="paymentDate">Payment date</label><input id="fPaymentDate" type="date"></div>
-<div class="field payment-field" style="display:none"><label data-ui="paymentInstallment">Payment plan installment</label><select id="fPaymentInstallment"><option value="">Auto-allocate (FIFO)</option></select><small class="muted">If selected, the payment is applied to that installment first.</small></div>
-<div class="field payment-field" style="display:none"><label data-ui="paymentMethod">Payment method</label><select id="fPaymentMethod"><option>Bank transfer</option><option>Card</option><option>Cash</option><option>Other</option></select></div>
-<div class="field payment-field" style="display:none"><label data-ui="reference">Reference</label><input id="fPaymentReference" placeholder="Transaction reference"></div>
-<div class="field expense-field" style="display:none"><label data-ui="expenseCategory">Expense category</label><select id="fExpenseCategory"><option>Software</option><option>Contractor</option><option>Travel</option><option>Marketing</option><option>Equipment</option><option>Other</option></select></div>
-<div class="field expense-field" style="display:none"><label data-ui="expenseDate">Expense date</label><input id="fExpenseDate" type="date"></div>
-<div class="field expense-field" style="display:none"><label data-ui="billable">Billable to client</label><select id="fExpenseBillable"><option value="false">No</option><option value="true">Yes</option></select></div>
-<div class="field"><label data-ui="nextAction">Next action</label><input id="fAction" placeholder="Follow up" data-ui-placeholder="followUp"></div>
-<div class="field full"><label data-ui="notes">Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…" data-ui-placeholder="notesPlaceholder"></textarea></div>
+<div class="field payment-field" style="display:none"><label for="fPaymentAmount" data-ui="paymentAmount">Payment amount</label><input id="fPaymentAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field payment-field" style="display:none"><label for="fPaymentDate" data-ui="paymentDate">Payment date</label><input id="fPaymentDate" type="date"></div>
+<div class="field payment-field" style="display:none"><label for="fPaymentInstallment" data-ui="paymentInstallment">Payment plan installment</label><select id="fPaymentInstallment"><option value="">Auto-allocate (FIFO)</option></select><small class="muted">If selected, the payment is applied to that installment first.</small></div>
+<div class="field payment-field" style="display:none"><label for="fPaymentMethod" data-ui="paymentMethod">Payment method</label><select id="fPaymentMethod"><option>Bank transfer</option><option>Card</option><option>Cash</option><option>Other</option></select></div>
+<div class="field payment-field" style="display:none"><label for="fPaymentReference" data-ui="reference">Reference</label><input id="fPaymentReference" placeholder="Transaction reference"></div>
+<div class="field expense-field" style="display:none"><label for="fExpenseCategory" data-ui="expenseCategory">Expense category</label><select id="fExpenseCategory"><option>Software</option><option>Contractor</option><option>Travel</option><option>Marketing</option><option>Equipment</option><option>Other</option></select></div>
+<div class="field expense-field" style="display:none"><label for="fExpenseDate" data-ui="expenseDate">Expense date</label><input id="fExpenseDate" type="date"></div>
+<div class="field expense-field" style="display:none"><label for="fExpenseBillable" data-ui="billable">Billable to client</label><select id="fExpenseBillable"><option value="false">No</option><option value="true">Yes</option></select></div>
+<div class="field"><label for="fAction" data-ui="nextAction">Next action</label><input id="fAction" placeholder="Follow up" data-ui-placeholder="followUp"></div>
+<div class="field full"><label for="fNotes" data-ui="notes">Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…" data-ui-placeholder="notesPlaceholder"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script>window.activeLanguage='en';</script><script>
 /* BUSINESS OS boot fallback: keeps navigation and language functional if the deferred runtime fails. */
@@ -1876,17 +1880,18 @@ function createInvoiceFromProject(projectId){
   }
 }
 const settingsUiCopy={
-  en:{title:'Settings',sub:'Local workspace data, import/export and archived records.',archive:'Archived records'},
-  ru:{title:'Настройки',sub:'Локальные данные, импорт/экспорт и архив записей.',archive:'Архив записей'},
-  es:{title:'Ajustes',sub:'Datos locales, importación/exportación y registros archivados.',archive:'Registros archivados'},
-  de:{title:'Einstellungen',sub:'Lokale Arbeitsbereichsdaten, Import/Export und archivierte Datensätze.',archive:'Archivierte Datensätze'},
-  fr:{title:'Paramètres',sub:'Données locales, import/export et enregistrements archivés.',archive:'Enregistrements archivés'}
+  en:{title:'Settings',sub:'Local workspace data, import/export and archived records.',archive:'Archived records',dataTitle:'Data & persistence'},
+  ru:{title:'Настройки',sub:'Локальные данные, импорт/экспорт и архив записей.',archive:'Архив записей',dataTitle:'Данные и сохранение'},
+  es:{title:'Ajustes',sub:'Datos locales, importación/exportación y registros archivados.',archive:'Registros archivados',dataTitle:'Datos y persistencia'},
+  de:{title:'Einstellungen',sub:'Lokale Arbeitsbereichsdaten, Import/Export und archivierte Datensätze.',archive:'Archivierte Datensätze',dataTitle:'Daten und Speicherung'},
+  fr:{title:'Paramètres',sub:'Données locales, import/export et enregistrements archivés.',archive:'Enregistrements archivés',dataTitle:'Données et conservation'}
 };
 function refreshSettingsLabels(){
   const c=settingsUiCopy[activeLanguage]||settingsUiCopy.en;
   document.getElementById('settingsTitle').textContent=c.title;
   document.getElementById('settingsSub').textContent=c.sub;
   document.getElementById('archiveTitle').textContent=c.archive;
+  document.getElementById('settingsDataTitle').textContent=c.dataTitle;
 }
 function renderArchive(){
   const copy={
@@ -2560,6 +2565,8 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   renderStoredRecords();
   closeCreateDrawer();
 });
+document.getElementById('settingsExportData').addEventListener('click',()=>document.getElementById('exportData').click());
+document.getElementById('settingsImportData').addEventListener('click',()=>document.getElementById('importData').click());
 document.getElementById('drawerClose').addEventListener('click',closeCreateDrawer);
 document.getElementById('drawerCancel').addEventListener('click',closeCreateDrawer);
 document.getElementById('detailDrawer').addEventListener('click',e=>{if(e.target.id==='detailDrawer')closeCreateDrawer();});
