@@ -21,7 +21,7 @@
 | B12 | Persistence / Export / Import | 100% |
 | B13 | Technical UI / Localization / Responsive | 100% |
 | B14 | Functional / E2E QA | 100% |
-| NEW DESIGN | Новый Premium Design с нуля | 20% |
+| NEW DESIGN | Новый Premium Design с нуля | 92% |
 | B15 | Commercial Packaging | 0% |
 | B16 | Sales / Marketplaces | 0% |
 
@@ -325,9 +325,9 @@ B14 полностью подтверждён фактическим выпол�
 | ND.1 | Product UI audit и mapping существующих функций | 100% |
 | ND.2 | Premium visual direction / design principles | 100% |
 | ND.3 | Design tokens: colors / typography / spacing / radius / elevation | 100% |
-| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 95% |
-| ND.5 | Core component system | 90% |
-| ND.6 | Overview / Dashboard redesign | 85% |
+| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 100% |
+| ND.5 | Core component system | 100% |
+| ND.6 | Overview / Dashboard redesign | 100% |
 | ND.7 | Leads / CRM redesign | 100% |
 | ND.8 | Clients redesign | 100% |
 | ND.9 | Proposals redesign | 100% |
@@ -337,14 +337,14 @@ B14 полностью подтверждён фактическим выпол�
 | ND.13 | Expenses redesign | 100% |
 | ND.14 | Profit redesign | 100% |
 | ND.15 | Cashflow redesign | 100% |
-| ND.16 | Settings / persistence / export-import redesign | 0% |
-| ND.17 | Forms / drawers / dialogs / validation states | 0% |
-| ND.18 | Empty / zero / error / success / loading states | 0% |
-| ND.19 | Responsive desktop / tablet / mobile | 0% |
-| ND.20 | EN / RU / ES / DE / FR visual QA | 0% |
-| ND.21 | Accessibility / focus / interaction polish | 0% |
-| ND.22 | Cross-module visual consistency | 0% |
-| ND.23 | Full B14 regression after redesign | 0% |
+| ND.16 | Settings / persistence / export-import redesign | 100% |
+| ND.17 | Forms / drawers / dialogs / validation states | 100% |
+| ND.18 | Empty / zero / error / success / loading states | 100% |
+| ND.19 | Responsive desktop / tablet / mobile | 100% |
+| ND.20 | EN / RU / ES / DE / FR visual QA | 100% |
+| ND.21 | Accessibility / focus / interaction polish | 100% |
+| ND.22 | Cross-module visual consistency | 100% |
+| ND.23 | Full B14 regression after redesign | 100% |
 | ND.24 | Production preview deployment | 0% |
 | ND.25 | Final manual acceptance + preview link | 0% |
 
@@ -476,3 +476,16 @@ B14 полностью подтверждён фактическим выпол�
 ### Design checkpoint — ND.22 completed
 - ND.22: 100% — Unified page titles, descriptions, controls, cards, tables, badges, toolbars and empty-state treatment across all product modules.
 - GitHub commit: `a86459435ae374fdb1286a73830843a66bd992b9`.
+
+
+### Design checkpoint — ND.23 закрыт / 2026-09-25
+- ND.23: **100%** — полный B14 regression после нового Premium Design успешно выполнен в GitHub Actions.
+- B14 E2E Run #63 — **success**.
+- Unit/static regression — **success**.
+- Playwright Chromium — установлен успешно.
+- B14 E2E job — **success**.
+- Playwright report artifact — загружен успешно.
+- Commit: `f31647b0dbbd470f8f83aa959d1d9fa3073e826d`.
+- Run: `36148050520`.
+
+Следующий этап: **ND.24 Production Preview deployment**, затем ND.25 финальная ручная acceptance-проверка live-приложения.
