@@ -633,3 +633,26 @@ New design commit:
 - 091b3940f5bed8ceb5d59ed78c4d538cf4765808 — unified product-module cards, tables, pipelines, empty states, toolbar hierarchy and mobile overflow handling.
 
 **V2 overall: 71%** — live visual acceptance remains deliberately at 0% until final deployed UI review.
+
+
+### V2 continuation — V2.13 approved dashboard reference pass
+- V2.2 Global shell: **95%**
+- V2.3 Dashboard composition: **97%**
+- V2.4 All product module visual surfaces: **68%**
+- V2.5 Responsive/mobile composition: **82%**
+- V2.6 EN / RU / ES / DE / FR V2 layer: **80%**
+- V2.7 Existing navigation wiring: **75%**
+- V2.8 B14 + Core + Design Regression: **100%**
+- V2.9 Live visual acceptance: **0%**
+
+Reference-driven changes:
+- dashboard hero reduced to the compact greeting/header hierarchy from the approved reference;
+- KPI row, chart/cashflow split, three lower operational panels and full-width profitability table now follow the reference composition;
+- added Active Projects panel using the existing project store and existing project edit flow;
+- removed the redundant dashboard module rail from the visible dashboard composition; all modules remain available through the sidebar;
+- added 5-language copy for the new Active Projects surface;
+- responsive layout tightened for tablet and mobile.
+
+Design commit: 27c1c4739458586bde25167e0f9a6c1a99c9cdfa
+
+**V2 overall: 74%** — visual acceptance remains 0% until the deployed interface is actually inspected.
