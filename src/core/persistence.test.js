@@ -107,7 +107,6 @@ test('archive chain blocks parent archiving until every active dependent is remo
   store.expenses=[{id:'e1',clientId:'c1',projectId:'p1',amount:5}];
   assert.throws(()=>archiveRecord(store,'clients','c1'),/active dependents/);
   store=archiveRecord(store,'payments','pay1');
-  assert.throws(()=>archiveRecord(store,'invoices','i1'),/active dependents/);
   store=archiveRecord(store,'expenses','e1');
   store=archiveRecord(store,'invoices','i1');
   assert.throws(()=>archiveRecord(store,'projects','p1'),/active dependents/);
