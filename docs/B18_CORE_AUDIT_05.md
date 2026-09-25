@@ -39,6 +39,13 @@ The Clients screen opening tag had the `class="screen"` attribute outside the el
 
 **Fix:** restored the correct `<div id="clientsScreen" class="screen">` markup.
 
+### 6. Cross-entity workflow integrity tests
+
+Added persistence tests covering the complete client consistency chain:
+Lead → Proposal → Project → Invoice → Payment / Expense.
+
+The tests also verify that a payment can move to another invoice only when its client relation is updated consistently.
+
 ## Deliberately unchanged
 
 - Billable expense remains metadata only; there is no defined reimbursement/invoicing workflow yet.
@@ -47,4 +54,4 @@ The Clients screen opening tag had the `class="screen"` attribute outside the el
 
 ## Commit
 
-Code: 81df67d967ca637f5cb9c103fb0b15b8f78c4c70
+Code: a326469b44084059b7dcbef070406ed3b3c95c26
