@@ -716,3 +716,20 @@ V2.17 completed the shared premium treatment for internal screens: page headers,
 Design commit: d278d8eb3c3b1a440397d04b341b80361e7661b2
 
 **V2 overall: 81%** — final visual acceptance remains intentionally pending.
+
+
+### V2 continuation — V2.18 data semantics polish
+- V2.2 Global shell: **96%**
+- V2.3 Dashboard composition: **98%**
+- V2.4 All product module visual surfaces: **86%**
+- V2.5 Responsive/mobile composition: **88%**
+- V2.6 EN / RU / ES / DE / FR V2 layer: **82%**
+- V2.7 Existing navigation wiring: **76%**
+- V2.8 B14 + Core + Design Regression: **100%**
+- V2.9 Live visual acceptance: **0%**
+
+V2.18 adds premium status semantics, action hierarchy, table interaction states and module-specific visual accents without changing business behavior.
+
+Design commit: 60e2b5e14b77718ce3f725a1b30836d60d13b9b0
+
+**V2 overall: 83%** — final visual acceptance remains pending.
