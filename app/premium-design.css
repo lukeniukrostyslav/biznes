@@ -898,3 +898,12 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 /* V2.14 — desktop shell alignment with reference */
 @media(min-width:721px){.product-identity-bar{display:none!important}.main{min-width:0!important}.topbar{border-top-left-radius:0!important}.content{padding-top:20px!important}}
 @media(max-width:720px){.product-identity-bar{display:flex!important}}
+
+
+/* V2.15 — reference details: date line and KPI micro-hierarchy */
+#dashboardScreen .dashboard-date{display:block;margin-top:4px;font-size:9px;color:#8b98aa;font-weight:600}
+#dashboardScreen .dashboard-hero-copy{display:block!important}
+#dashboardScreen .dashboard-kpi .kpi-value-row{align-items:baseline!important;gap:8px!important}
+#dashboardScreen .dashboard-kpi .kpi-trend{font-size:9px!important;font-weight:800!important}
+#dashboardScreen .dashboard-kpi .kpi-foot{font-size:8px!important;color:#8b98aa!important}
+@media(max-width:520px){#dashboardScreen .dashboard-date{font-size:8px!important}}
