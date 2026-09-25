@@ -42,7 +42,7 @@
 </div>
 </div>
 <div id="leadsScreen" class="screen">
-<div class="page-title"><div><h1 data-i18n="leadsTitle">Leads</h1><p data-i18n="leadsSub">Move opportunities forward without losing the next action.</p></div><div class="toolbar"><button class="filter">All stages ▾</button><button class="primary" data-i18n="newLead">＋ New lead</button></div></div>
+<div class="page-title"><div><h1 data-i18n="leadsTitle">Leads</h1><p data-i18n="leadsSub">Move opportunities forward without losing the next action.</p></div><div class="toolbar"><select class="filter" id="leadStageFilter" aria-label="Lead stage filter"><option value="">All stages</option><option>New</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option></select><button class="primary" data-i18n="newLead">＋ New lead</button></div></div>
 <div class="card" style="padding:14px"><div class="pipeline" id="leadsPipeline"></div></div>
 </div>
 <div id="clientsScreen" class="screen">
@@ -112,6 +112,12 @@
 <div class="field"><label id="fNameLabel" data-ui="nameLabel">Name</label><input id="fName" placeholder="Record name" data-ui-placeholder="recordName"></div>
 <div class="field"><label data-ui="statusLabel">Status</label><select id="fStatus"><option>New</option><option>Active</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Accepted</option><option>Awaiting</option><option>Viewed</option><option>Sent</option><option>Paid</option><option>Overdue</option><option>Planned</option><option>Draft</option><option>Lost</option><option>Closed</option><option>Cancelled</option></select></div>
 <div class="field relation-field" data-relation="client"><label data-ui="clientLabel">Client</label><select id="fClientId"><option value="">— No client —</option></select></div>
+<div class="field lead-field" style="display:none"><label id="fCompanyLabel">Company</label><input id="fCompany" placeholder="Company"></div>
+<div class="field lead-field" style="display:none"><label id="fEmailLabel">Email</label><input id="fEmail" type="email" placeholder="email@example.com"></div>
+<div class="field lead-field" style="display:none"><label id="fPhoneLabel">Phone</label><input id="fPhone" type="tel" placeholder="+39..."></div>
+<div class="field lead-field" style="display:none"><label id="fSourceLabel">Source</label><input id="fSource" placeholder="Website, referral..."></div>
+<div class="field lead-field" style="display:none"><label id="fProbabilityLabel">Probability %</label><input id="fProbability" type="number" min="0" max="100" step="1" value="0"></div>
+<div class="field lead-field" style="display:none"><label id="fNextActionDateLabel">Next action date</label><input id="fNextActionDate" type="date"></div>
 <div class="field relation-field" data-relation="lead"><label data-ui="leadLabel">Lead</label><select id="fLeadId"><option value="">— No lead —</option></select></div>
 <div class="field relation-field" data-relation="proposal"><label data-ui="proposalLabel">Proposal</label><select id="fProposalId"><option value="">— No proposal —</option></select></div>
 <div class="field relation-field" data-relation="project"><label data-ui="projectLabel">Project</label><select id="fProjectId"><option value="">— No project —</option></select></div>
@@ -147,6 +153,7 @@
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus, calculateInvoice } from "../src/core/financial-engine.js";
+import { DEFAULT_PIPELINE_STAGES, calculateCrmPipeline, convertLeadToClient } from "../src/core/crm-engine.js";
 import { archiveRecord, validateStore, exportStore, importStore, restoreRecord, loadStore as loadPersistentStore, saveStore as savePersistentStore } from "../src/core/persistence.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres']}};
 
@@ -320,14 +327,16 @@ function renderLeads(){
   const screen=document.getElementById('leadsScreen');
   const pipeline=screen?.querySelector('.pipeline');
   if(!pipeline)return;
-  const stages=['New','Qualified','Proposal','Negotiation','Won'];
-  const leads=businessStore.leads||[];
-  pipeline.innerHTML=stages.map(stage=>{
-    const items=leads.filter(x=>String(x.status||'New').toLowerCase()===stage.toLowerCase());
+  const filter=document.getElementById('leadStageFilter');
+  const result=calculateCrmPipeline(businessStore.leads||[],{stage:filter?.value||''});
+  const copy=recordUiCopy[activeLanguage]||recordUiCopy.en;
+  pipeline.innerHTML=result.stages.map(stage=>{
+    const items=result.byStage[stage]||[];
     return '<div class="stage"><div class="stage-head"><span>'+escapeHtml(stage)+'</span><span>'+items.length+'</span></div>'+
-      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.notes||(recordUiCopy[activeLanguage]||recordUiCopy.en).opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+(recordUiCopy[activeLanguage]||recordUiCopy.en).nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div></div>').join(''):'<div class="empty" style="padding:22px 8px">'+((recordUiCopy[activeLanguage]||recordUiCopy.en).noLeads)+'</div>')+
+      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.company||x.email||x.notes||copy.opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+copy.nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><small>Probability · '+Number(x.probability||0)+'%</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div></div>').join(''):'<div class="empty" style="padding:22px 8px">'+copy.noLeads+'</div>')+
       '</div>';
   }).join('');
+  if(filter)filter.onchange=renderLeads;
   pipeline.querySelectorAll('.deal').forEach(el=>el.addEventListener('click',()=>{
     const rec=(businessStore.leads||[]).find(x=>x.id===el.dataset.recordId);
     if(rec) openEditDrawer('leads',rec);
@@ -896,10 +905,23 @@ function getInvoicePlanLines(){
     dueDate:row.querySelector('[data-plan="date"]').value||null
   }));
 }
+const leadFieldCopy={
+ en:{company:'Company',email:'Email',phone:'Phone',source:'Source',probability:'Probability %',nextActionDate:'Next action date'},
+ ru:{company:'Компания',email:'Email',phone:'Телефон',source:'Источник',probability:'Вероятность %',nextActionDate:'Дата следующего действия'},
+ es:{company:'Empresa',email:'Email',phone:'Teléfono',source:'Fuente',probability:'Probabilidad %',nextActionDate:'Fecha de próxima acción'},
+ de:{company:'Unternehmen',email:'E-Mail',phone:'Telefon',source:'Quelle',probability:'Wahrscheinlichkeit %',nextActionDate:'Datum der nächsten Aktion'},
+ fr:{company:'Entreprise',email:'E-mail',phone:'Téléphone',source:'Source',probability:'Probabilité %',nextActionDate:'Date de la prochaine action'}
+};
+function refreshLeadFieldLabels(){
+ const c=leadFieldCopy[activeLanguage]||leadFieldCopy.en;
+ [['fCompanyLabel','company'],['fEmailLabel','email'],['fPhoneLabel','phone'],['fSourceLabel','source'],['fProbabilityLabel','probability'],['fNextActionDateLabel','nextActionDate']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.textContent=c[key];});
+}
 function prepareDrawerRelations(type,record={}){
   document.querySelectorAll('.relation-field').forEach(el=>el.style.display='none');
   visibleRelations(type).forEach(key=>document.querySelector('[data-relation="'+key+'"]').style.display='grid');
   document.querySelectorAll('.invoice-field').forEach(el=>el.style.display=type==='invoices'?'grid':'none');
+  document.querySelectorAll('.lead-field').forEach(el=>el.style.display=type==='leads'?'grid':'none');
+  refreshLeadFieldLabels();
   document.querySelectorAll('.payment-field').forEach(el=>el.style.display=type==='payments'?'grid':'none');
   document.querySelectorAll('.project-field').forEach(el=>el.style.display=type==='projects'?'grid':'none');
   document.querySelectorAll('.expense-field').forEach(el=>el.style.display=type==='expenses'?'grid':'none');
@@ -910,7 +932,13 @@ function openCreateDrawer(type){
   pendingType=type; editingId=null;
   document.getElementById('drawerTitle').textContent=(activeLanguage==='ru'?'Новая запись: ':activeLanguage==='es'?'Nuevo registro: ':activeLanguage==='de'?'Neuer Datensatz: ':activeLanguage==='fr'?'Nouvel enregistrement : ':'New record: ')+(typeUiCopy[activeLanguage]||typeUiCopy.en)[type];
   document.getElementById('fName').value='';
-  ['fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate','fExpenseDate'].forEach(id=>document.getElementById(id).value='');
+  ['fCompany','fEmail','fPhone','fSource','fNextActionDate','fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate','fExpenseDate'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCompany').value='';
+  document.getElementById('fEmail').value='';
+  document.getElementById('fPhone').value='';
+  document.getElementById('fSource').value='';
+  document.getElementById('fProbability').value='0';
+  document.getElementById('fNextActionDate').value='';
   document.getElementById('fInvoiceTaxRate').value='0';
   document.getElementById('fInvoiceDiscountType').value='none';
   document.getElementById('fInvoiceDiscountValue').value='0';
@@ -931,6 +959,12 @@ function openEditDrawer(type,record){
   document.getElementById('drawerTitle').textContent=(activeLanguage==='ru'?'Изменить: ':activeLanguage==='es'?'Editar: ':activeLanguage==='de'?'Bearbeiten: ':activeLanguage==='fr'?'Modifier : ':'Edit: ')+(typeUiCopy[activeLanguage]||typeUiCopy.en)[type];
   document.getElementById('fName').value=record.name||record.client||record.title||'';
   document.getElementById('fValue').value=record.amount??record.total??record.value??0;
+  document.getElementById('fCompany').value=record.company||'';
+  document.getElementById('fEmail').value=record.email||'';
+  document.getElementById('fPhone').value=record.phone||'';
+  document.getElementById('fSource').value=record.source||'';
+  document.getElementById('fProbability').value=record.probability??0;
+  document.getElementById('fNextActionDate').value=record.nextActionDate||'';
   const invoiceItems=Array.isArray(record.lineItems)&&record.lineItems.length?record.lineItems:[{description:'',quantity:1,unitPrice:record.value??record.amount??0}];
   setInvoiceLines(invoiceItems);
   document.getElementById('fInvoiceDiscountType').value=record.discountType||'none';
@@ -1075,7 +1109,8 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     reference:document.getElementById('fPaymentReference').value.trim(),
     installmentIndex:(document.getElementById('fPaymentInstallment').value===''?null:Number(document.getElementById('fPaymentInstallment').value))
   }:{};
-  const patch={name,status:document.getElementById('fStatus').value,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...projectPatch,...expensePatch,...relations,updatedAt:new Date().toISOString()};
+  const leadPatch=pendingType==='leads'?{company:document.getElementById('fCompany').value.trim(),email:document.getElementById('fEmail').value.trim(),phone:document.getElementById('fPhone').value.trim(),source:document.getElementById('fSource').value.trim(),probability:Math.min(Math.max(Number(document.getElementById('fProbability').value)||0,0),100),nextActionDate:document.getElementById('fNextActionDate').value||null}:{};
+  const patch={name,status:document.getElementById('fStatus').value,...leadPatch,nextAction:document.getElementById('fAction').value.trim(),notes:document.getElementById('fNotes').value.trim(),...invoicePatch,...paymentPatch,...projectPatch,...expensePatch,...relations,updatedAt:new Date().toISOString()};
   const candidate={...businessStore,[pendingType]:editingId?(businessStore[pendingType]||[]).map(x=>x.id===editingId?{...x,...patch}:x):[...(businessStore[pendingType]||[]),{id:uid(pendingType.slice(0,-1)),createdAt:new Date().toISOString(),...patch}]};
   const errors=validateStoredRelationships(candidate);
   if(errors.length){toast(t('relations'));return;}
@@ -1134,6 +1169,7 @@ function refreshMobileNavLabels(){
 const _applyUiCopy=applyUiCopy;
 applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();refreshCashflowLabels();refreshInvoiceProposalLabels();refreshSettingsLabels();};
 refreshMobileNavLabels();
+refreshLeadFieldLabels();
 refreshProfitLabels();
 refreshCashflowLabels();
 </script></body>
