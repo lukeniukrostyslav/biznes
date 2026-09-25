@@ -255,3 +255,14 @@ test('collection guard is available to all persistence mutators',()=>{
   assert.throws(()=>removeRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
   assert.throws(()=>archiveRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
 });
+
+
+test('restoreRecord rejects ambiguous archived ids across collections',()=>{
+  const store=createEmptyStore();
+  store.archivedRecords=[
+    {id:'same',collection:'clients',name:'Client'},
+    {id:'same',collection:'leads',name:'Lead'}
+  ];
+  assert.throws(()=>restoreRecord(store,'same'),/ambiguous archived record/);
+  assert.equal(store.archivedRecords.length,2);
+});
