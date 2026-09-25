@@ -907,3 +907,16 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 #dashboardScreen .dashboard-kpi .kpi-trend{font-size:9px!important;font-weight:800!important}
 #dashboardScreen .dashboard-kpi .kpi-foot{font-size:8px!important;color:#8b98aa!important}
 @media(max-width:520px){#dashboardScreen .dashboard-date{font-size:8px!important}}
+
+
+/* V2.16 — approved reference sidebar details and module surfaces */
+.sidebar .nav button{justify-content:flex-start!important}.sidebar .nav button .nav-badge{margin-left:auto!important;min-width:20px;height:18px;padding:0 5px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.13);color:#cbd7ea;font-size:9px;font-weight:800;line-height:1}.sidebar .nav button.active .nav-badge{background:rgba(255,255,255,.2);color:#fff}
+.sidebar .nav button:nth-child(11){margin-top:auto!important}.sidebar .nav button:nth-child(11)::before{margin-right:0!important}
+.top-actions .new{position:relative;padding-right:27px!important}.top-actions .new::after{content:"⌄";position:absolute;right:10px;top:50%;transform:translateY(-52%);font-size:11px;opacity:.9}
+.dashboard-card-title .text-action{font-size:9px!important;font-weight:750!important;color:#2774e8!important;background:transparent!important;border:0!important;padding:4px 0!important}
+#dashboardScreen .dashboard-chart-card .chart-legend{font-size:9px!important;color:#63728a!important;display:flex!important;align-items:center!important;gap:5px!important}
+#dashboardScreen .dashboard-cash-card .cash-row{padding:10px 0!important}.cash-row-head{font-size:10px!important}.cash-row-head strong{font-size:11px!important;color:#24354d!important}.cash-summary{border-top:1px solid #edf1f6!important;margin-top:5px!important;padding-top:11px!important;font-size:8px!important;color:#8997aa!important}
+#dashboardScreen .premium-list .row{min-height:43px!important;padding:7px 0!important;border-bottom:1px solid #edf1f6!important}.premium-list .row:last-child{border-bottom:0!important}.premium-list .row strong{font-size:10px!important;color:#26364d!important}.premium-list .row small{font-size:8px!important;color:#8b98aa!important}.premium-list .amount{font-size:9px!important;color:#5d6c82!important}
+#dashboardScreen .count-badge{min-width:20px!important;height:20px!important;border-radius:10px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;background:#eaf2ff!important;color:#2876e8!important;font-size:9px!important;font-weight:800!important}.danger-count{background:#fff0f1!important;color:#df4553!important}
+#dashboardScreen .dashboard-profit-card .table-scroll{margin-top:4px!important}.profit-table{width:100%!important;border-collapse:collapse!important}.profit-table th{padding:7px 8px!important}.profit-table td{padding:7px 8px!important}.profit-table tbody tr:hover{background:#f8faff!important}
+@media(max-width:720px){.sidebar .nav button .nav-badge{min-width:18px;height:17px;font-size:8px}.top-actions .new::after{display:none}.dashboard-card-title .text-action{font-size:8px!important}}
