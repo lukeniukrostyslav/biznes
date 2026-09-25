@@ -1602,3 +1602,21 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   .content{padding-bottom:84px!important}
   #dashboardScreen .dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+
+/* V2.40 — final pixel-density pass */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-kpi .kpi-bottom{min-height:29px!important;align-items:flex-end!important}
+  #dashboardScreen .dashboard-kpi .kpi-spark{margin-left:auto!important}
+  #dashboardScreen .dashboard-chart-card .chart-shell{padding-top:1px!important}
+  #dashboardScreen .dashboard-cash-card .card-period{border:1px solid #e1e7ef!important;border-radius:8px!important;padding:7px 11px!important;font-size:10px!important;background:#fff!important}
+  #dashboardScreen .dashboard-list-card .premium-list{margin-top:2px!important}
+  #dashboardScreen .dashboard-active-projects-card .active-project-row{border-bottom:1px solid #eef2f7!important}
+  #dashboardScreen .dashboard-active-projects-card .active-project-row:last-child{border-bottom:0!important}
+  #dashboardScreen .dashboard-profit-card .table-scroll{overflow:hidden!important}
+}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-kpi .kpi-bottom{min-height:20px!important}
+  #dashboardScreen .dashboard-main-grid .dashboard-cash-card{margin-top:0!important}
+  #dashboardScreen .dashboard-profit-card .table-scroll{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+}
