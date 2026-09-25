@@ -579,3 +579,14 @@ Additional work completed:
 - stat strips, tables, pipeline, entity cards, forms and action surfaces were visually unified with the new reference direction;
 - fixed Design Regression CI configuration: repository has no lockfile, so the workflow now uses npm install and no npm cache dependency;
 - current validation runs are executing against the latest commit.
+
+
+### V2 continuation — approved sidebar navigation pass
+- V2.2 Global shell: **90%**
+- Sidebar navigation was rebuilt to match the approved reference hierarchy: full-width clickable rows, persistent active state, icon treatment, hover state, separated Settings area, and workspace profile footer.
+- No business logic or navigation mapping was changed; existing navigation button actions remain the source of truth.
+- GitHub commit: 0b83795ca060f8f899c6a70c01cf9218a0823152
+- V2.8 Regression remains **0% until the new commit's CI runs finish**.
+- V2.9 Live visual acceptance remains **0%** until the actual deployed UI is checked.
+
+**Current V2 overall: 62%**.
