@@ -1,6 +1,6 @@
 # BUSINESS OS — ПРОГРЕСС
 
-Последнее обновление: 2026-09-25 — B10 закрыт после lifecycle engine + UI integration и GitHub Actions
+Последнее обновление: 2026-09-25 — B12 закрыт на 100% после persistence integration + GitHub Actions
 
 ## Текущий рабочий baseline
 
@@ -18,7 +18,7 @@
 | B09 | CRM / Leads / Pipeline | 100% |
 | B10 | Projects / Proposals / Invoices / Payments | 100% |
 | B11 | Cashflow / Dashboard / Analytics | 100% |
-| B12 | Persistence / Export / Import | 74% |
+| B12 | Persistence / Export / Import | 100% |
 | B13 | Technical UI / Localization / Responsive | 15% |
 | B14 | Functional / E2E QA | 0% |
 | NEW DESIGN | Новый Premium Design с нуля | 0% |
@@ -209,3 +209,49 @@ GitHub Actions acceptance: **Run #81 — success, 95/95 tests, 0 failures**.
 ### B11 — текущий статус
 
 B11.1–B11.21 реализованы и сохранены в GitHub. GitHub Actions run 36136051237 успешно завершён: **103/103 теста, 0 ошибок**. B11 полностью закрыт на **100%**.
+
+
+## B12 — ПОДБЛОКИ И ФАКТИЧЕСКОЕ ЗАКРЫТИЕ
+
+| Подблок | Название | Прогресс |
+|---|---|---:|
+| B12.1 | Local Storage Data Model | 100% |
+| B12.2 | Store Initialization / Default State | 100% |
+| B12.3 | Load Store | 100% |
+| B12.4 | Save Store | 100% |
+| B12.5 | Schema Versioning | 100% |
+| B12.6 | Schema Migration | 100% |
+| B12.7 | Store Validation | 100% |
+| B12.8 | Entity Relationship Validation | 100% |
+| B12.9 | Duplicate ID Protection | 100% |
+| B12.10 | Monetary Data Validation | 100% |
+| B12.11 | Archive Records | 100% |
+| B12.12 | Restore Archived Records | 100% |
+| B12.13 | Dependency Protection During Archive | 100% |
+| B12.14 | Remove Record Protection | 100% |
+| B12.15 | JSON Export | 100% |
+| B12.16 | JSON Import | 100% |
+| B12.17 | Import Validation | 100% |
+| B12.18 | Invalid / Corrupted Import Handling | 100% |
+| B12.19 | Future Schema Version Protection | 100% |
+| B12.20 | Archived Records Export / Import | 100% |
+| B12.21 | Persistence After CRUD Operations | 100% |
+| B12.22 | Persistence After Relationship Changes | 100% |
+| B12.23 | Export / Import Round-Trip Integrity | 100% |
+| B12.24 | Persistence Error / Recovery States | 100% |
+| B12.25 | UI ↔ Canonical Persistence Integration | 100% |
+| B12.26 | Export / Import UI Integration | 100% |
+| B12.27 | Localization EN / ES / DE / FR / RU | 100% |
+| B12.28 | Responsive / Mobile Persistence UI | 100% |
+| B12.29 | Persistence Business-Logic Tests | 100% |
+| B12.30 | Export / Import Regression Tests | 100% |
+| B12.31 | Full B12 Integration Verification | 100% |
+| B12.32 | Full B12 GitHub CI Verification | 100% |
+
+### B12 закрыт
+
+B12.1–B12.32 реализованы и сохранены в GitHub. Добавлены интеграционные тесты persistence/CRUD/relations/archive/restore/export/import и source-level UI wiring checks.
+
+GitHub Actions Run #94: **success — 110/110 тестов, 0 ошибок**.
+
+Следующий технический приоритет — **B13 Technical UI / Localization / Responsive**.
