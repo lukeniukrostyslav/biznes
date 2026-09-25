@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from 'playwright/test';
 
 const screens = [
   'Dashboard','Leads','Clients','Proposals','Projects','Invoices',
