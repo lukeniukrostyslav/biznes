@@ -225,7 +225,9 @@ function restoreRecord(store, archivedId) {
 }
 
 function upsertRecord(store, collection, record) {
-  const list = Array.isArray(store[collection]) ? [...store[collection]] : [];
+  assertCollection(collection);
+  const normalized = normalizeStore(store);
+  const list = Array.isArray(normalized[collection]) ? [...normalized[collection]] : [];
   const now = new Date().toISOString();
   const next = {
     id: record.id || createId(collection.slice(0, -1)),
