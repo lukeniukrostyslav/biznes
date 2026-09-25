@@ -183,3 +183,12 @@ test('removeRecord removes a leaf record without breaking relationships',()=>{
   store=removeRecord(store,'projects','p1');
   assert.equal(store.projects.length,0);
 });
+
+
+test('persistence mutators reject unknown collections',()=>{
+  const store=createEmptyStore();
+  assert.throws(()=>upsertRecord(store,'unknown',{id:'x'}),/Unknown BUSINESS OS collection/);
+  assert.throws(()=>removeRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
+  assert.throws(()=>archiveRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
+  assert.throws(()=>restoreRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
+});
