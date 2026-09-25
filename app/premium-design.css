@@ -1579,3 +1579,26 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   .sidebar .nav button{border-radius:8px!important}
   .mobile-nav{box-shadow:0 8px 28px rgba(8,25,50,.14)!important}
 }
+
+
+/* V2.39 — final reference geometry audit */
+@media(min-width:721px){
+  .app{min-height:100vh!important}
+  .sidebar{flex:0 0 230px!important}
+  .main{margin-left:0!important}
+  .topbar{height:58px!important}
+  .content{padding-top:16px!important}
+  #dashboardScreen .dashboard-hero{min-height:61px!important}
+  #dashboardScreen .dashboard-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  #dashboardScreen .dashboard-main-grid{align-items:stretch!important}
+  #dashboardScreen .dashboard-lower-grid{align-items:stretch!important}
+  #dashboardScreen .dashboard-profit-card{overflow:hidden!important}
+  #dashboardScreen .dashboard-profit-card .profit-table{margin-top:4px!important}
+  #dashboardScreen .dashboard-profit-card .profit-table td,
+  #dashboardScreen .dashboard-profit-card .profit-table th{vertical-align:middle!important}
+}
+@media(max-width:720px){
+  .app{min-height:100dvh!important}
+  .content{padding-bottom:84px!important}
+  #dashboardScreen .dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
