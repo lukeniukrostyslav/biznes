@@ -927,6 +927,25 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
   (relationFields[pendingType]||[]).forEach(field=>{relations[field]=document.getElementById('f'+field.charAt(0).toUpperCase()+field.slice(1)).value||null;});
   const name=document.getElementById('fName').value.trim()||'Untitled';
   const value=Number(document.getElementById('fValue').value)||0;
+
+  // Canonical relation ownership: downstream records inherit client from their linked parent.
+  if(pendingType==='proposals' && relations.leadId){
+    const lead=(businessStore.leads||[]).find(x=>x.id===relations.leadId);
+    if(lead?.clientId) relations.clientId=lead.clientId;
+  }
+  if(pendingType==='projects' && relations.proposalId){
+    const proposal=(businessStore.proposals||[]).find(x=>x.id===relations.proposalId);
+    if(proposal?.clientId) relations.clientId=proposal.clientId;
+  }
+  if(pendingType==='invoices' && relations.projectId){
+    const project=(businessStore.projects||[]).find(x=>x.id===relations.projectId);
+    if(project?.clientId) relations.clientId=project.clientId;
+  }
+  if(pendingType==='expenses' && relations.projectId){
+    const project=(businessStore.projects||[]).find(x=>x.id===relations.projectId);
+    if(project?.clientId) relations.clientId=project.clientId;
+  }
+
   const isInvoice=pendingType==='invoices';
   const isPayment=pendingType==='payments';
   const paymentAmount=Number(document.getElementById('fPaymentAmount').value)||0;
