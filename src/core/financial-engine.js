@@ -161,13 +161,17 @@ function calculatePipeline(opportunities) {
   return { pipeline, weightedPipeline };
 }
 
-function calculateCashflow(invoices, payments, expenses) {
+function calculateCashflow(invoices, payments, expenses, now = new Date()) {
   const inv = Array.isArray(invoices) ? invoices : [];
   const pay = Array.isArray(payments) ? payments : [];
   const exp = Array.isArray(expenses) ? expenses : [];
-  const invoiced = roundMoney(inv.reduce((sum, x) => sum + Number(x.total || 0), 0));
+  const invoiced = roundMoney(inv.reduce((sum, invoice) => {
+    const derived = calculateInvoice(invoice, now);
+    return sum + (Array.isArray(invoice.lineItems) ? derived.total : Number(invoice.total || 0));
+  }, 0));
   const paid = roundMoney(pay.reduce((sum, x) => sum + Number(x.amount || 0), 0));
-  const expensesTotal = roundMoney(exp.reduce((sum, x) => sum + Number(x.amount || 0), 0));
+  const actualExpenses = exp.filter(expense => expense.status !== 'Planned' && expense.planned !== true);
+  const expensesTotal = roundMoney(actualExpenses.reduce((sum, x) => sum + Number(x.amount || 0), 0));
   const outstanding = roundMoney(Math.max(invoiced - paid, 0));
   const profit = roundMoney(paid - expensesTotal);
   return { invoiced, paid, outstanding, expenses: expensesTotal, profit };
