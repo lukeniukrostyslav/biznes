@@ -22,10 +22,10 @@ test('loadStore surfaces malformed persisted JSON instead of resetting data',()=
   s.setItem('business-os-store-v1','{broken-json');
   assert.throws(()=>loadStore(s),/Cannot load BUSINESS OS store/);
 });
-test('loadStore surfaces invalid persisted relationships instead of resetting data',()=>{
+test('loadStore validates persisted relationships instead of silently accepting invalid data',()=>{
   const s=memoryStorage();
   s.setItem('business-os-store-v1',JSON.stringify({schemaVersion:2,clients:[],projects:[{id:'p1',clientId:'missing'}]}));
-  assert.throws(()=>loadStore(s),/BUSINESS OS schema|BUSINESS OS store/);
+  assert.throws(()=>loadStore(s),/Invalid BUSINESS OS persisted store/);
 });
 test('upserts and removes records',()=>{let store=createEmptyStore(); store=upsertRecord(store,'clients',{id:'c1',name:'Nova'}); store=upsertRecord(store,'clients',{id:'c1',name:'Nova Studio'}); assert.equal(store.clients.length,1); assert.equal(store.clients[0].name,'Nova Studio'); store=removeRecord(store,'clients','c1'); assert.equal(store.clients.length,0);});
 test('exports and imports portable JSON',()=>{let store=createEmptyStore(); store=upsertRecord(store,'projects',{id:'p1',name:'Website'}); const restored=importStore(exportStore(store)); assert.equal(restored.projects[0].name,'Website');});
