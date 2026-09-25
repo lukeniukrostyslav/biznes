@@ -203,7 +203,7 @@ function applyUiCopy(lang){
   const reference=document.getElementById('fPaymentReference'); if(reference){reference.placeholder={en:'Transaction reference',ru:'Назначение / ссылка на платёж',es:'Referencia de la transacción',de:'Transaktionsreferenz',fr:'Référence de transaction'}[lang]||'Transaction reference';}
 }
 let activeLanguage='en';
-function render(lang){activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();renderArchive();}
+function render(lang){activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(i===0?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);refreshSettingsLabels();bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();renderArchive();}
 function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
 
 const STORE_KEY='business-os-store-v1';
@@ -495,6 +495,19 @@ function createInvoiceFromProject(projectId){
   toast(t('invoiceCreated'));
   refreshDashboardMetrics();
   renderStoredRecords();
+}
+const settingsUiCopy={
+  en:{title:'Settings',sub:'Local workspace data, import/export and archived records.',archive:'Archived records'},
+  ru:{title:'Настройки',sub:'Локальные данные, импорт/экспорт и архив записей.',archive:'Архив записей'},
+  es:{title:'Ajustes',sub:'Datos locales, importación/exportación y registros archivados.',archive:'Registros archivados'},
+  de:{title:'Einstellungen',sub:'Lokale Arbeitsbereichsdaten, Import/Export und archivierte Datensätze.',archive:'Archivierte Datensätze'},
+  fr:{title:'Paramètres',sub:'Données locales, import/export et enregistrements archivés.',archive:'Enregistrements archivés'}
+};
+function refreshSettingsLabels(){
+  const c=settingsUiCopy[activeLanguage]||settingsUiCopy.en;
+  document.getElementById('settingsTitle').textContent=c.title;
+  document.getElementById('settingsSub').textContent=c.sub;
+  document.getElementById('archiveTitle').textContent=c.archive;
 }
 function renderArchive(){
   const copy={
@@ -1116,7 +1129,7 @@ function refreshMobileNavLabels(){
  document.querySelectorAll('[data-mobile-label]').forEach(el=>{const key=el.dataset.mobileLabel;if(copy[key])el.textContent=copy[key];});
 }
 const _applyUiCopy=applyUiCopy;
-applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();refreshCashflowLabels();refreshInvoiceProposalLabels();};
+applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();refreshCashflowLabels();refreshInvoiceProposalLabels();refreshSettingsLabels();};
 refreshMobileNavLabels();
 refreshProfitLabels();
 refreshCashflowLabels();
