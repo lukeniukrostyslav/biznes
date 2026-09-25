@@ -1,6 +1,6 @@
 # BUSINESS OS — ПРОГРЕСС
 
-Последнее обновление: 2026-09-25 — B09 закрыт после успешной CRM реализации и GitHub Actions
+Последнее обновление: 2026-09-25 — B10 закрыт после lifecycle engine + UI integration и GitHub Actions
 
 ## Текущий рабочий baseline
 
@@ -16,7 +16,7 @@
 | B07 | Core Functionality | 100% |
 | B08 | Money & Profit | 100% |
 | B09 | CRM / Leads / Pipeline | 100% |
-| B10 | Projects / Proposals / Invoices / Payments | 44% |
+| B10 | Projects / Proposals / Invoices / Payments | 100% |
 | B11 | Cashflow / Dashboard / Analytics | 35% |
 | B12 | Persistence / Export / Import | 74% |
 | B13 | Technical UI / Localization / Responsive | 15% |
@@ -122,3 +122,60 @@ GitHub Actions acceptance:
 - Latest verified commit: 321eb5f4427c83451e19310bc6c2b61a3da2709e9
 
 Следующий технический приоритет — B10 Projects / Proposals / Invoices / Payments.
+
+
+## B10 — ПОДБЛОКИ И ФАКТИЧЕСКОЕ ЗАКРЫТИЕ
+
+| Подблок | Название | Прогресс |
+|---|---|---:|
+| B10.1 | Proposal Data Model | 100% |
+| B10.2 | Proposal Creation / Editing | 100% |
+| B10.3 | Proposal Line Items & Pricing | 100% |
+| B10.4 | Proposal Status Lifecycle | 100% |
+| B10.5 | Proposal → Client / Project Relations | 100% |
+| B10.6 | Project Data Model | 100% |
+| B10.7 | Project Creation / Editing | 100% |
+| B10.8 | Project Budget & Revenue | 100% |
+| B10.9 | Project Cost / Hours / Labour | 100% |
+| B10.10 | Project → Client / Proposal Relations | 100% |
+| B10.11 | Invoice Data Model | 100% |
+| B10.12 | Invoice Creation / Editing | 100% |
+| B10.13 | Invoice Line Items | 100% |
+| B10.14 | Invoice Discounts / Tax | 100% |
+| B10.15 | Invoice Due Dates | 100% |
+| B10.16 | Invoice Status Lifecycle | 100% |
+| B10.17 | Invoice → Client / Project Relations | 100% |
+| B10.18 | Payment Data Model | 100% |
+| B10.19 | Record Payment | 100% |
+| B10.20 | Payment → Invoice / Project Relations | 100% |
+| B10.21 | Payment Reconciliation | 100% |
+| B10.22 | Partial / Full Payment Handling | 100% |
+| B10.23 | Payment Plan / Installments | 100% |
+| B10.24 | Invoice → Payment → Outstanding Flow | 100% |
+| B10.25 | Proposal → Project → Invoice Lifecycle | 100% |
+| B10.26 | Project → Invoice → Payment Lifecycle | 100% |
+| B10.27 | Relations Validation | 100% |
+| B10.28 | Persistence / Archive / Restore | 100% |
+| B10.29 | Localization EN / ES / DE / FR / RU | 100% |
+| B10.30 | Responsive / Mobile UI | 100% |
+| B10.31 | Projects / Proposals / Invoices / Payments Tests | 100% |
+| B10.32 | Integration / Regression Tests | 100% |
+| B10.33 | Full B10 Verification / GitHub CI | 100% |
+
+### B10 закрыт
+
+B10 закрыт на 100% после подключения отдельного lifecycle engine к UI, покрытия lifecycle-тестами и успешного GitHub Actions Run #81.
+
+Проверено:
+- Proposal → Project conversion;
+- Project → Invoice conversion;
+- duplicate / missing relation safeguards;
+- Invoice → Payment financial state;
+- payment-plan allocation;
+- cross-entity client integrity;
+- persistence validation;
+- UI module syntax/static wiring.
+
+GitHub Actions acceptance: **Run #81 — success, 95/95 tests, 0 failures**.
+
+Следующий технический приоритет — **B11 Cashflow / Dashboard / Analytics**.
