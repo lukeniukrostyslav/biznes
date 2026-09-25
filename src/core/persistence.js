@@ -50,6 +50,30 @@ function validateStore(input) {
   const findById = (collection, id) =>
     (Array.isArray(source[collection]) ? source[collection] : []).find(item => item.id === id);
 
+  const archived = source.archivedRecords;
+  if (!Array.isArray(archived)) {
+    errors.push('archivedRecords must be an array');
+  } else {
+    const seenArchived = new Set();
+    for (const record of archived) {
+      if (!record || typeof record !== 'object' || Array.isArray(record)) {
+        errors.push('archivedRecords contains a non-object record');
+        continue;
+      }
+      if (!record.id || typeof record.id !== 'string') {
+        errors.push('archivedRecords contains a record without a valid id');
+      }
+      if (!COLLECTIONS.includes(record.collection)) {
+        errors.push('archivedRecords contains an invalid collection: ' + String(record.collection));
+      }
+      if (record.id && COLLECTIONS.includes(record.collection)) {
+        const key = record.collection + ':' + record.id;
+        if (seenArchived.has(key)) errors.push('duplicate archived id: ' + key);
+        seenArchived.add(key);
+      }
+    }
+  }
+
   const seenIds = new Set();
   for (const collection of COLLECTIONS) {
     const records = source[collection];
