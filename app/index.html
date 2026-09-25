@@ -1167,11 +1167,12 @@ function refreshMobileNavLabels(){
  const copy=mobileNavCopy[activeLanguage]||mobileNavCopy.en;
  document.querySelectorAll('[data-mobile-label]').forEach(el=>{const key=el.dataset.mobileLabel;if(copy[key])el.textContent=copy[key];});
 }
-const _applyUiCopy=applyUiCopy;
-applyUiCopy=function(lang){_applyUiCopy(lang);refreshMobileNavLabels();refreshProfitLabels();refreshCashflowLabels();refreshInvoiceProposalLabels();refreshSettingsLabels();};
 refreshMobileNavLabels();
 refreshLeadFieldLabels();
 refreshProfitLabels();
 refreshCashflowLabels();
+refreshInvoiceProposalLabels();
+refreshSettingsLabels();
+window.applyUiCopy = applyUiCopy;
 </script></body>
 </html>
