@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "test": "node --test src/core/*.test.js src/app-static.test.js"
+    "test": "node --test src/core/*.test.js src/app-static.test.js",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "playwright": "1.55.0"
