@@ -506,3 +506,12 @@ B14 полностью подтверждён фактическим выпол�
 - Language selector визуально усилен пятью языками (EN/RU/ES/DE/FR).
 - Исправления сохранены в GitHub и опубликованы в Vercel production.
 - ND.25 остаётся **0%** до фактической ручной проверки live-интерфейса кликами.
+
+
+## 2026-09-25 — Critical visual cascade fix
+- Root cause found for the weak visual change: `premium-design.css` was loaded **before** the large legacy inline `<style>` block in `app/index.html`, so many premium rules were being overridden by the old UI layer.
+- Fixed stylesheet order: the premium design layer now loads **after** the legacy inline styles.
+- No business logic or data model changes.
+- Production redeployed and verified READY on Vercel.
+- New production deployment: `dpl_DwNAWsDSAMUonCNzp7eCnPsFCviS`.
+- ND.25 remains **0%** until live manual acceptance of the actual clickable product.
