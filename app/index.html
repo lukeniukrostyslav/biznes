@@ -99,11 +99,11 @@
     </article>
     <article class="card dashboard-profit-card">
       <div class="card-title dashboard-card-title"><div><h2 data-ui="projectProfitability">Project Profitability</h2><p data-v2="profitSub">Margin across active delivery</p></div><button class="text-action" type="button" data-dashboard-screen="4">View all →</button></div>
-      <div class="table-scroll"><table class="profit-table"><thead><tr><th data-ui-label="project">Project</th><th data-ui-label="revenue">Revenue</th><th data-ui-label="profit">Profit</th><th data-ui-label="margin">Margin</th></tr></thead><tbody id="projectProfitabilityBody"></tbody></table></div>
+      <div class="table-scroll"><table class="profit-table"><thead><tr><th data-ui-label="project">Project</th><th>Client</th><th data-ui-label="revenue">Revenue</th><th>Costs</th><th data-ui-label="profit">Profit</th><th data-ui-label="margin">Margin</th><th>Status</th></tr></thead><tbody id="projectProfitabilityBody"></tbody></table></div>
     </article>
   </section>
 
-  <section class="dashboard-module-section">
+  <section class="dashboard-module-section" aria-hidden="true">
     <div class="section-heading"><div><span class="eyebrow" data-v2="moduleEyebrow">YOUR WORKSPACE</span><h2 data-v2="moduleTitle">Everything connected to the business lifecycle</h2></div><span class="section-note" data-v2="moduleNote">Lead → Client → Proposal → Project → Invoice → Payment → Profit</span></div>
     <div class="dashboard-module-grid">
       <button class="module-card" type="button" data-dashboard-screen="2"><span class="module-icon blue">♙</span><strong data-v2="mClients">Clients</strong><small data-v2="mClientsSub">Relationships, projects and revenue</small></button>
@@ -730,7 +730,9 @@ function renderDashboardRealData(){
   }
   profitBody.innerHTML=projects.slice(0,5).map(project=>{
     const result=calculateProjectProfit(project,{invoices:businessStore.invoices||[],payments:businessStore.payments||[],expenses:businessStore.expenses||[]});
-    return '<tr><td>'+escapeHtml(project.name||project.title||'Project')+'</td><td>'+money(result.revenue||0)+'</td><td class="green">'+money(result.actualProfit||0)+'</td><td>'+Number(result.actualMargin||0).toFixed(0)+'%</td></tr>';
+    const client=(businessStore.clients||[]).find(c=>c.id===project.clientId);
+    const status=String(project.status||'Planning');
+    return '<tr><td>'+escapeHtml(project.name||project.title||'Project')+'</td><td>'+escapeHtml(client?.name||project.clientName||project.client||'—')+'</td><td>'+money(result.revenue||0)+'</td><td>'+money(result.actualCosts||0)+'</td><td class="green">'+money(result.profit||0)+'</td><td>'+Number(result.margin||0).toFixed(0)+'%</td><td><span class="status-dot">●</span> '+escapeHtml(status)+'</td></tr>';
   }).join('')||'<tr><td colspan="4" class="empty" data-ui="noProjects">No projects</td></tr>';
 
   const metrics=calculateBusinessMetrics(businessStore);
