@@ -472,3 +472,11 @@ Commits: `f754e10ad8b1896be22e11611c715a2915938fe6`, `7a1b1d7cdca74c8d2fc59b213f
 GitHub commits: `fc753550d96126fb44c5232d06c96e611709fb46`, `60f95c71a5b22b86d56ebe6888cb1b3d5e2b898c`.
 
 QA: source-level verification выполнена. GitHub Actions в репозитории сейчас не имеет workflow runs (0 runs), поэтому автоматический CI execution не подтверждён. Проценты B07/B12 не повышаются до фактического test execution.
+
+## B11 — Dashboard/Cashflow structural regression guard — 2026-09-25
+
+После последних исправлений Dashboard/Cashflow добавлен дополнительный static regression test: проверяется наличие и wiring ключевых функций `renderCashflow`, `renderDashboardRealData`, `refreshDashboardMetrics`, `refreshDashboardVisuals`, `exportCashflowReport`. Это фиксирует текущую границу функций после серии синтаксических исправлений.
+
+GitHub commit: `e0cf4ed76b4c7b28183550352cd657a304f511cc`.
+
+Полный GitHub Actions run для последнего commit пока не подтверждён (workflow runs отсутствуют), поэтому **B11 остаётся 35%**, а B14 остаётся 0%. Процент не повышается только за наличие static test — нужен фактический execution/browser QA.
