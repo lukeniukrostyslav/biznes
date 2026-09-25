@@ -21,8 +21,8 @@
 </aside>
 <main class="main">
 <div class="product-identity-bar">
-    <div class="identity-brand"><div class="identity-logo">♛</div><div><strong>BUSINESS OS</strong><span>Freelancer & Agency Business Command Center</span></div></div>
-    <div class="identity-value"><strong>All your business. One place.</strong><span>Clients · Projects · Proposals · Invoices · Profit · Cashflow</span></div>
+    <div class="identity-brand"><div class="identity-logo">♛</div><div><strong data-v2="brandTitle">BUSINESS OS</strong><span data-v2="brandSub">Freelancer & Agency Business Command Center</span></div></div>
+    <div class="identity-value"><strong data-v2="brandValue">All your business. One place.</strong><span data-v2="brandValueSub">Clients · Projects · Proposals · Invoices · Profit · Cashflow</span></div>
   </div>
 <input id="importDataInput" type="file" accept="application/json" hidden>
 <header class="topbar"><div class="search" id="search">⌕ Search clients, projects, invoices…</div><div class="top-actions"><button class="secondary" id="exportData">Export</button><button class="secondary" id="importData">Import</button><button class="new" id="newTopAction">＋ New</button><span>🔔</span><select class="lang" id="lang" aria-label="Language"><option value="en">🇬🇧 EN</option><option value="ru">🇷🇺 RU</option><option value="es">🇪🇸 ES</option><option value="de">🇩🇪 DE</option><option value="fr">🇫🇷 FR</option></select></div></header>
@@ -30,10 +30,10 @@
 <div id="dashboardScreen" class="screen active">
   <section class="dashboard-hero">
     <div class="dashboard-hero-copy">
-      <div class="eyebrow"><span class="eyebrow-dot"></span> BUSINESS COMMAND CENTER</div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-v2="heroEyebrow">BUSINESS COMMAND CENTER</span></div>
       <h1 id="greeting">Good morning</h1>
       <p id="subtitle">Here’s what’s happening with your business today.</p>
-      <div class="hero-proof"><span>●</span> Local-first workspace <span>•</span> EUR reporting <span>•</span> 5 languages</div>
+      <div class="hero-proof"><span>●</span> <span data-v2="heroProof">Local-first workspace • EUR reporting • 5 languages</span></div>
     </div>
     <div class="dashboard-hero-art" aria-hidden="true">
       <div class="hero-sky"></div><div class="hero-mountain hero-mountain-a"></div><div class="hero-mountain hero-mountain-b"></div>
@@ -70,46 +70,46 @@
 
   <section class="dashboard-main-grid">
     <article class="card dashboard-chart-card">
-      <div class="card-title dashboard-card-title"><div><h2 data-ui="revenueProfitTitle">Revenue & Profit</h2><p>Performance across your selected period</p></div><span class="chart-legend"><b class="legend-revenue"></b>Revenue <b class="legend-profit"></b>Profit</span></div>
+      <div class="card-title dashboard-card-title"><div><h2 data-ui="revenueProfitTitle">Revenue & Profit</h2><p data-v2="chartSub">Performance across your selected period</p></div><span class="chart-legend"><b class="legend-revenue"></b>Revenue <b class="legend-profit"></b>Profit</span></div>
       <div class="chart-shell"><div class="chart-y-labels"><span>€20K</span><span>€15K</span><span>€10K</span><span>€5K</span><span>€0</span></div><div class="chart" id="chart"></div></div>
     </article>
     <article class="card dashboard-cash-card">
-      <div class="card-title dashboard-card-title"><div><h2 data-ui="cashflowOverview">Cashflow Overview</h2><p>Current financial position</p></div><span class="card-period" data-ui="thisYearPlain">This year</span></div>
+      <div class="card-title dashboard-card-title"><div><h2 data-ui="cashflowOverview">Cashflow Overview</h2><p data-v2="cashSub">Current financial position</p></div><span class="card-period" data-ui="thisYearPlain">This year</span></div>
       <div class="cash cash-premium">
         <div class="cash-row"><div class="cash-row-head"><span data-ui="totalIncome">Total Income</span><strong id="dashIncome">€0</strong></div><div class="meter"><div class="fill income-fill" id="dashIncomeFill" style="width:0%"></div></div></div>
         <div class="cash-row"><div class="cash-row-head"><span data-ui="totalExpenses">Total Expenses</span><strong id="dashExpenses">€0</strong></div><div class="meter"><div class="fill expense-fill" id="dashExpensesFill" style="width:0%"></div></div></div>
         <div class="cash-row"><div class="cash-row-head"><span data-ui="netProfit">Net Profit</span><strong id="dashNetProfit">€0</strong></div><div class="meter"><div class="fill profit-fill" id="dashProfitFill" style="width:0%"></div></div></div>
       </div>
-      <div class="cash-summary"><span>30-day view</span><strong>Local data</strong></div>
+      <div class="cash-summary"><span data-v2="cashWindow">30-day view</span><strong data-v2="localData">Local data</strong></div>
     </article>
   </section>
 
   <section class="dashboard-lower-grid">
     <article class="card dashboard-list-card">
-      <div class="card-title dashboard-card-title"><div><h2 data-ui="followupsToday">Follow-ups Today</h2><p>Next actions that need attention</p></div><span class="count-badge" id="followupCount">0</span></div>
+      <div class="card-title dashboard-card-title"><div><h2 data-ui="followupsToday">Follow-ups Today</h2><p data-v2="followSub">Next actions that need attention</p></div><span class="count-badge" id="followupCount">0</span></div>
       <div class="list premium-list" id="followups"></div>
     </article>
     <article class="card dashboard-list-card">
-      <div class="card-title dashboard-card-title"><div><h2 data-ui="overdueInvoices">Overdue Invoices</h2><p>Collections requiring attention</p></div><span class="count-badge danger-count" id="overdueCount">0</span></div>
+      <div class="card-title dashboard-card-title"><div><h2 data-ui="overdueInvoices">Overdue Invoices</h2><p data-v2="overdueSub">Collections requiring attention</p></div><span class="count-badge danger-count" id="overdueCount">0</span></div>
       <div class="list premium-list" id="overdueList"></div>
     </article>
     <article class="card dashboard-profit-card">
-      <div class="card-title dashboard-card-title"><div><h2 data-ui="projectProfitability">Project Profitability</h2><p>Margin across active delivery</p></div><button class="text-action" type="button" data-dashboard-screen="4">View all →</button></div>
+      <div class="card-title dashboard-card-title"><div><h2 data-ui="projectProfitability">Project Profitability</h2><p data-v2="profitSub">Margin across active delivery</p></div><button class="text-action" type="button" data-dashboard-screen="4">View all →</button></div>
       <div class="table-scroll"><table class="profit-table"><thead><tr><th data-ui-label="project">Project</th><th data-ui-label="revenue">Revenue</th><th data-ui-label="profit">Profit</th><th data-ui-label="margin">Margin</th></tr></thead><tbody id="projectProfitabilityBody"></tbody></table></div>
     </article>
   </section>
 
   <section class="dashboard-module-section">
-    <div class="section-heading"><div><span class="eyebrow">YOUR WORKSPACE</span><h2>Everything connected to the business lifecycle</h2></div><span class="section-note">Lead → Client → Proposal → Project → Invoice → Payment → Profit</span></div>
+    <div class="section-heading"><div><span class="eyebrow" data-v2="moduleEyebrow">YOUR WORKSPACE</span><h2 data-v2="moduleTitle">Everything connected to the business lifecycle</h2></div><span class="section-note" data-v2="moduleNote">Lead → Client → Proposal → Project → Invoice → Payment → Profit</span></div>
     <div class="dashboard-module-grid">
-      <button class="module-card" type="button" data-dashboard-screen="2"><span class="module-icon blue">♙</span><strong>Clients</strong><small>Relationships, projects and revenue</small></button>
-      <button class="module-card" type="button" data-dashboard-screen="1"><span class="module-icon cyan">♧</span><strong>Leads</strong><small>Pipeline and next opportunities</small></button>
-      <button class="module-card" type="button" data-dashboard-screen="4"><span class="module-icon indigo">▱</span><strong>Projects</strong><small>Delivery, cost and margin</small></button>
-      <button class="module-card" type="button" data-dashboard-screen="3"><span class="module-icon violet">▤</span><strong>Proposals</strong><small>Offers, scope and conversion</small></button>
-      <button class="module-card" type="button" data-dashboard-screen="5"><span class="module-icon teal">▣</span><strong>Invoices</strong><small>Billing, payment and overdue</small></button>
-      <button class="module-card" type="button" data-dashboard-screen="6"><span class="module-icon green">◫</span><strong>Payments</strong><small>Received money and reconciliation</small></button>
-      <button class="module-card" type="button" data-dashboard-screen="8"><span class="module-icon purple">◔</span><strong>Profit</strong><small>Real profitability by project</small></button>
-      <button class="module-card" type="button" data-dashboard-screen="9"><span class="module-icon orange">◷</span><strong>Cashflow</strong><small>Current and expected cash</small></button>
+      <button class="module-card" type="button" data-dashboard-screen="2"><span class="module-icon blue">♙</span><strong data-v2="mClients">Clients</strong><small data-v2="mClientsSub">Relationships, projects and revenue</small></button>
+      <button class="module-card" type="button" data-dashboard-screen="1"><span class="module-icon cyan">♧</span><strong data-v2="mLeads">Leads</strong><small data-v2="mLeadsSub">Pipeline and next opportunities</small></button>
+      <button class="module-card" type="button" data-dashboard-screen="4"><span class="module-icon indigo">▱</span><strong data-v2="mProjects">Projects</strong><small data-v2="mProjectsSub">Delivery, cost and margin</small></button>
+      <button class="module-card" type="button" data-dashboard-screen="3"><span class="module-icon violet">▤</span><strong data-v2="mProposals">Proposals</strong><small data-v2="mProposalsSub">Offers, scope and conversion</small></button>
+      <button class="module-card" type="button" data-dashboard-screen="5"><span class="module-icon teal">▣</span><strong data-v2="mInvoices">Invoices</strong><small data-v2="mInvoicesSub">Billing, payment and overdue</small></button>
+      <button class="module-card" type="button" data-dashboard-screen="6"><span class="module-icon green">◫</span><strong data-v2="mPayments">Payments</strong><small data-v2="mPaymentsSub">Received money and reconciliation</small></button>
+      <button class="module-card" type="button" data-dashboard-screen="8"><span class="module-icon purple">◔</span><strong data-v2="mProfit">Profit</strong><small data-v2="mProfitSub">Real profitability by project</small></button>
+      <button class="module-card" type="button" data-dashboard-screen="9"><span class="module-icon orange">◷</span><strong data-v2="mCashflow">Cashflow</strong><small data-v2="mCashflowSub">Current and expected cash</small></button>
     </div>
   </section>
 </div>
@@ -294,6 +294,17 @@ function applyUiCopy(lang){
 }
 let activeLanguage='en';window.activeLanguage='en';
 let dashboardPeriod='month';
+const dashboardV2Copy={
+en:{brandTitle:'BUSINESS OS',brandSub:'Freelancer & Agency Business Command Center',brandValue:'All your business. One place.',brandValueSub:'Clients · Projects · Proposals · Invoices · Profit · Cashflow',heroEyebrow:'BUSINESS COMMAND CENTER',heroProof:'Local-first workspace • EUR reporting • 5 languages',chartSub:'Performance across your selected period',cashSub:'Current financial position',cashWindow:'30-day view',localData:'Local data',followSub:'Next actions that need attention',overdueSub:'Collections requiring attention',profitSub:'Margin across active delivery',moduleEyebrow:'YOUR WORKSPACE',moduleTitle:'Everything connected to the business lifecycle',moduleNote:'Lead → Client → Proposal → Project → Invoice → Payment → Profit',mClients:'Clients',mClientsSub:'Relationships, projects and revenue',mLeads:'Leads',mLeadsSub:'Pipeline and next opportunities',mProjects:'Projects',mProjectsSub:'Delivery, cost and margin',mProposals:'Proposals',mProposalsSub:'Offers, scope and conversion',mInvoices:'Invoices',mInvoicesSub:'Billing, payment and overdue',mPayments:'Payments',mPaymentsSub:'Received money and reconciliation',mProfit:'Profit',mProfitSub:'Real profitability by project',mCashflow:'Cashflow',mCashflowSub:'Current and expected cash'},
+ru:{brandTitle:'BUSINESS OS',brandSub:'Центр управления для фрилансеров и агентств',brandValue:'Весь ваш бизнес. В одном месте.',brandValueSub:'Клиенты · Проекты · Предложения · Счета · Прибыль · Cashflow',heroEyebrow:'ЦЕНТР УПРАВЛЕНИЯ БИЗНЕСОМ',heroProof:'Локальное рабочее пространство • отчётность в EUR • 5 языков',chartSub:'Динамика за выбранный период',cashSub:'Текущее финансовое положение',cashWindow:'Период 30 дней',localData:'Локальные данные',followSub:'Следующие действия, требующие внимания',overdueSub:'Счета, требующие оплаты',profitSub:'Маржа по активным проектам',moduleEyebrow:'ВАШЕ РАБОЧЕЕ ПРОСТРАНСТВО',moduleTitle:'Всё связано в едином бизнес-цикле',moduleNote:'Лид → Клиент → Предложение → Проект → Счёт → Платёж → Прибыль',mClients:'Клиенты',mClientsSub:'Связи, проекты и выручка',mLeads:'Лиды',mLeadsSub:'Воронка и новые возможности',mProjects:'Проекты',mProjectsSub:'Сроки, затраты и маржа',mProposals:'Предложения',mProposalsSub:'Офферы, объём и конверсия',mInvoices:'Счета',mInvoicesSub:'Биллинг, оплаты и просрочки',mPayments:'Платежи',mPaymentsSub:'Полученные деньги и сверка',mProfit:'Прибыль',mProfitSub:'Реальная прибыльность проектов',mCashflow:'Cashflow',mCashflowSub:'Текущие и ожидаемые деньги'},
+es:{brandTitle:'BUSINESS OS',brandSub:'Centro de gestión para freelancers y agencias',brandValue:'Todo tu negocio. En un solo lugar.',brandValueSub:'Clientes · Proyectos · Propuestas · Facturas · Beneficio · Cashflow',heroEyebrow:'CENTRO DE GESTIÓN EMPRESARIAL',heroProof:'Espacio local • informes en EUR • 5 idiomas',chartSub:'Rendimiento del periodo seleccionado',cashSub:'Situación financiera actual',cashWindow:'Vista de 30 días',localData:'Datos locales',followSub:'Próximas acciones que requieren atención',overdueSub:'Cobros que requieren atención',profitSub:'Margen de los proyectos activos',moduleEyebrow:'TU ESPACIO DE TRABAJO',moduleTitle:'Todo conectado en el ciclo de negocio',moduleNote:'Lead → Cliente → Propuesta → Proyecto → Factura → Pago → Beneficio',mClients:'Clientes',mClientsSub:'Relaciones, proyectos e ingresos',mLeads:'Leads',mLeadsSub:'Pipeline y nuevas oportunidades',mProjects:'Proyectos',mProjectsSub:'Entrega, costes y margen',mProposals:'Propuestas',mProposalsSub:'Ofertas, alcance y conversión',mInvoices:'Facturas',mInvoicesSub:'Facturación, pagos y vencidos',mPayments:'Pagos',mPaymentsSub:'Cobros y conciliación',mProfit:'Beneficio',mProfitSub:'Rentabilidad real por proyecto',mCashflow:'Cashflow',mCashflowSub:'Dinero actual y esperado'},
+de:{brandTitle:'BUSINESS OS',brandSub:'Business Command Center für Freelancer und Agenturen',brandValue:'Dein gesamtes Business. An einem Ort.',brandValueSub:'Kunden · Projekte · Angebote · Rechnungen · Gewinn · Cashflow',heroEyebrow:'BUSINESS COMMAND CENTER',heroProof:'Lokaler Workspace • EUR-Reporting • 5 Sprachen',chartSub:'Leistung im ausgewählten Zeitraum',cashSub:'Aktuelle Finanzlage',cashWindow:'30-Tage-Ansicht',localData:'Lokale Daten',followSub:'Nächste Aktionen mit Aufmerksamkeit',overdueSub:'Zahlungen, die Aufmerksamkeit benötigen',profitSub:'Marge aktiver Projekte',moduleEyebrow:'DEIN WORKSPACE',moduleTitle:'Alles im Business-Lifecycle verbunden',moduleNote:'Lead → Kunde → Angebot → Projekt → Rechnung → Zahlung → Gewinn',mClients:'Kunden',mClientsSub:'Beziehungen, Projekte und Umsatz',mLeads:'Leads',mLeadsSub:'Pipeline und neue Chancen',mProjects:'Projekte',mProjectsSub:'Lieferung, Kosten und Marge',mProposals:'Angebote',mProposalsSub:'Angebote, Umfang und Konversion',mInvoices:'Rechnungen',mInvoicesSub:'Abrechnung, Zahlung und Überfälliges',mPayments:'Zahlungen',mPaymentsSub:'Eingänge und Abstimmung',mProfit:'Gewinn',mProfitSub:'Reale Projektprofitabilität',mCashflow:'Cashflow',mCashflowSub:'Aktuelles und erwartetes Geld'},
+fr:{brandTitle:'BUSINESS OS',brandSub:'Centre de gestion pour freelances et agences',brandValue:'Toute votre activité. Au même endroit.',brandValueSub:'Clients · Projets · Propositions · Factures · Profit · Trésorerie',heroEyebrow:'CENTRE DE COMMANDE BUSINESS',heroProof:'Espace local • reporting EUR • 5 langues',chartSub:'Performance sur la période sélectionnée',cashSub:'Situation financière actuelle',cashWindow:'Vue sur 30 jours',localData:'Données locales',followSub:'Prochaines actions nécessitant votre attention',overdueSub:'Encaissements nécessitant une action',profitSub:'Marge des projets actifs',moduleEyebrow:'VOTRE ESPACE DE TRAVAIL',moduleTitle:'Tout est relié au cycle de votre activité',moduleNote:'Prospect → Client → Proposition → Projet → Facture → Paiement → Profit',mClients:'Clients',mClientsSub:'Relations, projets et chiffre d’affaires',mLeads:'Prospects',mLeadsSub:'Pipeline et opportunités',mProjects:'Projets',mProjectsSub:'Livraison, coûts et marge',mProposals:'Propositions',mProposalsSub:'Offres, périmètre et conversion',mInvoices:'Factures',mInvoicesSub:'Facturation, paiements et retards',mPayments:'Paiements',mPaymentsSub:'Encaissements et rapprochement',mProfit:'Profit',mProfitSub:'Rentabilité réelle des projets',mCashflow:'Trésorerie',mCashflowSub:'Trésorerie actuelle et attendue'}
+};
+function applyDashboardV2Copy(lang){
+ const c=dashboardV2Copy[lang]||dashboardV2Copy.en;
+ document.querySelectorAll('[data-v2]').forEach(el=>{const key=el.dataset.v2;if(c[key])el.textContent=c[key];});
+}
 function render(lang){const currentScreen=document.querySelector('.screen.active')?.id||'dashboardScreen';activeLanguage=lang;window.activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;document.getElementById('nav').innerHTML=c.nav.map((x,i)=>'<button class="'+(mapScreenIndex(currentScreen)===i?'active':'')+'" data-screen="'+i+'">'+x+'</button>').join('');applyUiCopy(lang);refreshSettingsLabels();bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();renderArchive();}
 function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
 function mapScreenIndex(screenId){return ['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'].indexOf(screenId);}
