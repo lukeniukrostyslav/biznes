@@ -241,11 +241,16 @@ function archiveRecord(store, collection, id) {
     throw new Error('Cannot archive record with active dependents: ' + dependents.join(', '));
   }
 
-  return normalizeStore({
+  const candidate = normalizeStore({
     ...normalized,
     [collection]: list.filter(item => item.id !== id),
     archivedRecords: [...(normalized.archivedRecords || []), { ...record, collection, archivedAt: new Date().toISOString() }]
   });
+  const validation = validateStore(candidate);
+  if (!validation.valid) {
+    throw new Error('Cannot archive invalid BUSINESS OS store: ' + validation.errors.join(', '));
+  }
+  return candidate;
 }
 
 function restoreRecord(store, archivedId) {
