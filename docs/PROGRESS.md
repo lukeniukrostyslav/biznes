@@ -17,7 +17,7 @@
 | B08 | Money & Profit | 100% |
 | B09 | CRM / Leads / Pipeline | 100% |
 | B10 | Projects / Proposals / Invoices / Payments | 100% |
-| B11 | Cashflow / Dashboard / Analytics | 95% |
+| B11 | Cashflow / Dashboard / Analytics | 100% |
 | B12 | Persistence / Export / Import | 74% |
 | B13 | Technical UI / Localization / Responsive | 15% |
 | B14 | Functional / E2E QA | 0% |
@@ -204,10 +204,8 @@ GitHub Actions acceptance: **Run #81 — success, 95/95 tests, 0 failures**.
 | B11.18 | Cashflow / Dashboard export integrity | 100% |
 | B11.19 | Dashboard business-logic tests | 100% |
 | B11.20 | Analytics integration / regression tests | 100% |
-| B11.21 | Full B11 verification / GitHub CI | 0% |
+| B11.21 | Full B11 verification / GitHub CI | 100% |
 
 ### B11 — текущий статус
 
-B11.1–B11.20 реализованы и сохранены в GitHub. B11.21 остаётся открытым до подтверждённого GitHub Actions execution нового набора тестов. Поэтому общий B11 сейчас **95%**, а не 100%.
-
-Следующий обязательный шаг: GitHub CI acceptance и закрытие B11.21.
+B11.1–B11.21 реализованы и сохранены в GitHub. GitHub Actions run 36136051237 успешно завершён: **103/103 теста, 0 ошибок**. B11 полностью закрыт на **100%**.
