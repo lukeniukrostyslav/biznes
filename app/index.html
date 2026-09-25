@@ -299,9 +299,17 @@
       'Project Profitability':'Прибыльность проектов','Project':'Проект','Client':'Клиент','Revenue':'Выручка',
       'Costs':'Затраты','Profit':'Прибыль','Margin':'Маржа','Status':'Статус','Name':'Название',
       'Cancel':'Отмена','Save record':'Сохранить запись','Edit':'Изменить','Back':'Назад',
-      'Next actions':'Следующие действия','Timeline':'Хронология'
+      'Next actions':'Следующие действия','Timeline':'Хронология',
+      'Projects':'Проекты','Clients':'Клиенты','Leads':'Лиды','Proposals':'Предложения','Invoices':'Счета',
+      'Payments':'Платежи','Settings':'Настройки','Dashboard':'Обзор','Cashflow':'Денежный поток',
+      'Search clients, projects, invoices…':'Поиск клиентов, проектов, счетов…','This month':'Этот месяц',
+      'This quarter':'Этот квартал','All time':'За всё время','Follow-ups Today':'Задачи на сегодня',
+      'Overdue Invoices':'Просроченные счета','Collections requiring attention':'Требует внимания',
+      'Next actions that need attention':'Следующие действия, требующие внимания',
+      'Current financial position':'Текущее финансовое положение','Performance across your selected period':'Результаты за выбранный период'
     };
-    if(lang==='ru'){
+    function applyRussianStatic(){
+      if((window.activeLanguage||document.getElementById('lang')?.value)!=='ru') return;
       document.querySelectorAll('.screen *').forEach(el=>{
         if(el.children.length===0){
           const t=(el.textContent||'').trim();
@@ -312,6 +320,7 @@
       if(legend) legend.innerHTML='<b class="legend-revenue"></b>Выручка <b class="legend-profit"></b>Прибыль <b class="legend-expense"></b>Расходы';
       document.querySelectorAll('.text-action').forEach(el=>{if((el.textContent||'').trim()==='View all →')el.textContent='Посмотреть всё →';});
     }
+    if(lang==='ru') applyRussianStatic();
 localStorage.setItem('business-os-lang',lang);
     window.activeLanguage=lang;
   }
@@ -323,6 +332,11 @@ localStorage.setItem('business-os-lang',lang);
       const type=createMap[btn.dataset.i18n];
       if(type && typeof window.openCreateDrawer==='function') window.openCreateDrawer(type);
     },true);
+  }
+  function bindRussianRuntimeTranslation(){
+    const target=document.querySelector('.content')||document.body;
+    const observer=new MutationObserver(()=>{ if((window.activeLanguage||document.getElementById('lang')?.value)==='ru') applyRussianStatic(); });
+    observer.observe(target,{childList:true,subtree:true});
   }
   function bindNav(){
     document.querySelectorAll('#nav button').forEach(btn=>{
@@ -349,6 +363,7 @@ localStorage.setItem('business-os-lang',lang);
       });
     }
     bindCreateFallback();
+    bindRussianRuntimeTranslation();
     setTimeout(()=>{
       const nav=document.getElementById('nav');
       if(nav && !nav.children.length){apply(localStorage.getItem('business-os-lang')||'en');}
