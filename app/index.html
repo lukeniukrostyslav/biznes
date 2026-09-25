@@ -1580,7 +1580,7 @@ function mapScreenIndex(screenId){return ['dashboardScreen','leadsScreen','clien
 const STORE_KEY='business-os-store-v1';
 const defaultStore={schemaVersion:2,clients:[],leads:[],proposals:[],projects:[],invoices:[],payments:[],expenses:[],archivedRecords:[]};
 function loadStore(){return loadPersistentStore(localStorage)}
-function saveStore(store){const next=savePersistentStore(localStorage,store);document.dispatchEvent(new Event("business-store-updated"));return next}
+function saveStore(store){const next=savePersistentStore(localStorage,store);window.businessStore=next;document.dispatchEvent(new Event("business-store-updated"));return next}
 function uid(prefix){return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
 let businessStore;
 try{
@@ -1590,6 +1590,7 @@ try{
   try{localStorage.removeItem(STORE_KEY);}catch(_e){}
   businessStore={...defaultStore,clients:[],leads:[],proposals:[],projects:[],invoices:[],payments:[],expenses:[],archivedRecords:[]};
 }
+window.businessStore=businessStore;
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1800)}
 const toastCopy={
   en:{saved:'Record saved locally',updated:'Record updated locally',proposalNotFound:'Proposal not found',proposalAccepted:'Proposal must be accepted first',projectExists:'Project already exists for this proposal',proposalClient:'Proposal needs a client before conversion',conversionBlocked:'Conversion blocked: check linked records',projectCreated:'Project created from proposal',projectNotFound:'Project not found',nonBillable:'Non-billable projects cannot be invoiced',invoiceExists:'An invoice already exists for this project',projectClient:'Project needs a client',projectAmount:'Project has no billable amount',invoiceBlocked:'Invoice creation blocked: check linked records',invoiceCreated:'Invoice created from project',imported:'Data imported',importError:'Import error',invoiceLine:'Invoice needs at least one line',paymentInput:'Error: select an invoice and enter a payment amount',invoiceMissing:'Error: invoice not found',paymentClient:'Error: payment client must match invoice client',paymentInvoiceAmount:'Error: payment exceeds invoice outstanding',installmentMissing:'Error: selected installment not found',paymentInstallmentAmount:'Error: payment exceeds selected installment outstanding',invoiceLines:'Error: check invoice lines',taxRate:'Error: tax rate must be between 0 and 100%',discount:'Error: check discount',paymentPlan:'Error: payment plan does not match invoice total',relations:'Error: check linked records',entityReady:'Entity details ready to connect to store',cashflowExported:'Cashflow report exported',profitExported:'Profit analysis exported'},
@@ -2618,10 +2619,10 @@ function updateKpiTrendsFromRealData(){
   const prevEnd=curStart;
   const inRange=(v,a,b)=>{if(!v)return false;const d=new Date(v);return Number.isFinite(d.getTime())&&d>=a&&d<b;};
   const sum=(items,dateFields,valueFn,a,b)=>items.reduce((s,x)=>{const date=dateFields.map(k=>x?.[k]).find(Boolean);return s+(inRange(date,a,b)?Number(valueFn(x)||0):0)},0);
-  const payments=Array.isArray(businessStore?.payments)?businessStore.payments:[];
-  const invoices=Array.isArray(businessStore?.invoices)?businessStore.invoices:[];
-  const expenses=Array.isArray(businessStore?.expenses)?businessStore.expenses:[];
-  const leads=Array.isArray(businessStore?.leads)?businessStore.leads:[];
+  const payments=Array.isArray(window.businessStore?.payments)?window.businessStore.payments:[];
+  const invoices=Array.isArray(window.businessStore?.invoices)?window.businessStore.invoices:[];
+  const expenses=Array.isArray(window.businessStore?.expenses)?window.businessStore.expenses:[];
+  const leads=Array.isArray(window.businessStore?.leads)?window.businessStore.leads:[];
   const revenueNow=sum(payments,['paymentDate','date','createdAt'],x=>x.amount,curStart,new Date(now.getFullYear(),now.getMonth()+1,1));
   const revenuePrev=sum(payments,['paymentDate','date','createdAt'],x=>x.amount,prevStart,prevEnd);
   const expenseNow=sum(expenses,['expenseDate','date','createdAt'],x=>x.amount,curStart,new Date(now.getFullYear(),now.getMonth()+1,1));
