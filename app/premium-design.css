@@ -90,3 +90,30 @@ html,body{background:var(--nd-bg);color:var(--nd-text)}body{font-family:Inter,ui
 #projectsScreen .data-table tbody tr:hover{background:#f8faff}
 #projectsScreen .badge{white-space:nowrap}
 @media(max-width:720px){#projectsScreen .page-title{align-items:flex-start;flex-direction:column}#projectsScreen .page-title .primary{width:100%}#projectsScreen .project-card{padding:14px}}
+
+/* ND.9 — Proposals completion */
+#proposalsScreen .card-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#proposalsScreen .card-header h2{margin:0;font-size:15px;font-weight:750}
+#proposalsScreen .data-table td{vertical-align:middle}
+#proposalsScreen .data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--nd-muted);font-weight:700}
+#proposalsScreen .empty{min-height:180px;display:grid;place-items:center}
+@media(max-width:720px){#proposalsScreen .card-header{align-items:flex-start;flex-direction:column}#proposalsScreen .card-header .btn{width:100%}}
+/* ND.10 — Projects completion pass */
+#projectsScreen .card-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#projectsScreen .card-header h2{margin:0;font-size:15px;font-weight:750}
+#projectsScreen .data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--nd-muted);font-weight:700}
+#projectsScreen .data-table td{vertical-align:middle}
+#projectsScreen .empty{min-height:180px;display:grid;place-items:center}
+#projectsScreen .project-card .metric{font-variant-numeric:tabular-nums}
+@media(max-width:720px){#projectsScreen .card-header{align-items:flex-start;flex-direction:column}#projectsScreen .card-header .btn{width:100%}}
+/* ND.11 — Invoices premium surface */
+#invoicesScreen .page-title h1{font-weight:800}
+#invoicesScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm);overflow:hidden}
+#invoicesScreen .data-table tbody tr{transition:background .15s ease}
+#invoicesScreen .data-table tbody tr:hover{background:#f8faff}
+#invoicesScreen .data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--nd-muted);font-weight:700}
+#invoicesScreen .data-table td{vertical-align:middle}
+#invoicesScreen .data-table td:first-child{font-weight:750;color:var(--nd-text)}
+#invoicesScreen .badge{white-space:nowrap}
+#invoicesScreen .actions{white-space:nowrap}
+@media(max-width:720px){#invoicesScreen .page-title{align-items:flex-start;flex-direction:column}#invoicesScreen .page-title .primary{width:100%}#invoicesScreen .card{overflow:auto}}
