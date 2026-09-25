@@ -1190,3 +1190,22 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   #dashboardScreen .dashboard-lower-grid .dashboard-card-title p{display:none!important}
   #dashboardScreen .dashboard-card-actions{display:flex!important;align-items:center!important;gap:7px!important}
 }
+
+
+/* V2.28 — cashflow reference completeness */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-cash-card .cash{gap:9px!important}
+  #dashboardScreen .dashboard-cash-card .cash-row{padding:5px 0!important}
+  #dashboardScreen .dashboard-cash-card .bank-fill{background:#7447df!important}
+  #dashboardScreen .dashboard-cash-card .cash-bank-row{margin-top:1px!important}
+  #dashboardScreen .dashboard-cash-card .cash-summary{display:none!important}
+  #dashboardScreen .dashboard-cash-card .card-period{
+    min-width:82px!important;height:28px!important;padding:0 9px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    border:1px solid #e0e6ef!important;border-radius:8px!important;background:#fff!important;font-size:9px!important;color:#44536a!important;font-weight:700!important
+  }
+  #dashboardScreen .dashboard-chart-card .chart-legend{margin-left:auto!important}
+}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-cash-card .cash-summary{display:none!important}
+  #dashboardScreen .dashboard-cash-card .bank-fill{background:#7447df!important}
+}
