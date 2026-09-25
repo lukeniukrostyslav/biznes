@@ -30,6 +30,10 @@ async function cancelEditAndVerify(page, screen, currentName) {
   await page.locator(`#nav button[data-screen="${screen}"]`).click();
   const row = page.locator('[data-record-id]').filter({ hasText: currentName }).first();
   await row.click();
+  if (screen === '2') {
+    await expect(page.locator('#entityScreen')).toHaveClass(/active/);
+    await page.locator('#entityEdit').click();
+  }
   await expect(page.locator('#detailDrawer')).toHaveClass(/open/);
   await page.locator('#fName').fill('SHOULD NOT BE SAVED');
   await page.locator('#drawerCancel').click();
@@ -115,7 +119,7 @@ test.describe('LQ04 CRUD acceptance — create / edit / save / cancel', () => {
     await page.locator('#fInvoiceLines .invoice-line input').nth(2).fill('1000');
     await saveNamed(page, invoice);
     await openCreate(page, '6', 'recordPayment');
-    await page.locator('#fInvoiceId').selectOption({ label: new RegExp(invoice) });
+    await page.locator('#fInvoiceId').selectOption({ index: 1 });
     await page.locator('#fPaymentAmount').fill('500');
     await saveNamed(page, payment);
     await editAndVerify(page, '6', payment, updated);
