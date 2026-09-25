@@ -37,3 +37,19 @@ html,body{background:var(--nd-bg);color:var(--nd-text)}body{font-family:Inter,ui
 #leadsScreen .deal:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,24,40,.08);border-color:var(--nd-border-strong)}
 #leadsScreen .deal-value{font-variant-numeric:tabular-nums}
 @media(max-width:720px){#leadsScreen .page-title{flex-direction:column}#leadsScreen .toolbar{width:100%}#leadsScreen .toolbar .primary{width:100%}#leadsScreen .toolbar .filter{min-width:0;flex:1}#leadsScreen .pipeline{padding-bottom:6px}}
+
+/* ND.7 — Leads / CRM completion pass */
+#leadsScreen .card{overflow:hidden}
+#leadsScreen .pipeline{align-items:start}
+#leadsScreen .stage{min-height:150px}
+#leadsScreen .stage-head{padding:2px 1px 8px;border-bottom:1px solid var(--nd-border);margin-bottom:10px}
+#leadsScreen .deal small{line-height:1.4}
+#leadsScreen .empty{min-height:180px;display:grid;place-items:center}
+/* ND.8 — Clients premium surface */
+#clientsScreen .page-title h1{font-weight:800}
+#clientsScreen .table-card{overflow:hidden}
+#clientsScreen .data-table tbody tr{transition:background .15s ease}
+#clientsScreen .data-table tbody tr:hover{background:#f8faff}
+#clientsScreen .data-table td:first-child{font-weight:700;color:var(--nd-text)}
+#clientsScreen .badge{white-space:nowrap}
+@media(max-width:720px){#clientsScreen .page-title{align-items:flex-start;flex-direction:column}#clientsScreen .page-title .primary{width:100%}#clientsScreen .table-card{overflow:auto}}
