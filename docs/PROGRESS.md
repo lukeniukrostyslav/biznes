@@ -325,10 +325,10 @@ B14 полностью подтверждён фактическим выпол�
 | ND.1 | Product UI audit и mapping существующих функций | 100% |
 | ND.2 | Premium visual direction / design principles | 100% |
 | ND.3 | Design tokens: colors / typography / spacing / radius / elevation | 100% |
-| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 90% |
-| ND.5 | Core component system | 80% |
-| ND.6 | Overview / Dashboard redesign | 70% |
-| ND.7 | Leads / CRM redesign | 0% |
+| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 95% |
+| ND.5 | Core component system | 90% |
+| ND.6 | Overview / Dashboard redesign | 85% |
+| ND.7 | Leads / CRM redesign | 35% |
 | ND.8 | Clients redesign | 0% |
 | ND.9 | Proposals redesign | 0% |
 | ND.10 | Projects redesign | 0% |
@@ -378,3 +378,12 @@ B14 полностью подтверждён фактическим выпол�
 - ND.6 повышен до 70%: Dashboard получил отдельную premium composition поверх существующих KPI, Revenue & Profit, Cashflow, Follow-ups, Overdue Invoices и Project Profitability без изменения бизнес-логики.
 - GitHub commit: `3edfbba6058002409948920b24b75ad16dd7188e`.
 - Проценты ND.4–ND.6 не считаются финальными: после публикации свежего deployment будет выполнена фактическая визуальная/browser проверка.
+
+
+### Design checkpoint — 2026-09-25 / Leads start
+- ND.4: 95% — shell visual layer further stabilized; final browser verification remains required.
+- ND.5: 90% — shared premium primitives now cover shell, buttons, cards, KPI, tables, pipeline/deals, forms, drawers, badges, empty states, toast, mobile navigation and focus states.
+- ND.6: 85% — Dashboard premium composition refined for KPI hierarchy, financial panels, chart area and responsive behavior; business logic unchanged.
+- ND.7: 35% — Leads/CRM visual redesign started: page header, filters, pipeline stages, deal cards, hover hierarchy and mobile wrapping are now covered by the premium layer.
+- GitHub commit: `bfd0d280018fba84225c8fbb0badbacc3c8371d6`.
+- Browser/live deployment verification is still a separate acceptance step; percentages are intentionally not marked 100% without it.
