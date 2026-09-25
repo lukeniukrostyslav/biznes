@@ -50,13 +50,17 @@ test.describe('B14 module navigation and functional surfaces', () => {
     await expect(page.locator('#importData')).toBeVisible();
   });
 
-  test('all module screens have no horizontal overflow on mobile', async ({ page }) => {
+  test('all core screens remain horizontally contained on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/app/index.html');
-    for (const [index] of screens) {
+    await page.setViewportSize({ width: 1200, height: 900 });
+    for (const [index, selector] of screens) {
       await page.locator(`#nav button[data-screen="${index}"]`).click();
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expect(page.locator(selector)).toHaveClass(/active/);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
       expect(overflow, `horizontal overflow on screen ${index}`).toBeFalsy();
+      await page.setViewportSize({ width: 1200, height: 900 });
     }
   });
 });
