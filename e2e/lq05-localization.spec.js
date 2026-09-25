@@ -53,4 +53,26 @@ test.describe('LQ05 localization acceptance', () => {
       await expect(page.locator('#detailDrawer')).not.toHaveClass(/open/);
     }
   });
+
+
+  test('localized create drawer exposes translated labels in every locale', async ({ page }) => {
+    const expected = {
+      en: { name: 'Name', status: 'Status', cancel: 'Cancel', save: 'Save record' },
+      ru: { name: 'Название', status: 'Статус', cancel: 'Отмена', save: 'Сохранить' },
+      es: { name: 'Nombre', status: 'Estado', cancel: 'Cancelar', save: 'Guardar' },
+      de: { name: 'Name', status: 'Status', cancel: 'Abbrechen', save: 'Speichern' },
+      fr: { name: 'Nom', status: 'Statut', cancel: 'Annuler', save: 'Enregistrer' }
+    };
+    for (const code of Object.keys(expected)) {
+      await page.locator('#lang').selectOption(code);
+      await page.locator('#nav button[data-screen="1"]').click();
+      await page.locator('button[data-i18n="newLead"]').click();
+      await expect(page.locator('#detailDrawer')).toHaveClass(/open/);
+      await expect(page.locator('#fNameLabel')).toHaveText(expected[code].name);
+      await expect(page.locator('#fStatus')).toBeVisible();
+      await expect(page.locator('#drawerCancel')).toHaveText(expected[code].cancel);
+      await expect(page.locator('#drawerSave')).toHaveText(expected[code].save);
+      await page.locator('#drawerCancel').click();
+    }
+  });
 });
