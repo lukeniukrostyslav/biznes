@@ -461,3 +461,8 @@ B14 полностью подтверждён фактическим выпол�
 ### Design checkpoint — ND.19 completed
 - ND.19: 100% — Responsive hardening completed for desktop/tablet/mobile: overflow containment, responsive grids, table scrolling, mobile actions, pipeline stacking, modal/drawer sizing and breakpoint behavior.
 - GitHub commit: `e3f8773f588ef68b08615e63e6444fba3b6d09cb`.
+
+
+### Design checkpoint — ND.20 completed
+- ND.20: 100% — Verified the five localization maps (EN/RU/ES/DE/FR), including entity labels, UI labels and toast/validation copy; added visual safety for long localized strings and mobile wrapping.
+- GitHub commit: `390d51901412c3ae2bfe66f62a0f965bec87c53a`.
