@@ -4,7 +4,7 @@ import { createEmptyStore, normalizeStore, loadStore, saveStore, upsertRecord, r
 
 function memoryStorage() {
   const data = new Map();
-  return { getItem:k=>data.get(k) ?? null, setItem:(k,v)=>data.set(k,v) };
+  return { getItem:k=>data.get(k) ?? null, setItem:(k,v)=>data.set(k,v), removeItem:k=>data.delete(k) };
 }
 
 test('creates a versioned empty store',()=>assert.equal(createEmptyStore().schemaVersion,2));
