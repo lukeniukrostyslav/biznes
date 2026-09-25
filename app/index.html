@@ -152,7 +152,7 @@
 <div class="field full"><label data-ui="notes">Notes</label><textarea id="fNotes" placeholder="Context, scope, next step…" data-ui-placeholder="notesPlaceholder"></textarea></div>
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
-import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus, calculateInvoice } from "../src/core/financial-engine.js";
+import { roundMoney, calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus, calculateInvoice } from "../src/core/financial-engine.js";
 import { calculateDashboardAnalytics, buildDashboardSeries, getDashboardLabels } from "../src/core/b11-analytics-engine.js";
 import { buildProjectFromProposal, buildInvoiceFromProject } from "../src/core/b10-lifecycle-engine.js";
 import { DEFAULT_PIPELINE_STAGES, calculateCrmPipeline, convertLeadToClient } from "../src/core/crm-engine.js";
