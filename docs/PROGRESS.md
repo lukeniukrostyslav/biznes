@@ -546,3 +546,11 @@ GitHub commits: `32ff73eaa4204466421baee84f6c062a35b49052`, `1255bdaf9ebd50b6929
 GitHub commits: `4efed03d0ae1e285928f9b6963d8e189f81702ee`, `4a9007238e674d170af135049fbf570a4a731ca0`.
 
 Процент не повышен без подтверждения полного test execution. **B07 = 89%.**
+
+## B07 — critical guard restoration checkpoint — 2026-09-25
+
+При повторной инспекции `persistence.js` обнаружено, что вызовы `assertCollection()` присутствовали, но сама функция-guard отсутствовала в текущем файле. Это исправлено: определение `assertCollection()` восстановлено перед persistence mutators, добавлен отдельный regression test.
+
+GitHub commits: `6d2bedc38988cebf922c3a28e29cbf2a0fb92502`, `6200cb93a7337a9dc6b34e7b268fe4d162b9ecf0`.
+
+Процент не повышен: необходим полный подтверждённый test execution. **B07 = 89%.**
