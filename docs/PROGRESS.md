@@ -264,3 +264,35 @@ GitHub Actions Run #94: **success — 110/110 тестов, 0 ошибок**.
 GitHub Actions **Run #100 — success**.
 
 Следующий технический приоритет — **B14 Functional / E2E QA**.
+
+## B14 — ПОДБЛОКИ И ТЕКУЩЕЕ СОСТОЯНИЕ
+
+| Подблок | Название | Прогресс |
+|---|---|---:|
+| B14.1 | Test infrastructure / Playwright setup | 100% |
+| B14.2 | Application startup & runtime smoke | 0% |
+| B14.3 | Navigation & core UI flows | 0% |
+| B14.4 | Leads / CRM functional E2E | 0% |
+| B14.5 | Projects functional E2E | 0% |
+| B14.6 | Proposals functional E2E | 0% |
+| B14.7 | Invoices & Payments E2E | 0% |
+| B14.8 | Expenses / Profit calculations E2E | 0% |
+| B14.9 | Cashflow E2E | 0% |
+| B14.10 | Dashboard / Analytics E2E | 0% |
+| B14.11 | Localization EN / ES / DE / FR / RU | 0% |
+| B14.12 | Currency / money formatting E2E | 0% |
+| B14.13 | Export / Import / Persistence E2E | 0% |
+| B14.14 | Responsive / Mobile functional E2E | 0% |
+| B14.15 | Validation / empty states / error states | 0% |
+| B14.16 | Cross-module workflow E2E | 0% |
+| B14.17 | Browser console / runtime error audit | 0% |
+| B14.18 | Full regression suite | 0% |
+| B14.19 | CI / GitHub Actions verification | 0% |
+| B14.20 | Final B14 acceptance & evidence | 0% |
+
+### B14 — текущая работа
+
+Добавлен Playwright smoke suite: e2e/b14-smoke.spec.js, включающий запуск Dashboard, browser runtime errors, все 5 языков, Dashboard period filter, Export/Import wiring и mobile navigation. Добавлен npm run test:e2e и отдельный GitHub Actions workflow .github/workflows/b14-e2e.yml.
+
+Правило процента сохраняется: B14 не повышается только за наличие тестов. После фактического успешного выполнения CI проценты будут повышаться по подтверждённым подблокам.
+
