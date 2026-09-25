@@ -89,7 +89,8 @@ test.describe('B14 functional acceptance flows', () => {
     })));
     await page.reload();
     await page.locator('#nav button[data-screen="10"]').click();
-    await page.locator('#importData').click();
+    await page.locator('#nav button[data-screen="10"]').click();
+    await page.locator('#settingsImportData').click();
     const input = page.locator('#importDataInput');
     await input.setInputFiles({
       name: 'invalid.json',
