@@ -1,6 +1,6 @@
 # BUSINESS OS — ПРОГРЕСС
 
-Последнее обновление: 2026-09-25 — B07 закрыт после успешного GitHub Actions execution
+Последнее обновление: 2026-09-25 — B09 закрыт после успешной CRM реализации и GitHub Actions
 
 ## Текущий рабочий baseline
 
@@ -15,7 +15,7 @@
 | B06 | Localization | 100% |
 | B07 | Core Functionality | 100% |
 | B08 | Money & Profit | 100% |
-| B09 | CRM / Leads / Pipeline | 6% |
+| B09 | CRM / Leads / Pipeline | 100% |
 | B10 | Projects / Proposals / Invoices / Payments | 44% |
 | B11 | Cashflow / Dashboard / Analytics | 35% |
 | B12 | Persistence / Export / Import | 74% |
@@ -84,3 +84,41 @@ GitHub Actions подтверждает полный набор: **74/74 тес�
 ### Следующий технический приоритет
 
 B08 закрыт. Следующий технический приоритет — **B09 CRM / Leads / Pipeline**. Работа продолжается строго последовательно.
+
+
+## B09 — ПОДБЛОКИ И ФАКТИЧЕСКОЕ ЗАКРЫТИЕ
+
+| Подблок | Название | Прогресс |
+|---|---|---:|
+| B09.1 | CRM-модель и канонические pipeline stages | 100% |
+| B09.2 | Leads — create/edit/archive lifecycle | 100% |
+| B09.3 | Lead fields и структура карточки | 100% |
+| B09.4 | Lead → Client conversion | 100% |
+| B09.5 | Clients CRM module | 100% |
+| B09.6 | Client profile / activity context | 100% |
+| B09.7 | Pipeline stages | 100% |
+| B09.8 | Deal management | 100% |
+| B09.9 | Deal value / probability / weighted value | 100% |
+| B09.10 | Pipeline movement / stage changes | 100% |
+| B09.11 | CRM search / filtering | 100% |
+| B09.12 | CRM relationships | 100% |
+| B09.13 | CRM dashboard / pipeline overview | 100% |
+| B09.14 | Validation / empty states / errors | 100% |
+| B09.15 | EN / ES / DE / FR / RU | 100% |
+| B09.16 | Responsive / mobile CRM | 100% |
+| B09.17 | Persistence / archive / restore | 100% |
+| B09.18 | CRM business-logic tests | 100% |
+| B09.19 | Integration / regression tests | 100% |
+| B09.20 | Full B09 verification + GitHub CI | 100% |
+
+### B09 закрыт
+
+B09 закрыт на 100%. Добавлены CRM engine и тесты, расширены поля лидов, реализованы поиск и фильтрация pipeline, реализована конвертация Won Lead → Client с защитой от дубликатов.
+
+GitHub Actions acceptance:
+- Run #73 — success
+- Run #74 — success
+- Run #75 — success
+- Latest verified commit: 321eb5f4427c83451e19310bc6c2b61a3da2709e9
+
+Следующий технический приоритет — B10 Projects / Proposals / Invoices / Payments.
