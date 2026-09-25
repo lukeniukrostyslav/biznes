@@ -37,7 +37,11 @@ function createEmptyStore() {
 
 function migrateStore(input) {
   const source = input && typeof input === 'object' ? input : {};
-  const version = Number(source.schemaVersion || 1);
+  const rawVersion = source.schemaVersion == null || source.schemaVersion === '' ? 1 : Number(source.schemaVersion);
+  if (!Number.isInteger(rawVersion) || rawVersion < 1) {
+    throw new Error('Invalid BUSINESS OS schema version');
+  }
+  const version = rawVersion;
   if (version > CURRENT_SCHEMA_VERSION) throw new Error('Unsupported BUSINESS OS schema version');
   if (version === 1) return { ...source, schemaVersion: CURRENT_SCHEMA_VERSION, archivedRecords: Array.isArray(source.archivedRecords) ? source.archivedRecords : [] };
   return source;
@@ -46,6 +50,9 @@ function migrateStore(input) {
 function validateStore(input) {
   const source = input && typeof input === 'object' ? input : {};
   const errors = [];
+  if (!Number.isInteger(Number(source.schemaVersion)) || Number(source.schemaVersion) !== CURRENT_SCHEMA_VERSION) {
+    errors.push('schemaVersion must equal ' + CURRENT_SCHEMA_VERSION);
+  }
 
   const findById = (collection, id) =>
     (Array.isArray(source[collection]) ? source[collection] : []).find(item => item.id === id);
@@ -148,7 +155,6 @@ function validateStore(input) {
     }
   }
 
-  // Cross-entity integrity: related records must belong to the same client.
   const checks = [
     ['proposals', 'leadId', 'leads', 'clientId'],
     ['projects', 'proposalId', 'proposals', 'clientId'],
@@ -161,16 +167,12 @@ function validateStore(input) {
     for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
       const relationId = record?.[relationField];
       if (relationId == null || relationId === '') continue;
-
       const target = findById(targetCollection, relationId);
       if (!target) continue;
-
       const recordClient = record?.clientId;
       const targetClient = target?.[clientField];
       if (recordClient && targetClient && recordClient !== targetClient) {
-        errors.push(
-          `${collection}.${record.id || '<unknown>'}.${relationField} client mismatch: ${recordClient} != ${targetClient}`
-        );
+        errors.push(`${collection}.${record.id || '<unknown>'}.${relationField} client mismatch: ${recordClient} != ${targetClient}`);
       }
     }
   }
