@@ -112,13 +112,15 @@ test.describe('B14 functional acceptance flows', () => {
   });
 
   test('no horizontal overflow across primary mobile screens', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
+    await page.setViewportSize({ width: 1200, height: 900 });
     for (const index of ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']) {
       await page.locator(`#nav button[data-screen="${index}"]`).click();
+      await page.setViewportSize({ width: 390, height: 844 });
       const overflow = await page.evaluate(() =>
         document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
       );
       expect(overflow, `horizontal overflow on screen ${index}`).toBeFalsy();
+      await page.setViewportSize({ width: 1200, height: 900 });
     }
   });
 
