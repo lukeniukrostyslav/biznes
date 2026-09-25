@@ -17,7 +17,7 @@
 | B08 | Money & Profit | 100% |
 | B09 | CRM / Leads / Pipeline | 100% |
 | B10 | Projects / Proposals / Invoices / Payments | 100% |
-| B11 | Cashflow / Dashboard / Analytics | 35% |
+| B11 | Cashflow / Dashboard / Analytics | 95% |
 | B12 | Persistence / Export / Import | 74% |
 | B13 | Technical UI / Localization / Responsive | 15% |
 | B14 | Functional / E2E QA | 0% |
@@ -179,3 +179,35 @@ B10 закрыт на 100% после подключения отдельног�
 GitHub Actions acceptance: **Run #81 — success, 95/95 tests, 0 failures**.
 
 Следующий технический приоритет — **B11 Cashflow / Dashboard / Analytics**.
+
+## B11 — ПОДБЛОКИ И ТЕКУЩЕЕ ЗАКРЫТИЕ
+
+| Подблок | Название | Прогресс |
+|---|---|---:|
+| B11.1 | Dashboard data model | 100% |
+| B11.2 | Revenue / Paid / Outstanding / Overdue KPIs | 100% |
+| B11.3 | Pipeline / Weighted Pipeline Dashboard | 100% |
+| B11.4 | Profit & Margin Dashboard | 100% |
+| B11.5 | Cashflow Forecast | 100% |
+| B11.6 | Cashflow Overview / Visualization | 100% |
+| B11.7 | Project Profitability Analytics | 100% |
+| B11.8 | Invoice / Payment Analytics | 100% |
+| B11.9 | Expense Analytics | 100% |
+| B11.10 | Outstanding / Overdue Analytics | 100% |
+| B11.11 | Dashboard period filters | 100% |
+| B11.12 | Dashboard aggregation / date ranges | 100% |
+| B11.13 | Analytics consistency across modules | 100% |
+| B11.14 | Dashboard empty / zero states | 100% |
+| B11.15 | Dashboard error / validation states | 100% |
+| B11.16 | Dashboard responsive layout | 100% |
+| B11.17 | Dashboard localization EN / ES / DE / FR / RU | 100% |
+| B11.18 | Cashflow / Dashboard export integrity | 100% |
+| B11.19 | Dashboard business-logic tests | 100% |
+| B11.20 | Analytics integration / regression tests | 100% |
+| B11.21 | Full B11 verification / GitHub CI | 0% |
+
+### B11 — текущий статус
+
+B11.1–B11.20 реализованы и сохранены в GitHub. B11.21 остаётся открытым до подтверждённого GitHub Actions execution нового набора тестов. Поэтому общий B11 сейчас **95%**, а не 100%.
+
+Следующий обязательный шаг: GitHub CI acceptance и закрытие B11.21.
