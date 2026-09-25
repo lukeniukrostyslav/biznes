@@ -456,3 +456,8 @@ B14 полностью подтверждён фактическим выпол�
 - ND.17: 100% — Unified form grid, modal/dialog/drawer structure, headers/bodies/footers, validation/focus treatment and mobile action behavior finalized.
 - ND.18: 100% — Empty, loading, error, success, skeleton and toast states finalized as a shared visual system.
 - GitHub commit: `4c72c16c17ce5de03364421d2fed49537aa08a27`.
+
+
+### Design checkpoint — ND.19 completed
+- ND.19: 100% — Responsive hardening completed for desktop/tablet/mobile: overflow containment, responsive grids, table scrolling, mobile actions, pipeline stacking, modal/drawer sizing and breakpoint behavior.
+- GitHub commit: `e3f8773f588ef68b08615e63e6444fba3b6d09cb`.
