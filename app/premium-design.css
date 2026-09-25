@@ -1526,3 +1526,34 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 
 /* Empty-state integrity: never imitate reference activity with invented rows. */
 #dashboardScreen .empty{color:#8b97aa!important;background:#fbfcfe!important;border:1px dashed #e5eaf1!important;border-radius:8px!important;padding:24px 12px!important;text-align:center!important}
+
+
+/* V2.37 — final visual alignment pass: reference hierarchy and mobile surface */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-kpi .kpi-label{font-size:11px!important;font-weight:700!important;color:#18243a!important}
+  #dashboardScreen .dashboard-kpi .kpi-value-row{margin-top:3px!important}
+  #dashboardScreen .dashboard-kpi .kpi-trend{font-size:11px!important;font-weight:800!important}
+  #dashboardScreen .dashboard-kpi .kpi-foot{font-size:10px!important;color:#7c8899!important}
+  #dashboardScreen .dashboard-kpi .kpi-icon{font-size:18px!important}
+  #dashboardScreen .dashboard-chart-card h2,#dashboardScreen .dashboard-cash-card h2,
+  #dashboardScreen .dashboard-list-card h2,#dashboardScreen .dashboard-profit-card h2{font-size:15px!important;font-weight:800!important;letter-spacing:-.02em!important}
+  #dashboardScreen .dashboard-card-actions .count-badge{min-width:22px!important;height:22px!important;display:inline-grid!important;place-items:center!important;border-radius:99px!important;font-size:10px!important}
+  #dashboardScreen .dashboard-card-actions .text-action{font-size:10px!important;font-weight:700!important;color:#176bea!important}
+  #dashboardScreen .dashboard-profit-card .profit-table{font-size:10px!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th{font-size:9px!important;color:#7c8899!important}
+  #dashboardScreen .dashboard-profit-card .profit-table td{font-size:10px!important}
+}
+@media(max-width:720px){
+  .topbar{height:54px!important;padding:0 10px!important}
+  .top-actions{gap:5px!important}
+  .lang{display:none!important}
+  #dashboardScreen .dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #dashboardScreen .dashboard-kpi{padding:11px!important}
+  #dashboardScreen .dashboard-kpi h3{font-size:19px!important}
+  #dashboardScreen .dashboard-kpi .kpi-label{font-size:10px!important}
+  #dashboardScreen .dashboard-kpi .kpi-icon{width:34px!important;height:34px!important}
+  #dashboardScreen .dashboard-main-grid{grid-template-columns:1fr!important}
+  #dashboardScreen .dashboard-lower-grid{grid-template-columns:1fr!important}
+  #dashboardScreen .dashboard-profit-card{overflow:hidden!important}
+  #dashboardScreen .dashboard-profit-card .profit-table{font-size:10px!important}
+}
