@@ -62,19 +62,19 @@ test('B14 dashboard period selector remains functional', async ({ page }) => {
 
 test('B14 responsive mobile surface remains usable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator('#mobileNav button[data-mobile="1"]').click();
-  await expect(page.locator('#leadsScreen')).toBeVisible();
-  await page.getByRole('button', { name: /New lead/i }).click();
+  await page.locator('#mobileNav button[data-mobile="2"]').click();
+  await expect(page.locator('#clientsScreen')).toBeVisible();
+  await page.getByRole('button', { name: /New client/i }).click();
   await expect(page.locator('#detailDrawer')).toBeVisible();
   await expect(page.locator('#fName')).toBeVisible();
   await page.locator('#drawerCancel').click();
 });
 
 test('B14 export controls are present and executable', async ({ page }) => {
-  await page.locator('#nav button').nth(9).click();
-  await expect(page.getByText(/Export/i).first()).toBeVisible();
-  await page.locator('#nav button').nth(8).click();
-  await expect(page.getByText(/Export/i).first()).toBeVisible();
+  await page.locator('#nav button[data-screen="9"]').click();
+  await expect(page.locator('#exportCashflow')).toBeVisible();
+  await page.locator('#nav button[data-screen="8"]').click();
+  await expect(page.locator('#exportProfitAnalysis')).toBeVisible();
 });
 
 test('B14 reload preserves persisted records', async ({ page }) => {
