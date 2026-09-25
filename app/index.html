@@ -320,9 +320,9 @@
       if(legend) legend.innerHTML='<b class="legend-revenue"></b>Выручка <b class="legend-profit"></b>Прибыль <b class="legend-expense"></b>Расходы';
       document.querySelectorAll('.text-action').forEach(el=>{if((el.textContent||'').trim()==='View all →')el.textContent='Посмотреть всё →';});
     }
-    if(lang==='ru') applyRussianStatic();
-localStorage.setItem('business-os-lang',lang);
     window.activeLanguage=lang;
+    localStorage.setItem('business-os-lang',lang);
+    if(lang==='ru') applyRussianStatic();
   }
   function bindCreateFallback(){
     const createMap={newLead:'leads',newClient:'clients',newProposal:'proposals',newProject:'projects',newInvoice:'invoices',recordPayment:'payments',addExpense:'expenses'};
