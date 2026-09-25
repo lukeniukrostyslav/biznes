@@ -1400,3 +1400,26 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 #dashboardScreen .active-project-image{
   width:42px!important;height:42px!important;min-width:42px!important;border-radius:7px!important;object-fit:cover!important;display:block!important
 }
+
+
+/* V2.33 — final dashboard composition: three action cards + full-width profitability */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-lower-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+  #dashboardScreen .dashboard-profit-card{grid-column:1 / -1!important;min-height:164px!important}
+  #dashboardScreen .dashboard-profit-card .profit-table{width:100%!important;table-layout:fixed!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th,
+  #dashboardScreen .dashboard-profit-card .profit-table td{padding:8px 10px!important;white-space:nowrap!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th:nth-child(1){width:20%!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th:nth-child(2){width:15%!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th:nth-child(3),
+  #dashboardScreen .dashboard-profit-card .profit-table th:nth-child(4),
+  #dashboardScreen .dashboard-profit-card .profit-table th:nth-child(5){width:11%!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th:nth-child(6){width:9%!important}
+  #dashboardScreen .dashboard-profit-card .profit-table th:nth-child(7){width:12%!important}
+  #dashboardScreen .dashboard-profit-card .status-dot{color:#1976e8;font-size:9px}
+  #dashboardScreen .dashboard-module-section{display:none!important}
+}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-module-section{display:none!important}
+  #dashboardScreen .dashboard-profit-card .profit-table{min-width:640px!important}
+}
