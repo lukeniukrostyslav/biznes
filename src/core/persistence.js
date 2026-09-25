@@ -179,6 +179,7 @@ function saveStore(storage, store) {
 }
 
 function archiveRecord(store, collection, id) {
+  assertCollection(collection);
   const normalized = normalizeStore(store);
   const list = Array.isArray(normalized[collection]) ? normalized[collection] : [];
   const record = list.find(item => item.id === id);
@@ -239,6 +240,7 @@ function upsertRecord(store, collection, record) {
 }
 
 function removeRecord(store, collection, id) {
+  assertCollection(collection);
   const normalized = normalizeStore(store);
   const candidate = normalizeStore({
     ...normalized,
