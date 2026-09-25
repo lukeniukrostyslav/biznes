@@ -70,7 +70,7 @@
 
   <section class="dashboard-main-grid">
     <article class="card dashboard-chart-card">
-      <div class="card-title dashboard-card-title"><div><h2 data-ui="revenueProfitTitle">Revenue & Profit</h2><p data-v2="chartSub">Performance across your selected period</p></div><span class="chart-legend"><b class="legend-revenue"></b>Revenue <b class="legend-profit"></b>Profit</span></div>
+      <div class="card-title dashboard-card-title"><div><h2 data-ui="revenueProfitTitle">Revenue & Profit</h2><p data-v2="chartSub">Performance across your selected period</p></div><span class="chart-legend"><b class="legend-revenue"></b>Revenue <b class="legend-profit"></b>Profit <b class="legend-expense"></b>Expenses</span></div>
       <div class="chart-shell"><div class="chart-y-labels"><span>€20K</span><span>€15K</span><span>€10K</span><span>€5K</span><span>€0</span></div><div class="chart" id="chart"></div></div>
     </article>
     <article class="card dashboard-cash-card">
@@ -746,7 +746,17 @@ function renderDashboardRealData(){
     const max=Math.max(...vals,0);
     const labels=getDashboardLabels(activeLanguage);
     chart.innerHTML=max
-      ? series.map((x,i)=>'<div class="bar" title="'+escapeHtml(x.label)+' · '+money(x.net)+'" aria-label="'+escapeHtml(x.label)+' · '+money(x.net)+'" style="height:'+Math.max(8,Math.round(vals[i]/max*190))+'px"></div>').join('')
+      ? (()=>{
+          const peak=Math.max(...series.flatMap(x=>[x.income||0,x.expenses||0,x.net||0]),1);
+          return '<div class="chart-series">'+series.map((x)=>{
+            const incomeH=Math.max(5,Math.round((x.income||0)/peak*160));
+            const expenseH=Math.max(4,Math.round((x.expenses||0)/peak*160));
+            const netH=Math.max(4,Math.round(Math.max(0,x.net||0)/peak*160));
+            return '<div class="chart-point" title="'+escapeHtml(x.label)+' · Revenue '+money(x.income||0)+' · Profit '+money(x.net||0)+' · Expenses '+money(x.expenses||0)+'">'+
+              '<div class="chart-bars"><i class="bar bar-revenue" style="height:'+incomeH+'px"></i><i class="bar bar-expense" style="height:'+expenseH+'px"></i><i class="bar bar-profit" style="height:'+netH+'px"></i></div>'+
+              '<span class="chart-label">'+escapeHtml(x.label)+'</span></div>';
+          }).join('')+'</div>';
+        })()
       : '<div class="empty" style="width:100%">'+escapeHtml(labels.empty)+'</div>';
   }
   const lower=document.querySelector('.lower');
