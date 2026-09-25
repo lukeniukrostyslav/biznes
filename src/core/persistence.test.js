@@ -148,3 +148,23 @@ test('enforces the full downstream client chain when relations are edited',()=>{
   assert.equal(validateStore(store).valid,false);
   assert.ok(validateStore(store).errors.some(error=>error.includes('expenses.e1.projectId client mismatch')));
 });
+
+
+test('export/import preserves archived records',()=>{
+  let store=createEmptyStore();
+  store.clients=[{id:'c1',name:'Nova'}];
+  store=archiveRecord(store,'clients','c1');
+  const restored=importStore(exportStore(store));
+  assert.equal(restored.clients.length,0);
+  assert.equal(restored.archivedRecords.length,1);
+  assert.equal(restored.archivedRecords[0].collection,'clients');
+  assert.equal(restored.archivedRecords[0].name,'Nova');
+});
+
+test('schema v1 export imports into a complete current store',()=>{
+  const restored=importStore({schemaVersion:1,clients:[{id:'c1',name:'Legacy'}]});
+  assert.equal(restored.schemaVersion,2);
+  assert.equal(restored.clients[0].name,'Legacy');
+  assert.deepEqual(restored.projects,[]);
+  assert.deepEqual(restored.archivedRecords,[]);
+});
