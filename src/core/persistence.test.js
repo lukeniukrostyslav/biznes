@@ -192,3 +192,15 @@ test('persistence mutators reject unknown collections',()=>{
   assert.throws(()=>archiveRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
   assert.throws(()=>restoreRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
 });
+
+
+test('upsertRecord rejects a relationship-breaking edit',()=>{
+  let store=createEmptyStore();
+  store.clients=[{id:'c1'},{id:'c2'}];
+  store.projects=[{id:'p1',clientId:'c1'}];
+  assert.throws(
+    ()=>upsertRecord(store,'projects',{id:'p1',clientId:'missing'}),
+    /Cannot upsert invalid BUSINESS OS store/
+  );
+  assert.equal(store.projects[0].clientId,'c1');
+});
