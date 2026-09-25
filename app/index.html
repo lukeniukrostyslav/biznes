@@ -615,7 +615,7 @@ function renderDashboardRealData(){
     const payments=businessStore.payments||[];
     const expensesRows=businessStore.expenses||[];
     const months=Array.from({length:12},(_,i)=>{const d=new Date();d.setMonth(d.getMonth()-11+i);return {y:d.getFullYear(),m:d.getMonth(),v:0};});
-    payments.forEach(p=>{const d=new Date(p.date||p.paymentDate||p.createdAt);if(!isNaN(d))months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth())?.v+=Number(p.amount||0);});
+    payments.forEach(p=>{const d=new Date(p.date||p.paymentDate||p.createdAt);if(!isNaN(d)){const bucket=months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth());if(bucket)bucket.v+=Number(p.amount||0);}});
     expensesRows.filter(e=>e.status!=='Planned'&&e.planned!==true).forEach(e=>{const d=new Date(e.date||e.expenseDate||e.createdAt);if(!isNaN(d))months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth())?.v-=Number(e.amount||0);});
     const vals=months.map(x=>Math.max(0,x.v)); const max=Math.max(...vals,0);
     chart.innerHTML=max?vals.map(v=>'<div class="bar" title="'+money(v)+'" style="height:'+Math.max(8,Math.round(v/max*190))+'px"></div>').join(''):'<div class="empty" style="width:100%">No financial history yet.</div>';
