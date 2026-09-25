@@ -949,7 +949,7 @@ function openCreateDrawer(type){
   pendingType=type; editingId=null;
   document.getElementById('drawerTitle').textContent=(activeLanguage==='ru'?'Новая запись: ':activeLanguage==='es'?'Nuevo registro: ':activeLanguage==='de'?'Neuer Datensatz: ':activeLanguage==='fr'?'Nouvel enregistrement : ':'New record: ')+(typeUiCopy[activeLanguage]||typeUiCopy.en)[type];
   document.getElementById('fName').value='';
-  ['fCompany','fEmail','fPhone','fSource','fNextActionDate','fValue','fAction','fNotes','fInvoiceDescription','fInvoiceUnitPrice','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate','fExpenseDate'].forEach(id=>document.getElementById(id).value='');
+  ['fCompany','fEmail','fPhone','fSource','fNextActionDate','fValue','fAction','fNotes','fInvoiceDueDate','fPaymentAmount','fPaymentDate','fPaymentReference','fProjectBudget','fProjectRevenue','fProjectActualCosts','fProjectActualHours','fProjectLabourRate','fExpenseDate'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fCompany').value='';
   document.getElementById('fEmail').value='';
   document.getElementById('fPhone').value='';
