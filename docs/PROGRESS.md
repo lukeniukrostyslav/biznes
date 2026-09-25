@@ -819,3 +819,20 @@ Commits:
 - `b155ad81d49092396bae7e191123d4d7f5eda768` — design: finalize approved dashboard composition
 
 **Acceptance remains pending until the updated Vercel deployment is READY and the live desktop/mobile UI is manually checked against the supplied reference.**
+
+
+### Design checkpoint — V2.26 / reference KPI fidelity — 2026-09-25
+
+Additional visual parity completed against the supplied approved reference:
+- restored KPI micro-trend visuals under the four headline metrics;
+- added explicit “vs. last month” context;
+- differentiated the four KPI trend colors;
+- refined sidebar notification/count badges;
+- tightened topbar action hierarchy;
+- preserved the reference dashboard composition locked in V2.25.
+
+Commit:
+- `447ec0a86cc577bdbce0f77b072a05d3ea94006` — design: restore reference KPI trend visuals
+- `acefc8b5247e3c487a0eb1f3c17be1ebbbeabfa9` — design: refine KPI and sidebar reference details
+
+Acceptance remains pending until live deployment verification.
