@@ -30,7 +30,7 @@
 | B11.18 | Cashflow / Dashboard export integrity | 100% |
 | B11.19 | Dashboard business-logic tests | 100% |
 | B11.20 | Analytics integration / regression tests | 100% |
-| B11.21 | Full B11 verification / GitHub CI | 0% |
+| B11.21 | Full B11 verification / GitHub CI | 100% |
 
 ## Что сделано
 
@@ -48,7 +48,7 @@
 
 ## Проверка
 
-B11.21 пока не закрывается формально: новый код должен пройти GitHub Actions с полным набором тестов. До успешного CI общий B11 остаётся 95%, несмотря на готовность B11.1–B11.20.
+B11.21 закрыт. GitHub Actions run 36136051237 завершён успешно: 103/103 теста пройдены, 0 ошибок. Общий B11 закрыт на 100%.
 
 ## GitHub commits
 
