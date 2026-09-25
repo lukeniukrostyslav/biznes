@@ -522,3 +522,11 @@ GitHub commits: `50c87eff7508136c863de270630fe3eb6b72f551`, `0803807790b47106003
 GitHub commits: `b5fd5545a06bd7fe44987c73b38d7f3fee52ceb3`, `219d0fca84b72fba82e0947d34a8b35c4a7562e4`.
 
 Процент B07 не повышен: **89%**, до подтверждённого полного test execution.
+
+## B07 — restore metadata integrity checkpoint — 2026-09-25
+
+Усилен restore-path: malformed archived metadata с неизвестной collection теперь явно отклоняется через общий `assertCollection()`, вместо тихого игнорирования записи. Добавлен regression test, подтверждающий отказ и сохранение исходного archive state.
+
+GitHub commits: `19557ac5baaaf6c02bfb6c22cf21079dde3c70f4`, `2193b2a94cc790c1dd83ae07ad342f8a6e100515`.
+
+Процент не повышен до подтверждения полного test execution. **B07 = 89%.**
