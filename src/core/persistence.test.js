@@ -215,3 +215,11 @@ test('upsertRecord accepts a valid create and update',()=>{
   assert.equal(store.clients.length,1);
   assert.equal(store.clients[0].name,'Beta');
 });
+
+
+test('restoreRecord rejects malformed archived collection metadata',()=>{
+  const store=createEmptyStore();
+  store.archivedRecords=[{id:'arch1',collection:'unknown',name:'Broken'}];
+  assert.throws(()=>restoreRecord(store,'arch1'),/Unknown BUSINESS OS collection/);
+  assert.equal(store.archivedRecords.length,1);
+});
