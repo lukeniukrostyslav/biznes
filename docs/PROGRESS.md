@@ -330,9 +330,9 @@ B14 полностью подтверждён фактическим выпол�
 | ND.6 | Overview / Dashboard redesign | 85% |
 | ND.7 | Leads / CRM redesign | 100% |
 | ND.8 | Clients redesign | 100% |
-| ND.9 | Proposals redesign | 70% |
-| ND.10 | Projects redesign | 30% |
-| ND.11 | Invoices redesign | 0% |
+| ND.9 | Proposals redesign | 100% |
+| ND.10 | Projects redesign | 100% |
+| ND.11 | Invoices redesign | 35% |
 | ND.12 | Payments redesign | 0% |
 | ND.13 | Expenses redesign | 0% |
 | ND.14 | Profit redesign | 0% |
@@ -407,3 +407,10 @@ B14 полностью подтверждён фактическим выпол�
 - ND.9: 70% — Proposals hierarchy, status/action treatment, responsive surface and interaction polish advanced.
 - ND.10: 30% — Projects premium surface started with card hierarchy, metadata, progress/action treatment and mobile behavior.
 - GitHub commit: `44b02c582a960040e851d0f1bf5925001bd24214`.
+
+
+### Design checkpoint — Proposals + Projects completed / Invoices started
+- ND.9: 100% — Proposals premium surface completed: hierarchy, status/action treatment, responsive behavior, empty state and interaction polish.
+- ND.10: 100% — Projects premium surface completed: cards, metadata, progress/metrics, actions, table hierarchy, empty state and mobile behavior.
+- ND.11: 35% — Invoices premium surface started with table hierarchy, status/action treatment and responsive handling.
+- GitHub commit: `23c9fa3411ce39b15a08891aad3a74d2c619eaef`.
