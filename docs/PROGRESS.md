@@ -530,3 +530,11 @@ GitHub commits: `b5fd5545a06bd7fe44987c73b38d7f3fee52ceb3`, `219d0fca84b72fba82e
 GitHub commits: `19557ac5baaaf6c02bfb6c22cf21079dde3c70f4`, `2193b2a94cc790c1dd83ae07ad342f8a6e100515`.
 
 Процент не повышен до подтверждения полного test execution. **B07 = 89%.**
+
+## B07 — archived metadata validation checkpoint — 2026-09-25
+
+Усилена целостность `archivedRecords`: теперь `validateStore()` проверяет, что архив — массив, элементы являются объектами, имеют валидный id, допустимую collection и не содержат дубликатов `collection:id`. Добавлен regression test.
+
+GitHub commits: `32ff73eaa4204466421baee84f6c062a35b49052`, `1255bdaf9ebd50b6929e27deff1a9230802be97a`.
+
+Процент не повышен без подтверждения полного test execution. **B07 = 89%.**
