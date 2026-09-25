@@ -394,3 +394,6 @@ function formatMoney(value, currency = 'EUR', locale = 'en-US') {
   return new Intl.NumberFormat(locale, { style: 'currency', currency: safeCurrency, maximumFractionDigits: 2 }).format(Number(value || 0));
 }
 
+
+
+export { roundMoney, lineTotal, calculateInvoice, calculatePaymentPlan, allocatePaymentPlan, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateCashflowForecast, calculatePricingEngine, calculateFinancialAlerts, formatMoney, calculateBusinessMetrics };
