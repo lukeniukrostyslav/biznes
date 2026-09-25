@@ -866,3 +866,50 @@ Commits:
 - `25e7599b0d94bd10f3cbc495faccbff24e8950b6`
 
 Live visual acceptance remains pending.
+
+---
+
+# PRE-LAUNCH QUALITY GATE — SALE READINESS
+
+This gate is separate from the historical B00–B14 completion percentages and from the V2 visual-design percentage. A product is not marked ready for sale until the current main commit passes the gate below.
+
+**Rule:** historical test success does not close a current gate after a regression. Every gate that depends on the live/current build must be re-verified.
+
+## Launch gate blocks
+
+| ID | Block | Current status | Exit evidence |
+|---|---|---:|---|
+| LQ01 | Source / JavaScript syntax / HTML integrity | 100% on commit `8a72a1d`; re-run required after latest localization commit | CI syntax test passes |
+| LQ02 | Runtime boot / no page errors | 0% | Playwright pageerror = 0 + live production check |
+| LQ03 | Navigation: all 11 modules | 0% current-gate acceptance | Every nav item opens the correct screen |
+| LQ04 | Create / edit / save / cancel flows | 0% current-gate acceptance | Lead, Client, Proposal, Project, Invoice, Payment, Expense flows pass |
+| LQ05 | Localization EN / RU / ES / DE / FR | 50% source layer fixed; runtime acceptance pending | Full UI, buttons, tables, forms and dynamic states translated |
+| LQ06 | End-to-end lifecycle relationships | 0% current-gate acceptance | Lead → Client → Proposal → Project → Invoice → Payment |
+| LQ07 | Local persistence / reload / export / import | 0% current-gate acceptance | Data survives reload; valid/invalid import behavior verified |
+| LQ08 | Money / profit / invoice / payment calculations | 0% current-gate acceptance | Core tests + UI/E2E financial flows pass |
+| LQ09 | Responsive desktop / tablet / mobile | 0% current-gate acceptance | No overflow; touch targets; drawer/nav work at target sizes |
+| LQ10 | Accessibility | 0% current-gate acceptance | Keyboard, focus, labels, semantic controls, contrast review |
+| LQ11 | Browser compatibility | 0% | Chromium + Firefox + WebKit acceptance |
+| LQ12 | Validation / empty / error / recovery states | 0% | Invalid input/import and corrupted-store recovery verified |
+| LQ13 | Security / privacy / local-first data boundaries | 0% | No secrets/client data leakage; storage/export review |
+| LQ14 | Performance / loading / interaction stability | 0% | Production performance budget and interaction checks |
+| LQ15 | Production deployment / cache / rollback | 0% | Fresh READY deployment tested; rollback path verified |
+| LQ16 | Commercial packaging | 0% | Product files, versioning, license/readme, release package |
+| LQ17 | Marketplace readiness | 0% | Screenshots, description, pricing, installation/update instructions |
+| LQ18 | Final manual acceptance | 0% | Fresh production desktop + Android/mobile tap-through by a human |
+
+### Current known blockers found by the gate
+
+1. The production runtime had a real JavaScript integrity failure. A literal `\\n` had been inserted into executable code and prevented the runtime from parsing.
+2. The runtime had duplicate persistence helper declarations after two implementation layers were combined.
+3. The dashboard KPI render loop was missing its closing `});`.
+4. The visual screenshot showed English static table headers while Russian navigation was active. Static table headers are now wired through the localization system; fresh E2E verification is still required.
+5. The previous test suite did not protect against all of these exact regressions. The launch gate therefore adds explicit regression checks instead of relying only on historical B14 results.
+
+### Sale gate policy
+
+**No “ready for sale” claim is allowed while any of LQ02–LQ15 or LQ18 is below 100%.**
+
+External quality references used for the gate:
+- Accessibility baseline: WCAG 2.2, including keyboard operation, visible focus, target-size and contrast requirements.
+- Performance baseline: Core Web Vitals / real-user performance targets, measured separately for mobile and desktop.
