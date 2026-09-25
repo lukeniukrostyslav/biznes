@@ -1387,3 +1387,16 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   .sidebar .nav button{height:38px!important}
   .sidebar .nav .nav-icon{display:inline-flex!important;width:20px!important;justify-content:center!important}
 }
+
+
+/* V2.32 — real-data KPI microcharts + richer project thumbnails */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-kpi.has-kpi-data .kpi-spark{display:block!important;width:86px!important;height:28px!important}
+  #dashboardScreen .dashboard-kpi.has-kpi-data .kpi-foot{visibility:visible!important}
+}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-kpi.has-kpi-data .kpi-spark{display:none!important}
+}
+#dashboardScreen .active-project-image{
+  width:42px!important;height:42px!important;min-width:42px!important;border-radius:7px!important;object-fit:cover!important;display:block!important
+}
