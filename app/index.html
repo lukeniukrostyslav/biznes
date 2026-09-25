@@ -140,7 +140,7 @@
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus } from "../src/core/financial-engine.js";
-import { archiveRecord } from "../src/core/persistence.js";
+import { archiveRecord, validateStore } from "../src/core/persistence.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres']}};
 
 const screenCopy={
@@ -488,30 +488,7 @@ function createInvoiceFromProject(projectId){
   renderStoredRecords();
 }
 function validateStoredRelationships(store){
-  const rules={leads:{clientId:'clients'},proposals:{clientId:'clients',leadId:'leads'},projects:{clientId:'clients',proposalId:'proposals'},invoices:{clientId:'clients',projectId:'projects'},payments:{invoiceId:'invoices',clientId:'clients'},expenses:{projectId:'projects',clientId:'clients'}};
-  const errors=[];
-  const find=(type,id)=>(store[type]||[]).find(x=>x.id===id);
-  Object.entries(rules).forEach(([type,fields])=>{
-    (store[type]||[]).forEach(record=>Object.entries(fields).forEach(([field,target])=>{
-      if(record[field]&&!find(target,record[field]))errors.push(type+'.'+field);
-    }));
-  });
-  const consistency=[
-    ['proposals','leadId','leads'],
-    ['projects','proposalId','proposals'],
-    ['invoices','projectId','projects'],
-    ['payments','invoiceId','invoices'],
-    ['expenses','projectId','projects']
-  ];
-  consistency.forEach(([type,field,targetType])=>{
-    (store[type]||[]).forEach(record=>{
-      const target=record[field]&&find(targetType,record[field]);
-      if(target&&record.clientId&&target.clientId&&record.clientId!==target.clientId){
-        errors.push(type+'.'+field+'.clientMismatch');
-      }
-    });
-  });
-  return errors;
+  return validateStore(store).errors;
 }
 function deleteRecord(type,id){
   const record=(businessStore[type]||[]).find(x=>x.id===id);
@@ -611,7 +588,7 @@ function renderDashboardRealData(){
   const cols=lower.querySelectorAll('.wide');
   const follow=businessStore.leads||[];
   const followHtml=follow.length?follow.slice(0,5).map(x=>'<div class="row"><span class="dot"></span><div><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.nextAction||x.notes||'Follow up')+'</small></div><span class="amount">'+recordAmount(x)+'</span></div>').join(''):'<div class="empty">'+t.none+'</div>';
-  const overdue=(businessStore.invoices||[]).map(i=>({i,status:calculateInvoicePaymentStatus(i,businessStore.payments||[],new Date())})).filter(x=>x.status==='Overdue');
+  const overdue=(businessStore.invoices||[]).map(i=>({i,status:calculateInvoicePaymentStatus(i,businessStore.payments||[],new Date())})).filter(x=>x.status.status==='Overdue');
   const overdueHtml=overdue.length?overdue.slice(0,5).map(x=>'<div class="row"><span class="dot" style="background:#dc3c4c"></span><div><strong>'+recordLabel(x.i)+'</strong><small>'+escapeHtml(x.i.dueDate||'')+'</small></div><span class="amount danger">'+recordAmount(x.i)+'</span></div>').join(''):'<div class="empty">'+t.none+'</div>';
   const projects=businessStore.projects||[];
   const projectHtml=projects.length?projects.slice(0,5).map(p=>{const pr=calculateProjectProfit(p,{expenses:businessStore.expenses||[]});return '<tr><td>'+recordLabel(p)+'</td><td>'+money(pr.revenue)+'</td><td class="green">'+money(pr.profit)+'</td><td>'+escapeHtml(pr.margin!=null?pr.margin+'%':'—')+'</td></tr>';}).join(''):'<tr><td colspan="4" class="empty">'+t.none+'</td></tr>';
