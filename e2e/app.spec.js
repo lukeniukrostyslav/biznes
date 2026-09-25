@@ -6,8 +6,11 @@ const screens = [
 ];
 
 test.beforeEach(async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/app/index.html');
   await page.waitForLoadState('networkidle');
+  if (errors.length) throw new Error('Browser runtime errors: ' + errors.join(' | '));
 });
 
 test('B14 app loads with dashboard and no runtime page error', async ({ page }) => {
