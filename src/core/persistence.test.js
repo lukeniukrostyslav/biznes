@@ -55,3 +55,34 @@ test('blocks restoring a record when its required relationship is missing',()=>{
   store.archivedRecords=[{id:'p1',name:'Website',collection:'projects',clientId:'missing'}];
   assert.throws(()=>restoreRecord(store,'p1'),/Cannot restore record/);
 });
+
+
+test('enforces cross-entity client consistency across proposal, project, invoice, payment and expense',()=>{
+  const store=createEmptyStore();
+  store.clients=[{id:'c1'},{id:'c2'}];
+  store.leads=[{id:'l1',clientId:'c1'}];
+  store.proposals=[{id:'prop1',clientId:'c1',leadId:'l1'}];
+  store.projects=[{id:'p1',clientId:'c1',proposalId:'prop1'}];
+  store.invoices=[{id:'i1',clientId:'c1',projectId:'p1'}];
+  store.payments=[{id:'pay1',clientId:'c1',invoiceId:'i1',amount:100}];
+  store.expenses=[{id:'e1',clientId:'c1',projectId:'p1',amount:50}];
+  assert.equal(validateStore(store).valid,true);
+
+  store.payments[0].clientId='c2';
+  assert.equal(validateStore(store).valid,false);
+  assert.ok(validateStore(store).errors.some(error=>error.includes('payments.pay1.invoiceId client mismatch')));
+});
+
+test('allows a payment to move to another invoice only when its client relation is consistent',()=>{
+  const store=createEmptyStore();
+  store.clients=[{id:'c1'},{id:'c2'}];
+  store.invoices=[
+    {id:'i1',clientId:'c1'},
+    {id:'i2',clientId:'c2'}
+  ];
+  store.payments=[{id:'pay1',invoiceId:'i1',clientId:'c1',amount:100}];
+
+  store.payments[0].invoiceId='i2';
+  store.payments[0].clientId='c2';
+  assert.equal(validateStore(store).valid,true);
+});
