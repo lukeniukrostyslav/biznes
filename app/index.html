@@ -140,7 +140,7 @@
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script type="module">
 import { calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus, calculateInvoice } from "../src/core/financial-engine.js";
-import { archiveRecord, validateStore } from "../src/core/persistence.js";
+import { archiveRecord, validateStore, exportStore, importStore } from "../src/core/persistence.js";
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres']}};
 
 const screenCopy={
@@ -719,19 +719,37 @@ function exportProfitAnalysis(){
   toast(t('profitExported'));
 }
 function exportBusinessData(){
-  const blob=new Blob([JSON.stringify(businessStore,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a');
-  a.href=url; a.download='business-os-export.json'; a.click(); URL.revokeObjectURL(url);
+  const blob=new Blob([exportStore(businessStore)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='business-os-export.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),0);
 }
 function importBusinessData(file){
   const reader=new FileReader();
-  reader.onload=()=>{try{
-    const data=JSON.parse(reader.result);
-    if(data.schemaVersion && Number(data.schemaVersion)>2) throw new Error('Unsupported schema');
-    const relationshipErrors=validateStoredRelationships(data);
-    if(relationshipErrors.length) throw new Error('Invalid relationships');
-    businessStore=saveStore({...defaultStore,...data,schemaVersion:2,archivedRecords:Array.isArray(data.archivedRecords)?data.archivedRecords:[]}); toast(t('imported'));
-  }catch(e){toast(t('importError'));}};
+  reader.onload=()=>{
+    try{
+      const imported=importStore(reader.result);
+      const replaceText={
+        en:'Import will replace the current local workspace. Continue?',
+        ru:'Импорт заменит текущие локальные данные рабочего пространства. Продолжить?',
+        es:'La importación reemplazará los datos locales actuales. ¿Continuar?',
+        de:'Der Import ersetzt die aktuellen lokalen Arbeitsbereichsdaten. Fortfahren?',
+        fr:'L’importation remplacera les données locales actuelles. Continuer?'
+      }[activeLanguage]||'Import will replace the current local workspace. Continue?';
+      if(!confirm(replaceText))return;
+      businessStore=saveStore(imported);
+      refreshDashboardMetrics();
+      renderStoredRecords();
+      toast(t('imported'));
+    }catch(e){
+      toast(t('importError'));
+    }
+  };
   reader.readAsText(file);
 }
 refreshDashboardMetrics();
