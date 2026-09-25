@@ -1844,6 +1844,8 @@ function renderStoredRecords(){
     });
   });
   renderLeads();
+  refreshProjectMetrics();
+  renderProjectHealth();
 }
 function convertProposalToProject(proposalId){
   const proposal=(businessStore.proposals||[]).find(x=>x.id===proposalId);
@@ -2149,6 +2151,8 @@ function refreshDashboardMetrics(){
   refreshDashboardVisuals();
   renderProfitRealData();
   renderDashboardRealData();
+  refreshProjectMetrics();
+  renderProjectHealth();
   const labels=getDashboardLabels(activeLanguage);
   const periodEl=document.getElementById('dashboardPeriod');
   if(periodEl) periodEl.setAttribute('aria-label',labels[dashboardPeriod]||labels.year);
