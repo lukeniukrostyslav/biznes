@@ -1085,6 +1085,7 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     }
   }
   const invoiceLines=isInvoice?getInvoiceLines():[];
+  let invoicePatch={value,amount:value};
   if(isInvoice){
     const taxRate=Number(document.getElementById('fInvoiceTaxRate').value);
     const discountType=document.getElementById('fInvoiceDiscountType').value;
@@ -1099,9 +1100,7 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     const planLines=getInvoicePlanLines();
     const paymentPlan=planLines.length?calculatePaymentPlan(total,planLines):null;
     if(paymentPlan && !paymentPlan.valid){toast(t('paymentPlan'));return;}
-    const invoicePatch={lineItems:invoiceLines,discountType,discountValue,taxRate,dueDate:document.getElementById('fInvoiceDueDate').value||null,value:total,amount:total,paymentPlan};
-  }else{
-    var invoicePatch={value,amount:value};
+    invoicePatch={lineItems:invoiceLines,discountType,discountValue,taxRate,dueDate:document.getElementById('fInvoiceDueDate').value||null,value:total,amount:total,paymentPlan};
   }
   const isProject=pendingType==='projects';
   const projectPatch=isProject?{
