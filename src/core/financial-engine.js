@@ -379,12 +379,13 @@ function calculateFinancialAlerts(store = {}, now = new Date(), options = {}) {
     alerts.push({ type: 'low-upcoming-cashflow', severity: 'high', amount: forecast.forecastNetCash, upcomingExpenses: upcomingExpenseTotal, action: 'Protect cash runway and accelerate collections' });
   }
 
-  const pipeline = calculatePipeline(Array.isArray(source.leads) ? source.leads : []);
+  const activeLeads = (Array.isArray(source.leads) ? source.leads : []).filter(x => !['won','lost','closed','cancelled'].includes(String(x.status || '').toLowerCase()));
+  const pipelineTotal = roundMoney(activeLeads.reduce((sum, x) => sum + Number(x.value || 0), 0));
   const concentrationThreshold = Number(options.pipelineConcentrationThreshold ?? 0.5);
   const active = (Array.isArray(source.leads) ? source.leads : []).filter(x => !['won','lost','closed','cancelled'].includes(String(x.status || '').toLowerCase()));
-  if (active.length > 1 && pipeline.pipeline > 0) {
-    const largest = Math.max(...active.map(x => Number(x.value || 0)));
-    if (largest / pipeline >= concentrationThreshold) alerts.push({ type: 'pipeline-concentration', severity: 'medium', share: roundMoney(largest / pipeline * 100), action: 'Diversify active pipeline' });
+  if (activeLeads.length > 1 && pipelineTotal > 0) {
+    const largest = Math.max(...activeLeads.map(x => Number(x.value || 0)));
+    if (largest / pipelineTotal >= concentrationThreshold) alerts.push({ type: 'pipeline-concentration', severity: 'medium', share: roundMoney(largest / pipeline * 100), action: 'Diversify active pipeline' });
   }
   return alerts;
 }
