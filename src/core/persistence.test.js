@@ -17,6 +17,16 @@ test('rejects malformed schema versions during migration',()=>{
 test('normalize treats missing schema version as legacy v1',()=>assert.equal(normalizeStore({clients:[{id:'c1'}]}).schemaVersion,2));
 test('normalizes missing collections',()=>assert.deepEqual(normalizeStore({clients:[{id:'c1'}]}).leads,[]));
 test('loads and saves JSON store',()=>{const s=memoryStorage(); let store=createEmptyStore(); store.clients.push({id:'c1',name:'Nova'}); store=saveStore(s,store); const loaded=loadStore(s); assert.equal(loaded.clients[0].name,'Nova');});
+test('loadStore surfaces malformed persisted JSON instead of resetting data',()=>{
+  const s=memoryStorage();
+  s.setItem('business-os-store-v1','{broken-json');
+  assert.throws(()=>loadStore(s),/Cannot load BUSINESS OS store/);
+});
+test('loadStore surfaces invalid persisted relationships instead of resetting data',()=>{
+  const s=memoryStorage();
+  s.setItem('business-os-store-v1',JSON.stringify({schemaVersion:2,clients:[],projects:[{id:'p1',clientId:'missing'}]}));
+  assert.throws(()=>loadStore(s),/BUSINESS OS schema|BUSINESS OS store/);
+});
 test('upserts and removes records',()=>{let store=createEmptyStore(); store=upsertRecord(store,'clients',{id:'c1',name:'Nova'}); store=upsertRecord(store,'clients',{id:'c1',name:'Nova Studio'}); assert.equal(store.clients.length,1); assert.equal(store.clients[0].name,'Nova Studio'); store=removeRecord(store,'clients','c1'); assert.equal(store.clients.length,0);});
 test('exports and imports portable JSON',()=>{let store=createEmptyStore(); store=upsertRecord(store,'projects',{id:'p1',name:'Website'}); const restored=importStore(exportStore(store)); assert.equal(restored.projects[0].name,'Website');});
 test('rejects future schema versions',()=>assert.throws(()=>importStore({schemaVersion:99}),/Unsupported/));
