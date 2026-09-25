@@ -835,3 +835,25 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 .dashboard-module-grid{gap:10px!important}.module-card{min-height:112px!important;border-radius:12px!important;box-shadow:0 5px 18px rgba(20,42,76,.04)!important}.module-card:hover{transform:translateY(-2px)!important;box-shadow:0 11px 25px rgba(20,42,76,.085)!important}
 @media(max-width:900px){.search{min-width:220px!important}.product-identity-bar{padding:10px 16px!important}.content{padding:18px 16px 30px!important}}
 @media(max-width:720px){.product-identity-bar{min-height:52px!important;padding:8px 14px!important}.identity-value{display:none!important}.topbar{height:58px!important;padding:0 14px!important}.search{min-width:0!important;flex:1!important;font-size:10px!important}.top-actions{gap:5px!important}.top-actions .new{padding:0 10px!important}.content{padding:14px 12px 78px!important}.dashboard-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.module-card{min-height:104px!important}}
+
+
+/* V2.12 — product module consistency pass */
+.screen:not(#dashboardScreen) .page-title{margin-bottom:14px!important}
+.screen:not(#dashboardScreen) .page-title p{max-width:720px!important;color:#7d8ba0!important}
+.screen:not(#dashboardScreen) .toolbar{gap:8px!important;margin-bottom:14px!important}
+.screen:not(#dashboardScreen) .toolbar .primary{box-shadow:0 6px 15px rgba(49,94,251,.14)!important}
+.screen:not(#dashboardScreen) .card-header{padding-bottom:12px!important;border-bottom:1px solid #edf1f6!important}
+.screen:not(#dashboardScreen) .data-table{background:#fff!important}
+.screen:not(#dashboardScreen) .data-table tbody tr{height:48px!important}
+.screen:not(#dashboardScreen) .data-table td{font-size:11px!important;color:#42536b!important}
+.screen:not(#dashboardScreen) .data-table td strong{color:#1c2c44!important}
+.screen:not(#dashboardScreen) .empty{border:1px dashed #d9e2ee!important;background:#fafcff!important;color:#8190a4!important}
+#leadsScreen .stage,#projectsScreen .stage{border-radius:12px!important;box-shadow:0 5px 16px rgba(20,42,76,.035)!important}
+#leadsScreen .deal,#projectsScreen .deal{border-radius:10px!important;background:#fff!important;border:1px solid #e3e9f1!important}
+#clientsScreen .data-table tbody tr,#proposalsScreen .data-table tbody tr,#invoicesScreen .data-table tbody tr,#paymentsScreen .data-table tbody tr,#expensesScreen .data-table tbody tr{transition:background .15s ease,transform .15s ease!important}
+#clientsScreen .data-table tbody tr:hover,#proposalsScreen .data-table tbody tr:hover,#invoicesScreen .data-table tbody tr:hover,#paymentsScreen .data-table tbody tr:hover,#expensesScreen .data-table tbody tr:hover{background:#f8faff!important}
+#proposalsScreen .mini,#projectsScreen .mini,#invoicesScreen .mini,#paymentsScreen .mini,#expensesScreen .mini{background:linear-gradient(180deg,#fff,#fbfcfe)!important}
+#profitScreen .stat-card,#cashflowScreen .stat-card{background:linear-gradient(180deg,#fff,#fafcff)!important}
+#settingsScreen .action-item{border-radius:11px!important;transition:background .15s ease,border-color .15s ease!important}
+#settingsScreen .action-item:hover{background:#f7faff!important}
+@media(max-width:720px){.screen:not(#dashboardScreen) .page-title{margin-bottom:10px!important}.screen:not(#dashboardScreen) .toolbar{margin-bottom:10px!important}.screen:not(#dashboardScreen) .data-table{min-width:640px!important}.screen:not(#dashboardScreen) .table-card{overflow-x:auto!important}.screen:not(#dashboardScreen) .card-header{padding-bottom:10px!important}}
