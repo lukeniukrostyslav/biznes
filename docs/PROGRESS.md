@@ -14,7 +14,7 @@
 | B05 | Старый UX/UI — FROZEN | 100% исторически |
 | B06 | Localization | 100% |
 | B07 | Core Functionality | 100% |
-| B08 | Money & Profit | 76% |
+| B08 | Money & Profit | 100% |
 | B09 | CRM / Leads / Pipeline | 6% |
 | B10 | Projects / Proposals / Invoices / Payments | 44% |
 | B11 | Cashflow / Dashboard / Analytics | 35% |
@@ -57,6 +57,30 @@ GitHub commits:
 
 Процент повышается только после фактического выполнения и проверки соответствующего объёма работы. Наличие нового кода или regression tests само по себе не считается основанием для повышения процента без подтверждённого execution.
 
-## Следующий технический приоритет
+## B08 — ПОДБЛОКИ И ФАКТИЧЕСКОЕ ЗАКРЫТИЕ
 
-B07 закрыт. Следующий технический приоритет — B08 Money & Profit. Работа продолжается строго последовательно.
+| Подблок | Название | Прогресс |
+|---|---|---:|
+| B08.1 | Денежная модель и состояния | 100% |
+| B08.2 | Project Economics | 100% |
+| B08.3 | Estimates vs Actuals | 100% |
+| B08.4 | Invoice Financial Engine | 100% |
+| B08.5 | Payment Reconciliation | 100% |
+| B08.6 | Pipeline / Weighted Pipeline | 100% |
+| B08.7 | Cashflow Engine | 100% |
+| B08.8 | Expenses / Actual vs Planned | 100% |
+| B08.9 | Currency & Money Formatting | 100% |
+| B08.10 | Money Precision | 100% |
+| B08.11 | Pricing Engine | 100% |
+| B08.12 | Financial Alerts | 100% |
+| B08.13 | Financial Dashboard Integrity | 100% |
+| B08.14 | Financial Regression Tests | 100% |
+| B08.15 | B08 Full Integration Verification | 100% |
+
+### B08 закрыт
+
+GitHub Actions подтверждает полный набор: **74/74 тестов, 0 ошибок**.
+
+### Следующий технический приоритет
+
+B08 закрыт. Следующий технический приоритет — **B09 CRM / Leads / Pipeline**. Работа продолжается строго последовательно.
