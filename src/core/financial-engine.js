@@ -304,8 +304,93 @@ function calculateBusinessMetrics(store, now = new Date()) {
   };
 }
 
-function formatMoney(value, currency = 'EUR', locale = 'en-US') {
-  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(Number(value || 0));
+function calculatePricingEngine(inputs = {}) {
+  const annualIncome = Math.max(Number(inputs.targetAnnualIncome || 0), 0);
+  const annualCosts = Math.max(Number(inputs.annualBusinessCosts || 0), 0);
+  const taxRate = Math.min(Math.max(Number(inputs.taxReserveRate || 0), 0), 100);
+  const workingWeeks = Math.max(Number(inputs.workingWeeks || 0), 0);
+  const hoursPerWeek = Math.max(Number(inputs.hoursPerWeek || 0), 0);
+  const utilisation = Math.min(Math.max(Number(inputs.billableUtilisation || 0), 0), 100);
+  const targetMargin = Math.min(Math.max(Number(inputs.targetProfitMargin || 0), 0), 99.99);
+  const billableHours = workingWeeks * hoursPerWeek * (utilisation / 100);
+  const baseRequired = annualIncome + annualCosts;
+  const taxAdjustedRequired = baseRequired / Math.max(1 - taxRate / 100, 0.0001);
+  const marginAdjustedRequired = taxAdjustedRequired / Math.max(1 - targetMargin / 100, 0.0001);
+  const minimumHourlyRate = billableHours > 0 ? roundMoney(baseRequired / billableHours) : null;
+  const targetHourlyRate = billableHours > 0 ? roundMoney(marginAdjustedRequired / billableHours) : null;
+  const premiumHourlyRate = targetHourlyRate === null ? null : roundMoney(targetHourlyRate * 1.25);
+  const dailyRate = targetHourlyRate === null ? null : roundMoney(targetHourlyRate * Math.max(hoursPerWeek / 5, 1));
+  return {
+    annualIncome, annualCosts, taxRate, workingWeeks, hoursPerWeek, utilisation, targetMargin,
+    billableHours: roundMoney(billableHours),
+    minimumHourlyRate, targetHourlyRate, premiumHourlyRate, dailyRate,
+    assumptions: {
+      billableHoursFormula: 'workingWeeks × hoursPerWeek × billableUtilisation',
+      minimumFormula: '(targetAnnualIncome + annualBusinessCosts) ÷ billableHours',
+      targetFormula: 'minimum required revenue adjusted for tax/reserve and target margin ÷ billableHours',
+      premiumFormula: 'targetHourlyRate × 1.25',
+      dailyFormula: 'targetHourlyRate × max(hoursPerWeek ÷ 5, 1)'
+    }
+  };
 }
 
-export { roundMoney, lineTotal, calculateInvoice, calculatePaymentPlan, allocatePaymentPlan, calculateInvoicePaymentStatus, calculateProjectProfit, calculatePipeline, calculateCashflow, calculateCashflowForecast, formatMoney, calculateBusinessMetrics };
+function calculateFinancialAlerts(store = {}, now = new Date(), options = {}) {
+  const source = store && typeof store === 'object' ? store : {};
+  const invoices = Array.isArray(source.invoices) ? source.invoices : [];
+  const expenses = Array.isArray(source.expenses) ? source.expenses : [];
+  const projects = Array.isArray(source.projects) ? source.projects : [];
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const targetMargin = Number(options.targetMargin ?? source.targetProfitMargin ?? 0);
+  const dueSoonDays = Math.max(Number(options.dueSoonDays ?? 7), 0);
+  const horizonDays = Math.max(Number(options.horizonDays ?? 30), 0);
+  const alerts = [];
+  const dueSoonLimit = new Date(now);
+  dueSoonLimit.setDate(dueSoonLimit.getDate() + dueSoonDays);
+  const horizonLimit = new Date(now);
+  horizonLimit.setDate(horizonLimit.getDate() + horizonDays);
+
+  for (const invoice of invoices) {
+    const metric = calculateInvoicePaymentStatus(invoice, payments, now);
+    if (metric.outstanding <= 0 || String(invoice.status).toLowerCase() === 'cancelled') continue;
+    if (invoice.dueDate) {
+      const due = new Date(invoice.dueDate);
+      if (due < now) alerts.push({ type: 'overdue-invoice', severity: 'high', invoiceId: invoice.id, amount: metric.outstanding, action: 'Follow up on overdue invoice' });
+      else if (due <= dueSoonLimit) alerts.push({ type: 'invoice-due-soon', severity: 'medium', invoiceId: invoice.id, amount: metric.outstanding, action: 'Contact client before due date' });
+    }
+  }
+
+  for (const project of projects) {
+    const metrics = calculateProjectProfit(project, { expenses });
+    if (targetMargin > 0 && metrics.margin !== null && metrics.margin < targetMargin) {
+      alerts.push({ type: 'low-project-margin', severity: 'medium', projectId: project.id, margin: metrics.margin, targetMargin, action: 'Review scope, pricing or costs' });
+    }
+    if (Number(project.estimatedCosts || 0) > 0 && metrics.actualCosts > Number(project.estimatedCosts)) {
+      alerts.push({ type: 'project-cost-over-estimate', severity: 'high', projectId: project.id, actualCosts: metrics.actualCosts, estimatedCosts: roundMoney(project.estimatedCosts), action: 'Review project costs' });
+    }
+  }
+
+  const planned = expenses.filter(x => x.status === 'Planned' || x.planned === true);
+  const upcomingExpenseTotal = roundMoney(planned.reduce((sum, x) => {
+    const date = new Date(x.expenseDate || x.date || 0);
+    return date >= now && date <= horizonLimit ? sum + Number(x.amount || 0) : sum;
+  }, 0));
+  const forecast = calculateCashflowForecast(source, now, horizonDays);
+  if (forecast.forecastNetCash < 0) {
+    alerts.push({ type: 'low-upcoming-cashflow', severity: 'high', amount: forecast.forecastNetCash, upcomingExpenses: upcomingExpenseTotal, action: 'Protect cash runway and accelerate collections' });
+  }
+
+  const pipeline = calculatePipeline(Array.isArray(source.leads) ? source.leads : []);
+  const concentrationThreshold = Number(options.pipelineConcentrationThreshold ?? 0.5);
+  const active = (Array.isArray(source.leads) ? source.leads : []).filter(x => !['won','lost','closed','cancelled'].includes(String(x.status || '').toLowerCase()));
+  if (active.length > 1 && pipeline.pipeline > 0) {
+    const largest = Math.max(...active.map(x => Number(x.value || 0)));
+    if (largest / pipeline >= concentrationThreshold) alerts.push({ type: 'pipeline-concentration', severity: 'medium', share: roundMoney(largest / pipeline * 100), action: 'Diversify active pipeline' });
+  }
+  return alerts;
+}
+
+function formatMoney(value, currency = 'EUR', locale = 'en-US') {
+  const safeCurrency = /^[A-Z]{3}$/.test(String(currency)) ? String(currency) : 'EUR';
+  return new Intl.NumberFormat(locale, { style: 'currency', currency: safeCurrency, maximumFractionDigits: 2 }).format(Number(value || 0));
+}
+
