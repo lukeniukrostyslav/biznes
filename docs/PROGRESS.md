@@ -498,3 +498,11 @@ GitHub commit: `e0cf4ed76b4c7b28183550352cd657a304f511cc`.
 GitHub commits: `3aad70292d31cfbedb6498bfd909cf1293088d0b`, `528c1a74624291836e9fb3762fa91369e710af6d`.
 
 Это фактическое усиление B07, но процент пока не повышается: нужен подтверждённый полный test execution. **B07 остаётся 89%.**
+
+## B07 — persistence API boundary checkpoint — 2026-09-25
+
+Дополнительно усилен core persistence: `upsertRecord()`, `removeRecord()`, `archiveRecord()` и `restoreRecord()` теперь отклоняют неизвестные collection names вместо тихого no-op/потери операции. Добавлены regression tests для всех четырёх mutators.
+
+GitHub commits: `7b934bc81efee820e6ca144c2f66d02915f6ab52`, `14d32d38f02a74e8c5b57a619c7faccc73160871`.
+
+Процент B07 не повышен: локальный полный запуск тестов недоступен в текущем окружении, а GitHub Actions для последних изменений пока не подтверждён. **B07 остаётся 89%.**
