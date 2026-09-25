@@ -656,3 +656,23 @@ Reference-driven changes:
 Design commit: 27c1c4739458586bde25167e0f9a6c1a99c9cdfa
 
 **V2 overall: 74%** — visual acceptance remains 0% until the deployed interface is actually inspected.
+
+
+### V2 continuation — reference fidelity micro-pass
+- V2.2 Global shell: **95%**
+- V2.3 Dashboard composition: **98%**
+- V2.4 All product module visual surfaces: **68%**
+- V2.5 Responsive/mobile composition: **84%**
+- V2.6 EN / RU / ES / DE / FR V2 layer: **82%**
+- V2.7 Existing navigation wiring: **75%**
+- V2.8 B14 + Core + Design Regression: **100%**
+- V2.9 Live visual acceptance: **0%**
+
+Latest reference-detail work:
+- localized current date added to Dashboard;
+- KPI micro-hierarchy, trend typography and secondary labels refined;
+- desktop/mobile spacing remains aligned to the approved reference composition.
+
+Latest design commit: a3af146a5b38d68f9d800eacdffcd44bdcc0c46b
+
+**V2 overall: 75%** — intentionally not final until deployment is visually inspected and all modules are checked against the reference level.
