@@ -33,6 +33,12 @@ No change was made to `actualCosts` semantics because the product currently trea
 
 Dashboard and Cashflow use `calculateBusinessMetrics()` / `calculateCashflowForecast()` rather than the legacy `calculateCashflow()` helper. No active UI call to `calculateCashflow()` was found, so no change was made there.
 
+### 5. Clients screen navigation typo
+
+The Clients screen opening tag had the `class="screen"` attribute outside the element, which could break screen switching because navigation relies on the `.screen` class.
+
+**Fix:** restored the correct `<div id="clientsScreen" class="screen">` markup.
+
 ## Deliberately unchanged
 
 - Billable expense remains metadata only; there is no defined reimbursement/invoicing workflow yet.
@@ -41,4 +47,4 @@ Dashboard and Cashflow use `calculateBusinessMetrics()` / `calculateCashflowFore
 
 ## Commit
 
-Code: ce8998da9d21eb57c866fc33187f97d5c1a3299a
+Code: 81df67d967ca637f5cb9c103fb0b15b8f78c4c70
