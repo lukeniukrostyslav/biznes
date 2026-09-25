@@ -118,3 +118,33 @@ test('archive chain blocks parent archiving until every active dependent is remo
   assert.equal(store.clients.length,0);
   assert.equal(store.archivedRecords.length,6);
 });
+
+
+test('enforces the full downstream client chain when relations are edited',()=>{
+  const store=createEmptyStore();
+  store.clients=[{id:'c1'},{id:'c2'}];
+  store.leads=[{id:'l1',clientId:'c1'}];
+  store.proposals=[{id:'pr1',clientId:'c1',leadId:'l1'}];
+  store.projects=[{id:'p1',clientId:'c1',proposalId:'pr1'}];
+  store.invoices=[{id:'i1',clientId:'c1',projectId:'p1'}];
+  store.expenses=[{id:'e1',clientId:'c1',projectId:'p1',amount:10}];
+
+  store.proposals[0].clientId='c2';
+  assert.equal(validateStore(store).valid,false);
+  assert.ok(validateStore(store).errors.some(error=>error.includes('proposals.pr1.leadId client mismatch')));
+
+  store.proposals[0].clientId='c1';
+  store.projects[0].clientId='c2';
+  assert.equal(validateStore(store).valid,false);
+  assert.ok(validateStore(store).errors.some(error=>error.includes('projects.p1.proposalId client mismatch')));
+
+  store.projects[0].clientId='c1';
+  store.invoices[0].clientId='c2';
+  assert.equal(validateStore(store).valid,false);
+  assert.ok(validateStore(store).errors.some(error=>error.includes('invoices.i1.projectId client mismatch')));
+
+  store.invoices[0].clientId='c1';
+  store.expenses[0].clientId='c2';
+  assert.equal(validateStore(store).valid,false);
+  assert.ok(validateStore(store).errors.some(error=>error.includes('expenses.e1.projectId client mismatch')));
+});
