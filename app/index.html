@@ -572,7 +572,7 @@ function renderDashboardRealData(){
     const expensesRows=businessStore.expenses||[];
     const months=Array.from({length:12},(_,i)=>{const d=new Date();d.setMonth(d.getMonth()-11+i);return {y:d.getFullYear(),m:d.getMonth(),v:0};});
     payments.forEach(p=>{const d=new Date(p.date||p.paymentDate||p.createdAt);if(!isNaN(d))months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth())?.v+=Number(p.amount||0);});
-    expensesRows.forEach(e=>{const d=new Date(e.date||e.expenseDate||e.createdAt);if(!isNaN(d))months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth())?.v-=Number(e.amount||0);});
+    expensesRows.filter(e=>e.status!=='Planned'&&e.planned!==true).forEach(e=>{const d=new Date(e.date||e.expenseDate||e.createdAt);if(!isNaN(d))months.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth())?.v-=Number(e.amount||0);});
     const vals=months.map(x=>Math.max(0,x.v)); const max=Math.max(...vals,0);
     chart.innerHTML=max?vals.map(v=>'<div class="bar" title="'+money(v)+'" style="height:'+Math.max(8,Math.round(v/max*190))+'px"></div>').join(''):'<div class="empty" style="width:100%">No financial history yet.</div>';
   }
@@ -611,7 +611,7 @@ function refreshInvoiceProposalLabels(){
 }
 function refreshInvoiceProposalMetrics(){
  const invoices=businessStore.invoices||[], payments=businessStore.payments||[], now=new Date();
- const invoiced=invoices.reduce((sum,i)=>sum+Number(i.amount??i.total??i.value??0),0);
+ const invoiced=roundMoney(invoices.reduce((sum,i)=>sum+Number(calculateInvoice(i).total||0),0));
  const paid=payments.filter(p=>p.invoiceId).reduce((sum,p)=>sum+Number(p.amount||0),0);
  const outstanding=invoices.reduce((sum,invoice)=>sum+Number(calculateInvoicePaymentStatus(invoice,payments,now).outstanding||0),0);
  const overdue=invoices.reduce((sum,invoice)=>{const state=calculateInvoicePaymentStatus(invoice,payments,now);return sum+(state.status==='Overdue'?Number(state.outstanding||0):0);},0);
@@ -637,7 +637,7 @@ function refreshOperationalMetrics(){
   const metrics=calculateBusinessMetrics(businessStore);
   const forecast=calculateCashflowForecast(businessStore,now,30);
   const overdue=invoices.map(i=>calculateInvoicePaymentStatus(i,payments,now)).filter(s=>s.status==='Overdue').reduce((s,x)=>s+Number(x.outstanding||0),0);
-  const totalInvoiced=invoices.reduce((s,i)=>s+Number(i.amount||i.value||0),0);
+  const totalInvoiced=Number(metrics.invoiced||0);
   const collection=totalInvoiced>0?Math.round((metrics.paid/totalInvoiced)*100):0;
   const monthExpenses=expenses.filter(e=>{const d=new Date(e.expenseDate||e.date||e.createdAt);return d.getMonth()===month&&d.getFullYear()===year;});
   const expenseTotal=monthExpenses.reduce((s,e)=>s+Number(e.amount||0),0);
@@ -703,11 +703,11 @@ function exportProfitAnalysis(){
   const rows=[['Project','Revenue','Costs','Profit','Margin']];
   projects.forEach(project=>{
     const calc=calculateProjectProfit(project,{expenses});
-    rows.push([project.name||project.id,calc.revenue,calc.directCosts||0,calc.profit,calc.margin==null?'':calc.margin]);
+    rows.push([project.name||project.id,calc.revenue,calc.actualCosts||0,calc.profit,calc.margin==null?'':calc.margin]);
   });
   const payments=businessStore.payments||[];
   const grossRevenue=payments.reduce((sum,p)=>sum+Number(p.amount||0),0);
-  const directCosts=projects.reduce((sum,project)=>sum+Number(calculateProjectProfit(project,{expenses}).directCosts||0),0);
+  const directCosts=projects.reduce((sum,project)=>sum+Number(calculateProjectProfit(project,{expenses}).actualCosts||0),0);
   const operatingCosts=expenses.filter(e=>!e.projectId && e.status!=='Planned' && e.planned!==true).reduce((sum,e)=>sum+Number(e.amount||0),0);
   rows.push([]);
   rows.push(['Metric','Value']);
