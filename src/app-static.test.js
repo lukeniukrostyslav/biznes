@@ -86,3 +86,77 @@ test('B13 semantic form controls have explicit input types and labels', () => {
   assert.ok(inputs.some(x => /type="number"/.test(x)));
   assert.match(html, /<label[^>]*>Name<\/label>|data-ui="nameLabel"/);
 });
+
+
+test('B14 functional flow wiring covers all primary entities', () => {
+  for (const key of ['newLead','newClient','newProposal','newProject','newInvoice','recordPayment','addExpense']) {
+    assert.match(html, new RegExp(key + ':'));
+  }
+  for (const fn of ['addRecord','openEditDrawer','renderStoredRecords','refreshDashboardMetrics','refreshDashboardVisuals','exportBusinessData','importBusinessData']) {
+    assert.match(html, new RegExp('function\\s+' + fn + '\\s*\\('));
+  }
+});
+
+test('B14 lifecycle conversions are wired to canonical engines', () => {
+  assert.match(html, /buildProjectFromProposal/);
+  assert.match(html, /buildInvoiceFromProject/);
+  assert.match(html, /convertLeadToClient/);
+  assert.match(html, /validateStoredRelationships/);
+});
+
+test('B14 persistence actions are wired to canonical persistence API', () => {
+  for (const fn of ['loadPersistentStore','savePersistentStore','exportStore','importStore','archiveRecord','restoreRecord','validateStore']) {
+    assert.match(html, new RegExp(fn));
+  }
+  assert.match(html, /localStorage/);
+});
+
+test('B14 financial lifecycle is wired to financial engine', () => {
+  for (const fn of ['calculateBusinessMetrics','calculateProjectProfit','calculatePaymentPlan','allocatePaymentPlan','calculateCashflowForecast','calculateInvoicePaymentStatus','calculateInvoice']) {
+    assert.match(html, new RegExp(fn));
+  }
+});
+
+test('B14 dashboard analytics is wired to B11 engine', () => {
+  for (const fn of ['calculateDashboardAnalytics','buildDashboardSeries','getDashboardLabels']) {
+    assert.match(html, new RegExp(fn));
+  }
+  assert.match(html, /dashboardPeriod/);
+});
+
+test('B14 export workflows create user-downloadable files', () => {
+  assert.match(html, /exportCashflowReport/);
+  assert.match(html, /exportProfitAnalysis/);
+  assert.match(html, /exportBusinessData/);
+  assert.match(html, /URL\.createObjectURL/);
+});
+
+test('B14 validation and recovery UI hooks exist', () => {
+  assert.match(html, /try\s*\{/);
+  assert.match(html, /catch\s*\(/);
+  assert.match(html, /toast\(/);
+  assert.match(html, /No data yet|Пока нет данных/);
+});
+
+test('B14 required screens expose stable identifiers', () => {
+  for (const id of ['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen']) {
+    assert.match(html, new RegExp('id="' + id + '"'));
+  }
+});
+
+test('B14 localization runtime supports all required languages', () => {
+  for (const lang of ['en','ru','es','de','fr']) {
+    assert.match(html, new RegExp(lang + ':\\{'));
+  }
+  assert.match(html, /let activeLanguage='en'/);
+  assert.match(html, /document\.documentElement\.lang=lang/);
+});
+
+test('B14 responsive functional surfaces exist for desktop, tablet and mobile', () => {
+  assert.match(html, /@media\(max-width:1050px\)/);
+  assert.match(html, /@media\(max-width:900px\)/);
+  assert.match(html, /@media\(max-width:720px\)/);
+  assert.match(html, /@media\(max-width:600px\)/);
+  assert.match(html, /\.drawer-panel/);
+  assert.match(html, /\.table-card\{overflow:auto\}/);
+});
