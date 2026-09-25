@@ -289,3 +289,10 @@ img,svg,canvas{max-width:100%;height:auto}
 .page-title h1,.page-title p,.card-header h2,.data-table th,.data-table td{word-break:normal;overflow-wrap:anywhere}
 .lang{min-width:72px;max-width:110px}
 @media(max-width:720px){.page-title p{max-width:100%;line-height:1.45}.data-table th,.data-table td{white-space:normal}}
+
+/* ND.21 — accessibility closure */
+:focus-visible{outline:3px solid rgba(37,99,235,.28);outline-offset:2px}
+button:disabled,input:disabled,select:disabled,textarea:disabled{cursor:not-allowed;opacity:.58}
+[aria-disabled=true]{cursor:not-allowed}
+@media(prefers-contrast:more){.card,.table-card,.stat-card,.btn,.filter,.data-table td,.data-table th{border-color:#8792a5}.muted,.data-table th,.setting-help{color:#465267}}
+@media(prefers-reduced-motion:reduce){.skeleton::after{animation:none}.btn,.deal,.project-card,.stat-card{transition:none!important}}
