@@ -86,3 +86,35 @@ test('allows a payment to move to another invoice only when its client relation 
   store.payments[0].clientId='c2';
   assert.equal(validateStore(store).valid,true);
 });
+
+
+test('saveStore rejects invalid relationship state instead of persisting it',()=>{
+  const storage=memoryStorage();
+  const store=createEmptyStore();
+  store.clients=[{id:'c1'}];
+  store.projects=[{id:'p1',clientId:'missing'}];
+  assert.throws(()=>saveStore(storage,store),/Cannot save invalid BUSINESS OS store/);
+  assert.equal(storage.getItem('business-os-store-v1'),null);
+});
+
+test('archive chain blocks parent archiving until every active dependent is removed',()=>{
+  let store=createEmptyStore();
+  store.clients=[{id:'c1'}];
+  store.proposals=[{id:'pr1',clientId:'c1'}];
+  store.projects=[{id:'p1',clientId:'c1',proposalId:'pr1'}];
+  store.invoices=[{id:'i1',clientId:'c1',projectId:'p1'}];
+  store.payments=[{id:'pay1',clientId:'c1',invoiceId:'i1',amount:10}];
+  store.expenses=[{id:'e1',clientId:'c1',projectId:'p1',amount:5}];
+  assert.throws(()=>archiveRecord(store,'clients','c1'),/active dependents/);
+  store=archiveRecord(store,'payments','pay1');
+  assert.throws(()=>archiveRecord(store,'invoices','i1'),/active dependents/);
+  store=archiveRecord(store,'expenses','e1');
+  store=archiveRecord(store,'invoices','i1');
+  assert.throws(()=>archiveRecord(store,'projects','p1'),/active dependents/);
+  store=archiveRecord(store,'projects','p1');
+  assert.throws(()=>archiveRecord(store,'proposals','pr1'),/active dependents/);
+  store=archiveRecord(store,'proposals','pr1');
+  store=archiveRecord(store,'clients','c1');
+  assert.equal(store.clients.length,0);
+  assert.equal(store.archivedRecords.length,6);
+});
