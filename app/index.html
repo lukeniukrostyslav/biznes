@@ -79,8 +79,8 @@
         <div class="cash-row"><div class="cash-row-head"><span data-ui="totalIncome">Total Income</span><strong id="dashIncome">€0</strong></div><div class="meter"><div class="fill income-fill" id="dashIncomeFill" style="width:0%"></div></div></div>
         <div class="cash-row"><div class="cash-row-head"><span data-ui="totalExpenses">Total Expenses</span><strong id="dashExpenses">€0</strong></div><div class="meter"><div class="fill expense-fill" id="dashExpensesFill" style="width:0%"></div></div></div>
         <div class="cash-row"><div class="cash-row-head"><span data-ui="netProfit">Net Profit</span><strong id="dashNetProfit">€0</strong></div><div class="meter"><div class="fill profit-fill" id="dashProfitFill" style="width:0%"></div></div></div>
+        <div class="cash-row cash-bank-row"><div class="cash-row-head"><span data-v2="cashInBank">Cash in Bank</span><strong id="dashCashInBank">€0</strong></div><div class="meter"><div class="fill bank-fill" id="dashCashFill" style="width:0%"></div></div></div>
       </div>
-      <div class="cash-summary"><span data-v2="cashWindow">30-day view</span><strong data-v2="localData">Local data</strong></div>
     </article>
   </section>
 
@@ -737,8 +737,11 @@ function renderDashboardRealData(){
   if(incomeEl)incomeEl.textContent=money(paid);
   if(expEl)expEl.textContent=money(expenses);
   if(profitEl)profitEl.textContent=money(profit);
-  const base=Math.max(paid,expenses,profit,1);
-  [['dashIncomeFill',paid],['dashExpensesFill',expenses],['dashProfitFill',Math.max(0,profit)]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.style.width=Math.min(100,Math.round(v/base*100))+'%';});
+  const cashInBank=Number(calculateCashflowForecast(businessStore,new Date(),30).currentNetCash||0);
+  const cashBankEl=document.getElementById('dashCashInBank');
+  if(cashBankEl)cashBankEl.textContent=money(cashInBank);
+  const base=Math.max(paid,expenses,profit,cashInBank,1);
+  [['dashIncomeFill',paid],['dashExpensesFill',expenses],['dashProfitFill',Math.max(0,profit)],['dashCashFill',Math.max(0,cashInBank)]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.style.width=Math.min(100,Math.round(v/base*100))+'%';});
   const chart=document.getElementById('chart');
   if(chart){
     const series=buildDashboardSeries(businessStore,dashboardPeriod==='month'?'month':dashboardPeriod==='quarter'?'quarter':'year',new Date());
