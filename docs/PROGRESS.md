@@ -802,3 +802,20 @@ GitHub commit:
 - `e9b2aac113e98deb5c849ff41f96bea2c73888f1` — design: bring dashboard to approved reference level
 
 **Acceptance rule:** this pass is implemented but not counted as final visual acceptance until the fresh deployment is READY and the live desktop/mobile screens are manually checked. Therefore the NEW DESIGN percentage remains unchanged until that verification.
+
+
+### Design checkpoint — V2.25 / reference composition lock — 2026-09-25
+
+The supplied approved reference remains the visual target for the Dashboard.
+
+Additional parity changes completed:
+- Revenue / Expenses / Profit chart now uses revenue bars, expense bars and a purple profit line, matching the reference hierarchy.
+- Removed the extra post-table workspace module rail from the Dashboard so the screen ends on Project Profitability, matching the reference composition.
+- Preserved the responsive mobile dashboard and existing business functionality.
+- Kept all changes in the premium visual layer / dashboard presentation; no persistence or financial-engine behavior was changed.
+
+Commits:
+- `feb452277d46ca71b91f4f1ba942f9a37ee86956` — design: match reference chart with profit line
+- `b155ad81d49092396bae7e191123d4d7f5eda768` — design: finalize approved dashboard composition
+
+**Acceptance remains pending until the updated Vercel deployment is READY and the live desktop/mobile UI is manually checked against the supplied reference.**
