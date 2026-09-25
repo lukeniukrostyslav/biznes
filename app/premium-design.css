@@ -24,3 +24,16 @@ html,body{background:var(--nd-bg);color:var(--nd-text)}body{font-family:Inter,ui
 #dashboardScreen .profit-table td,.profit-table th{white-space:nowrap}
 @media(max-width:1050px){#dashboardScreen .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:720px){#dashboardScreen .heading{align-items:flex-start;flex-direction:column}#dashboardScreen .period{width:100%}#dashboardScreen .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#dashboardScreen .kpi{min-height:112px}#dashboardScreen .grid>.card,#dashboardScreen .lower>.card{min-height:auto}}
+
+/* ND.7 — Leads / CRM premium surface */
+#leadsScreen .page-title{align-items:flex-start}
+#leadsScreen .page-title h1{font-weight:800}
+#leadsScreen .toolbar{flex-wrap:wrap}
+#leadsScreen .toolbar .filter{background:var(--nd-surface);min-width:170px}
+#leadsScreen .pipeline{padding:2px;scrollbar-width:thin}
+#leadsScreen .stage{background:var(--nd-surface-2);border-color:var(--nd-border);box-shadow:inset 0 1px 0 rgba(255,255,255,.65)}
+#leadsScreen .stage-head{color:var(--nd-text);letter-spacing:.01em}
+#leadsScreen .deal{transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+#leadsScreen .deal:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,24,40,.08);border-color:var(--nd-border-strong)}
+#leadsScreen .deal-value{font-variant-numeric:tabular-nums}
+@media(max-width:720px){#leadsScreen .page-title{flex-direction:column}#leadsScreen .toolbar{width:100%}#leadsScreen .toolbar .primary{width:100%}#leadsScreen .toolbar .filter{min-width:0;flex:1}#leadsScreen .pipeline{padding-bottom:6px}}
