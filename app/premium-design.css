@@ -971,4 +971,7 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   #mobileNav button.active{color:#176be9!important;background:#edf4ff!important}.mobile-nav-add{width:44px!important;max-width:44px!important;flex:0 0 44px!important;background:#176be9!important;color:#fff!important;border-radius:50%!important;font-size:20px!important;box-shadow:0 6px 15px rgba(23,107,233,.24)!important}
   .screen:not(#dashboardScreen) .content,.screen:not(#dashboardScreen){min-width:0!important}.screen:not(#dashboardScreen) .page-title{padding:3px 1px 12px!important}.screen:not(#dashboardScreen) .page-title h1{font-size:21px!important}.screen:not(#dashboardScreen) .stat-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.screen:not(#dashboardScreen) .stat-strip .mini{min-height:76px!important}.screen:not(#dashboardScreen) .data-table{min-width:650px!important}.screen:not(#dashboardScreen) .toolbar{gap:6px!important}
 }
+
+/* V2.20 — give module titles breathing room from the accent rail */
+@media(max-width:720px){.screen:not(#dashboardScreen) .page-title{padding-left:10px!important}.screen:not(#dashboardScreen) .page-title>div:first-child{padding-left:2px!important}}
 @media(max-width:420px){.content{padding-left:10px!important;padding-right:10px!important}.dashboard-kpi{min-height:96px!important}.dashboard-kpi .kpi-value{font-size:18px!important}#mobileNav{left:6px!important;right:6px!important;bottom:6px!important}.mobile-nav-add{width:42px!important;max-width:42px!important;flex-basis:42px!important}}
