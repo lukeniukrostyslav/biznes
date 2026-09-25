@@ -3,7 +3,8 @@ const TERMINAL_STAGES = Object.freeze(['Won','Lost','Closed','Cancelled']);
 
 function normalizeStage(value) {
   const raw = String(value || '').trim();
-  const match = DEFAULT_PIPELINE_STAGES.find(stage => stage.toLowerCase() === raw.toLowerCase());
+  const allStages = [...DEFAULT_PIPELINE_STAGES, ...TERMINAL_STAGES.filter(stage => !DEFAULT_PIPELINE_STAGES.includes(stage))];
+  const match = allStages.find(stage => stage.toLowerCase() === raw.toLowerCase());
   return match || 'New';
 }
 
