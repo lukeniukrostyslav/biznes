@@ -893,3 +893,8 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 @media(max-width:1100px){#dashboardScreen .dashboard-main-grid{grid-template-columns:1fr!important}#dashboardScreen .dashboard-lower-grid{grid-template-columns:1fr 1fr!important}#dashboardScreen .dashboard-profit-card{grid-column:1/-1!important}}
 @media(max-width:720px){#dashboardScreen .dashboard-hero{min-height:72px!important;padding-bottom:8px!important}.dashboard-hero h1{font-size:22px!important}.dashboard-hero p{font-size:10px!important}.dashboard-hero .hero-period{top:0!important;right:0!important;width:128px!important;height:34px!important}.dashboard-kpi{min-height:106px!important;padding:12px!important}.dashboard-kpi h3{font-size:20px!important}.dashboard-main-grid{grid-template-columns:1fr!important}.dashboard-lower-grid{grid-template-columns:1fr!important}.dashboard-profit-card{grid-column:auto!important}.dashboard-active-projects-card{min-height:220px!important}}
 @media(max-width:520px){#dashboardScreen .dashboard-hero{padding-right:0!important}.dashboard-hero h1{font-size:20px!important}.dashboard-hero p{max-width:55%;line-height:1.35}.dashboard-hero .hero-period{position:relative!important;top:auto!important;right:auto!important;width:100%!important;margin-top:10px!important}.dashboard-kpis{grid-template-columns:1fr 1fr!important}.dashboard-kpi .kpi-foot{font-size:8px!important}}
+
+
+/* V2.14 — desktop shell alignment with reference */
+@media(min-width:721px){.product-identity-bar{display:none!important}.main{min-width:0!important}.topbar{border-top-left-radius:0!important}.content{padding-top:20px!important}}
+@media(max-width:720px){.product-identity-bar{display:flex!important}}
