@@ -103,13 +103,15 @@ function validateStore(input) {
     }
   }
 
-  for (const record of archived) {
-    if (!record?.id || !COLLECTIONS.includes(record.collection)) continue;
-    const active = Array.isArray(source[record.collection])
-      ? source[record.collection].some(item => item?.id === record.id)
-      : false;
-    if (active) {
-      errors.push('archived record conflicts with active record: ' + record.collection + ':' + record.id);
+  if (Array.isArray(archived)) {
+    for (const record of archived) {
+      if (!record?.id || !COLLECTIONS.includes(record.collection)) continue;
+      const active = Array.isArray(source[record.collection])
+        ? source[record.collection].some(item => item?.id === record.id)
+        : false;
+      if (active) {
+        errors.push('archived record conflicts with active record: ' + record.collection + ':' + record.id);
+      }
     }
   }
 
@@ -199,7 +201,12 @@ function loadStore(storage) {
   const raw = storage.getItem(STORAGE_KEY);
   if (!raw) return createEmptyStore();
   try {
-    return normalizeStore(JSON.parse(raw));
+    const normalized = normalizeStore(JSON.parse(raw));
+    const validation = validateStore(normalized);
+    if (!validation.valid) {
+      throw new Error('Invalid BUSINESS OS persisted store: ' + validation.errors.join(', '));
+    }
+    return normalized;
   } catch (error) {
     throw new Error('Cannot load BUSINESS OS store: ' + error.message);
   }
