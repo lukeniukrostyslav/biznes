@@ -2248,6 +2248,7 @@ document.getElementById('dashboardPeriod')?.addEventListener('change',e=>{
   refreshDashboardMetrics();
 });
 document.getElementById('exportData').addEventListener('click',exportBusinessData);
+document.getElementById('newTopAction').addEventListener('click',()=>openCreateDrawer('leads'));
 document.getElementById('exportCashflow')?.addEventListener('click',exportCashflowReport);
 document.getElementById('exportProfitAnalysis')?.addEventListener('click',exportProfitAnalysis);
 document.getElementById('importData').addEventListener('click',()=>document.getElementById('importDataInput').click());
