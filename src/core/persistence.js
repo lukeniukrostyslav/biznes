@@ -170,6 +170,10 @@ function loadStore(storage) {
 
 function saveStore(storage, store) {
   const normalized = normalizeStore(store);
+  const validation = validateStore(normalized);
+  if (!validation.valid) {
+    throw new Error('Cannot save invalid BUSINESS OS store: ' + validation.errors.join(', '));
+  }
   storage.setItem(STORAGE_KEY, JSON.stringify(normalized));
   return normalized;
 }
