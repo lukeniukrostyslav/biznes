@@ -166,3 +166,20 @@ test('schema v1 export imports into a complete current store',()=>{
   assert.deepEqual(restored.projects,[]);
   assert.deepEqual(restored.archivedRecords,[]);
 });
+
+
+test('removeRecord refuses to break active relationships',()=>{
+  let store=createEmptyStore();
+  store.clients=[{id:'c1'}];
+  store.projects=[{id:'p1',clientId:'c1'}];
+  assert.throws(()=>removeRecord(store,'clients','c1'),/Cannot remove record/);
+  assert.equal(store.clients.length,1);
+});
+
+test('removeRecord removes a leaf record without breaking relationships',()=>{
+  let store=createEmptyStore();
+  store.clients=[{id:'c1'}];
+  store.projects=[{id:'p1',clientId:'c1'}];
+  store=removeRecord(store,'projects','p1');
+  assert.equal(store.projects.length,0);
+});
