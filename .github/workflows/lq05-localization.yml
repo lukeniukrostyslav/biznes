@@ -1,4 +1,5 @@
 name: LQ05 Localization
+run-name: LQ05 Localization
 
 on:
   push:
