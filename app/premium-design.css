@@ -150,3 +150,35 @@ html,body{background:var(--nd-bg);color:var(--nd-text)}body{font-family:Inter,ui
 #expensesScreen .empty{min-height:180px;display:grid;place-items:center}
 #expensesScreen .expense-amount{font-variant-numeric:tabular-nums;font-weight:750}
 @media(max-width:720px){#expensesScreen .page-title{align-items:flex-start;flex-direction:column}#expensesScreen .page-title .primary{width:100%}#expensesScreen .card{overflow:auto}}
+
+/* ND.12/13 — completion pass */
+#paymentsScreen .card-header,#expensesScreen .card-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#paymentsScreen .card-header h2,#expensesScreen .card-header h2{margin:0;font-size:15px;font-weight:750}
+#paymentsScreen .data-table .amount,#expensesScreen .data-table .amount{font-variant-numeric:tabular-nums;font-weight:750}
+@media(max-width:720px){#paymentsScreen .card-header,#expensesScreen .card-header{align-items:flex-start;flex-direction:column}#paymentsScreen .card-header .btn,#expensesScreen .card-header .btn{width:100%}}
+/* ND.14 — Profit premium surface */
+#profitScreen .page-title h1{font-weight:800}
+#profitScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm);overflow:hidden}
+#profitScreen .stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#profitScreen .stat-card{min-height:112px;padding:16px;border:1px solid var(--nd-border);border-radius:var(--nd-radius-md);background:var(--nd-surface)}
+#profitScreen .stat-card .value{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+#profitScreen .stat-card .label{font-size:12px;color:var(--nd-muted)}
+#profitScreen .data-table tbody tr:hover{background:#f8faff}
+#profitScreen .data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--nd-muted);font-weight:700}
+#profitScreen .data-table td{vertical-align:middle}
+#profitScreen .empty{min-height:180px;display:grid;place-items:center}
+@media(max-width:900px){#profitScreen .stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){#profitScreen .page-title{align-items:flex-start;flex-direction:column}#profitScreen .page-title .primary{width:100%}#profitScreen .stat-grid{grid-template-columns:1fr}#profitScreen .card{overflow:auto}}
+/* ND.15 — Cashflow premium surface */
+#cashflowScreen .page-title h1{font-weight:800}
+#cashflowScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm);overflow:hidden}
+#cashflowScreen .stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#cashflowScreen .stat-card{min-height:112px;padding:16px;border:1px solid var(--nd-border);border-radius:var(--nd-radius-md);background:var(--nd-surface)}
+#cashflowScreen .stat-card .value{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+#cashflowScreen .stat-card .label{font-size:12px;color:var(--nd-muted)}
+#cashflowScreen .data-table tbody tr:hover{background:#f8faff}
+#cashflowScreen .data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--nd-muted);font-weight:700}
+#cashflowScreen .data-table td{vertical-align:middle}
+#cashflowScreen .empty{min-height:180px;display:grid;place-items:center}
+@media(max-width:900px){#cashflowScreen .stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){#cashflowScreen .page-title{align-items:flex-start;flex-direction:column}#cashflowScreen .page-title .primary{width:100%}#cashflowScreen .stat-grid{grid-template-columns:1fr}#cashflowScreen .card{overflow:auto}}
