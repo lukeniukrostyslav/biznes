@@ -229,11 +229,1162 @@
 </div><div class="drawer-actions"><button class="secondary" id="drawerCancel" data-ui="cancel">Cancel</button><button class="primary" id="drawerSave" data-ui="saveRecord">Save record</button></div></aside></div></div>
 <script>let activeLanguage='en';window.activeLanguage=activeLanguage;</script>
 <script type="module">
-import { roundMoney, calculateBusinessMetrics, calculateProjectProfit, calculatePaymentPlan, allocatePaymentPlan, calculateCashflowForecast, calculateInvoicePaymentStatus, calculateInvoice } from "../src/core/financial-engine.js";
-import { calculateDashboardAnalytics, buildDashboardSeries, getDashboardLabels } from "../src/core/b11-analytics-engine.js";
-import { buildProjectFromProposal, buildInvoiceFromProject } from "../src/core/b10-lifecycle-engine.js";
-import { DEFAULT_PIPELINE_STAGES, calculateCrmPipeline, convertLeadToClient } from "../src/core/crm-engine.js";
-import { archiveRecord, validateStore, exportStore, importStore, restoreRecord, loadStore as loadPersistentStore, saveStore as savePersistentStore } from "../src/core/persistence.js";
+/* BUSINESS OS runtime bundle: core modules inlined for reliable production/mobile loading. */
+
+function roundMoney(value, decimals = 2) {
+  const factor = 10 ** decimals;
+  return Math.round((Number(value) + Number.EPSILON) * factor) / factor;
+}
+
+function lineTotal(line) {
+  return roundMoney(Number(line.quantity || 0) * Number(line.unitPrice || 0));
+}
+
+function calculateInvoice(invoice, now = new Date()) {
+  const items = Array.isArray(invoice.lineItems) ? invoice.lineItems : [];
+  const subtotal = roundMoney(items.reduce((sum, item) => sum + lineTotal(item), 0));
+  const discountType = invoice.discountType === 'percent' ? 'percent' : invoice.discountType === 'fixed' ? 'fixed' : 'none';
+  const rawDiscount = Math.max(Number(invoice.discountValue || 0), 0);
+  const discount = roundMoney(Math.min(discountType === 'percent' ? subtotal * (rawDiscount / 100) : rawDiscount, subtotal));
+  const taxableSubtotal = roundMoney(Math.max(subtotal - discount, 0));
+  const tax = roundMoney(taxableSubtotal * (Number(invoice.taxRate || 0) / 100));
+  const total = roundMoney(taxableSubtotal + tax);
+  const paid = roundMoney(Number(invoice.paid || 0));
+  const outstanding = roundMoney(Math.max(total - paid, 0));
+
+  let status = invoice.status || 'Draft';
+  if (status !== 'Cancelled') {
+    if (outstanding <= 0 && total > 0) status = 'Paid';
+    else if (paid > 0) status = 'Partially Paid';
+    else if (status !== 'Draft' && invoice.dueDate && new Date(invoice.dueDate) < now && total > 0) status = 'Overdue';
+    else if (status !== 'Draft') status = 'Sent';
+  }
+
+  return { subtotal, discount, discountType, discountValue: rawDiscount, taxableSubtotal, tax, total, paid, outstanding, status };
+}
+
+function calculatePaymentPlan(invoiceTotal, installments = [], now = new Date()) {
+  const total = roundMoney(Math.max(Number(invoiceTotal || 0), 0));
+  const source = Array.isArray(installments) ? installments : [];
+  const fixed = source.filter(x => x.amountType === 'fixed').reduce((sum, x) => sum + Math.max(Number(x.amount || 0), 0), 0);
+  const percentage = source.filter(x => x.amountType === 'percent').reduce((sum, x) => sum + Math.max(Number(x.amount || 0), 0), 0);
+  const equal = source.filter(x => x.amountType === 'equal');
+  const percentAmount = roundMoney(total * percentage / 100);
+  const remainingForEqual = Math.max(total - fixed - percentAmount, 0);
+  const equalAmount = equal.length ? roundMoney(remainingForEqual / equal.length) : 0;
+  const calculated = source.map((item, index) => {
+    const amount = item.amountType === 'fixed'
+      ? Math.max(Number(item.amount || 0), 0)
+      : item.amountType === 'percent'
+        ? roundMoney(total * Math.max(Number(item.amount || 0), 0) / 100)
+        : equalAmount;
+    const dueDate = item.dueDate ? new Date(item.dueDate) : null;
+    return { ...item, index, calculatedAmount: roundMoney(amount), overdue: Boolean(dueDate && dueDate < now && !item.paid) };
+  });
+  const plannedTotal = roundMoney(calculated.reduce((sum, item) => sum + item.calculatedAmount, 0));
+  return {
+    total,
+    installments: calculated,
+    plannedTotal,
+    difference: roundMoney(total - plannedTotal),
+    valid: Math.abs(total - plannedTotal) <= 0.01 && fixed <= total && percentage <= 100
+  };
+}
+
+function allocatePaymentPlan(invoice, payments = [], now = new Date()) {
+  const plan = calculatePaymentPlan(
+    calculateInvoice(invoice, now).total,
+    invoice && invoice.paymentPlan && Array.isArray(invoice.paymentPlan.installments) ? invoice.paymentPlan.installments : [],
+    now
+  );
+  if (!plan.installments.length) return { ...plan, installments: [], allocatedPayments: 0, unallocatedPayments: 0 };
+  const linked = (Array.isArray(payments) ? payments : [])
+    .filter(payment => payment.invoiceId === invoice.id)
+    .map(payment => ({ ...payment, amount: roundMoney(Math.max(Number(payment.amount || 0), 0)) }))
+    .filter(payment => payment.amount > 0)
+    .sort((a, b) => new Date(a.paymentDate || a.date || a.createdAt || 0) - new Date(b.paymentDate || b.date || b.createdAt || 0));
+
+  const remaining = plan.installments.map(item => item.calculatedAmount);
+  let allocatedPayments = 0;
+  let unallocatedPayments = 0;
+  const allocations = [];
+
+  for (const payment of linked) {
+    let amountLeft = payment.amount;
+    const explicit = Number.isInteger(payment.installmentIndex) ? payment.installmentIndex : null;
+    const order = explicit !== null ? [explicit, ...remaining.map((_, i) => i).filter(i => i !== explicit)] : remaining.map((_, i) => i);
+    for (const index of order) {
+      if (amountLeft <= 0.01 || index < 0 || index >= remaining.length) break;
+      const applied = roundMoney(Math.min(amountLeft, Math.max(remaining[index], 0)));
+      if (applied <= 0) continue;
+      remaining[index] = roundMoney(Math.max(remaining[index] - applied, 0));
+      amountLeft = roundMoney(amountLeft - applied);
+      allocatedPayments = roundMoney(allocatedPayments + applied);
+      allocations.push({ paymentId: payment.id, installmentIndex: index, amount: applied, explicit: explicit !== null });
+    }
+    if (amountLeft > 0.01) unallocatedPayments = roundMoney(unallocatedPayments + amountLeft);
+  }
+
+  const installments = plan.installments.map((item, index) => {
+    const paid = roundMoney(item.calculatedAmount - remaining[index]);
+    const outstanding = roundMoney(Math.max(item.calculatedAmount - paid, 0));
+    const dueDate = item.dueDate ? new Date(item.dueDate) : null;
+    let status = paid >= item.calculatedAmount - 0.01 ? 'Paid' : paid > 0 ? 'Partially Paid' : dueDate && dueDate < now ? 'Overdue' : dueDate && dueDate <= now ? 'Due' : 'Upcoming';
+    if (status === 'Overdue' && paid > 0) status = 'Partially Paid';
+    return { ...item, paid, outstanding, status };
+  });
+  return { ...plan, installments, allocations, allocatedPayments, unallocatedPayments };
+}
+
+function calculateInvoicePaymentStatus(invoice, payments = [], now = new Date()) {
+  const linkedPayments = (Array.isArray(payments) ? payments : [])
+    .filter(payment => payment.invoiceId === invoice.id);
+  const linkedPaid = roundMoney(linkedPayments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0));
+  return calculateInvoice({ ...invoice, paid: linkedPaid }, now);
+}
+
+function calculateProjectProfit(project, related = {}) {
+  const revenue = Number(project.revenue || 0);
+  const directCosts = Number(project.actualCosts || 0);
+  const actualHours = Number(project.actualHours || 0);
+  const labourRate = Number(project.labourRate || 0);
+  const labourCost = roundMoney(actualHours * labourRate);
+  const expenses = Array.isArray(related.expenses) ? related.expenses : [];
+  const projectExpenses = expenses
+    .filter(expense => expense.projectId === project.id && expense.status !== 'Planned' && expense.planned !== true)
+    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+  const plannedExpenses = expenses
+    .filter(expense => expense.projectId === project.id && (expense.status === 'Planned' || expense.planned === true))
+    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+  const totalActualCosts = roundMoney(directCosts + projectExpenses + labourCost);
+  const profit = roundMoney(revenue - totalActualCosts);
+  const margin = revenue > 0 ? roundMoney((profit / revenue) * 100) : null;
+  const budget = Number(project.budget || 0);
+  const budgetUsed = project.budgetType === 'Time' ? actualHours : totalActualCosts;
+  const budgetRemaining = budget > 0 ? roundMoney(Math.max(budget - budgetUsed, 0)) : null;
+  const forecastCosts = roundMoney(totalActualCosts + plannedExpenses);
+  const forecastProfit = roundMoney(revenue - forecastCosts);
+  const forecastMargin = revenue > 0 ? roundMoney((forecastProfit / revenue) * 100) : null;
+  return {
+    revenue: roundMoney(revenue),
+    actualCosts: totalActualCosts,
+    directCosts: roundMoney(directCosts),
+    projectExpenses: roundMoney(projectExpenses),
+    plannedExpenses: roundMoney(plannedExpenses),
+    labourCost,
+    budget: roundMoney(budget),
+    budgetUsed: roundMoney(budgetUsed),
+    budgetRemaining,
+    forecastCosts,
+    forecastProfit,
+    forecastMargin,
+    profit,
+    margin
+  };
+}
+
+function calculatePipeline(opportunities) {
+  const list = Array.isArray(opportunities) ? opportunities : [];
+  const active = list.filter(item => {
+    const status = String(item.status || '').toLowerCase();
+    return !['won', 'lost', 'closed', 'cancelled'].includes(status);
+  });
+  const pipeline = roundMoney(active.reduce((sum, item) => sum + Number(item.value || 0), 0));
+  const weightedPipeline = roundMoney(active.reduce((sum, item) => sum + Number(item.value || 0) * (Number(item.probability || 0) / 100), 0));
+  return { pipeline, weightedPipeline };
+}
+
+function calculateCashflow(invoices, payments, expenses, now = new Date()) {
+  const inv = Array.isArray(invoices) ? invoices : [];
+  const pay = Array.isArray(payments) ? payments : [];
+  const exp = Array.isArray(expenses) ? expenses : [];
+  const invoiced = roundMoney(inv.reduce((sum, invoice) => {
+    const derived = calculateInvoice(invoice, now);
+    return sum + (Array.isArray(invoice.lineItems) ? derived.total : Number(invoice.total || 0));
+  }, 0));
+  const paid = roundMoney(pay.reduce((sum, x) => sum + Number(x.amount || 0), 0));
+  const actualExpenses = exp.filter(expense => expense.status !== 'Planned' && expense.planned !== true);
+  const expensesTotal = roundMoney(actualExpenses.reduce((sum, x) => sum + Number(x.amount || 0), 0));
+  const outstanding = roundMoney(Math.max(invoiced - paid, 0));
+  const profit = roundMoney(paid - expensesTotal);
+  return { invoiced, paid, outstanding, expenses: expensesTotal, profit };
+}
+
+function calculateCashflowForecast(store, now = new Date(), horizonDays = 30) {
+  const source = store && typeof store === 'object' ? store : {};
+  const invoices = Array.isArray(source.invoices) ? source.invoices : [];
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const expenses = Array.isArray(source.expenses) ? source.expenses : [];
+  const horizon = new Date(now);
+  horizon.setDate(horizon.getDate() + Math.max(Number(horizonDays || 0), 0));
+
+  const events = [];
+  for (const invoice of invoices) {
+    const allocation = allocatePaymentPlan(invoice, payments, now);
+    if (allocation.installments.length) {
+      allocation.installments.forEach((item, index) => {
+        if (item.outstanding <= 0) return;
+        const dueDate = item.dueDate ? new Date(item.dueDate) : null;
+        if (!dueDate || dueDate > horizon || dueDate < now) return;
+        events.push({
+          type: 'payment',
+          date: dueDate.toISOString().slice(0, 10),
+          amount: roundMoney(item.outstanding),
+          invoiceId: invoice.id,
+          installmentIndex: index,
+          label: invoice.name || invoice.title || invoice.id,
+          status: item.status
+        });
+      });
+    } else {
+      const metric = calculateInvoicePaymentStatus(invoice, payments, now);
+      if (metric.outstanding > 0 && invoice.dueDate) {
+        const dueDate = new Date(invoice.dueDate);
+        if (dueDate >= now && dueDate <= horizon) {
+          events.push({
+            type: 'payment',
+            date: dueDate.toISOString().slice(0, 10),
+            amount: metric.outstanding,
+            invoiceId: invoice.id,
+            installmentIndex: null,
+            label: invoice.name || invoice.title || invoice.id,
+            status: metric.status
+          });
+        }
+      }
+    }
+  }
+
+  for (const expense of expenses) {
+    if (expense.status !== 'Planned' && expense.planned !== true) continue;
+    const dateValue = expense.expenseDate || expense.date;
+    if (!dateValue) continue;
+    const date = new Date(dateValue);
+    if (date < now || date > horizon) continue;
+    events.push({
+      type: 'expense',
+      date: date.toISOString().slice(0, 10),
+      amount: roundMoney(Math.max(Number(expense.amount || 0), 0)),
+      expenseId: expense.id,
+      label: expense.name || expense.title || expense.id,
+      status: 'Planned'
+    });
+  }
+
+  events.sort((a, b) => a.date.localeCompare(b.date) || (a.type === 'expense' ? 1 : -1));
+  const futureInflows = roundMoney(events.filter(x => x.type === 'payment').reduce((sum, x) => sum + x.amount, 0));
+  const futureExpenses = roundMoney(events.filter(x => x.type === 'expense').reduce((sum, x) => sum + x.amount, 0));
+  const actualExpenses = roundMoney(expenses.filter(x => x.status !== 'Planned' && x.planned !== true).reduce((sum, x) => sum + Number(x.amount || 0), 0));
+  const actualPaid = roundMoney(payments.reduce((sum, x) => sum + Number(x.amount || 0), 0));
+  const currentNetCash = roundMoney(actualPaid - actualExpenses);
+  return {
+    horizonDays: Math.max(Number(horizonDays || 0), 0),
+    events,
+    futureInflows,
+    futureExpenses,
+    currentNetCash,
+    forecastNetCash: roundMoney(currentNetCash + futureInflows - futureExpenses)
+  };
+}
+
+function calculateBusinessMetrics(store, now = new Date()) {
+  const source = store && typeof store === 'object' ? store : {};
+  const invoices = Array.isArray(source.invoices) ? source.invoices : [];
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const expenses = Array.isArray(source.expenses) ? source.expenses : [];
+  const leads = Array.isArray(source.leads) ? source.leads : [];
+
+  const actualExpenses = expenses.filter(expense => expense.status !== 'Planned' && expense.planned !== true);
+  const plannedExpensesList = expenses.filter(expense => expense.status === 'Planned' || expense.planned === true);
+
+  const invoiceMetrics = invoices.map(invoice => {
+    const linkedPaid = payments
+      .filter(payment => payment.invoiceId === invoice.id)
+      .reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+    return calculateInvoice({ ...invoice, paid: linkedPaid }, now);
+  });
+  const invoiced = roundMoney(invoiceMetrics.reduce((sum, metric) => sum + metric.total, 0));
+  const paid = roundMoney(payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0));
+  const actualExpensesTotal = roundMoney(actualExpenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
+  const plannedExpenses = roundMoney(plannedExpensesList.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
+  const pipeline = calculatePipeline(leads);
+  const outstanding = roundMoney(invoiceMetrics.reduce((sum, metric) => sum + metric.outstanding, 0));
+  const actualProfit = roundMoney(paid - actualExpensesTotal);
+
+  const expectedPayments = roundMoney(invoiceMetrics.reduce((sum, metric, index) => {
+    const derivedStatus = String(metric.status || '').toLowerCase();
+    return sum + (!['paid', 'cancelled'].includes(derivedStatus) ? metric.outstanding : 0);
+  }, 0));
+
+  const forecastCash = roundMoney(paid + expectedPayments - actualExpensesTotal - plannedExpenses);
+  const overdue = roundMoney(invoiceMetrics.reduce((sum, metric, index) => {
+    const invoice = invoices[index];
+    return sum + (metric.outstanding > 0 && invoice.dueDate && new Date(invoice.dueDate) < now ? metric.outstanding : 0);
+  }, 0));
+
+  return {
+    invoiced,
+    paid,
+    outstanding,
+    expenses: actualExpensesTotal,
+    actualProfit,
+    pipeline: pipeline.pipeline,
+    weightedPipeline: pipeline.weightedPipeline,
+    expectedPayments,
+    plannedExpenses,
+    forecastCash,
+    overdue
+  };
+}
+
+function calculatePricingEngine(inputs = {}) {
+  const annualIncome = Math.max(Number(inputs.targetAnnualIncome || 0), 0);
+  const annualCosts = Math.max(Number(inputs.annualBusinessCosts || 0), 0);
+  const taxRate = Math.min(Math.max(Number(inputs.taxReserveRate || 0), 0), 100);
+  const workingWeeks = Math.max(Number(inputs.workingWeeks || 0), 0);
+  const hoursPerWeek = Math.max(Number(inputs.hoursPerWeek || 0), 0);
+  const utilisation = Math.min(Math.max(Number(inputs.billableUtilisation || 0), 0), 100);
+  const targetMargin = Math.min(Math.max(Number(inputs.targetProfitMargin || 0), 0), 99.99);
+  const billableHours = workingWeeks * hoursPerWeek * (utilisation / 100);
+  const baseRequired = annualIncome + annualCosts;
+  const taxAdjustedRequired = baseRequired / Math.max(1 - taxRate / 100, 0.0001);
+  const marginAdjustedRequired = taxAdjustedRequired / Math.max(1 - targetMargin / 100, 0.0001);
+  const minimumHourlyRate = billableHours > 0 ? roundMoney(baseRequired / billableHours) : null;
+  const targetHourlyRate = billableHours > 0 ? roundMoney(marginAdjustedRequired / billableHours) : null;
+  const premiumHourlyRate = targetHourlyRate === null ? null : roundMoney(targetHourlyRate * 1.25);
+  const dailyRate = targetHourlyRate === null ? null : roundMoney(targetHourlyRate * Math.max(hoursPerWeek / 5, 1));
+  return {
+    annualIncome, annualCosts, taxRate, workingWeeks, hoursPerWeek, utilisation, targetMargin,
+    billableHours: roundMoney(billableHours),
+    minimumHourlyRate, targetHourlyRate, premiumHourlyRate, dailyRate,
+    assumptions: {
+      billableHoursFormula: 'workingWeeks × hoursPerWeek × billableUtilisation',
+      minimumFormula: '(targetAnnualIncome + annualBusinessCosts) ÷ billableHours',
+      targetFormula: 'minimum required revenue adjusted for tax/reserve and target margin ÷ billableHours',
+      premiumFormula: 'targetHourlyRate × 1.25',
+      dailyFormula: 'targetHourlyRate × max(hoursPerWeek ÷ 5, 1)'
+    }
+  };
+}
+
+function calculateFinancialAlerts(store = {}, now = new Date(), options = {}) {
+  const source = store && typeof store === 'object' ? store : {};
+  const invoices = Array.isArray(source.invoices) ? source.invoices : [];
+  const expenses = Array.isArray(source.expenses) ? source.expenses : [];
+  const projects = Array.isArray(source.projects) ? source.projects : [];
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const targetMargin = Number(options.targetMargin ?? source.targetProfitMargin ?? 0);
+  const dueSoonDays = Math.max(Number(options.dueSoonDays ?? 7), 0);
+  const horizonDays = Math.max(Number(options.horizonDays ?? 30), 0);
+  const alerts = [];
+  const dueSoonLimit = new Date(now);
+  dueSoonLimit.setDate(dueSoonLimit.getDate() + dueSoonDays);
+  const horizonLimit = new Date(now);
+  horizonLimit.setDate(horizonLimit.getDate() + horizonDays);
+
+  for (const invoice of invoices) {
+    const metric = calculateInvoicePaymentStatus(invoice, payments, now);
+    if (metric.outstanding <= 0 || String(invoice.status).toLowerCase() === 'cancelled') continue;
+    if (invoice.dueDate) {
+      const due = new Date(invoice.dueDate);
+      if (due < now) alerts.push({ type: 'overdue-invoice', severity: 'high', invoiceId: invoice.id, amount: metric.outstanding, action: 'Follow up on overdue invoice' });
+      else if (due <= dueSoonLimit) alerts.push({ type: 'invoice-due-soon', severity: 'medium', invoiceId: invoice.id, amount: metric.outstanding, action: 'Contact client before due date' });
+    }
+  }
+
+  for (const project of projects) {
+    const metrics = calculateProjectProfit(project, { expenses });
+    if (targetMargin > 0 && metrics.margin !== null && metrics.margin < targetMargin) {
+      alerts.push({ type: 'low-project-margin', severity: 'medium', projectId: project.id, margin: metrics.margin, targetMargin, action: 'Review scope, pricing or costs' });
+    }
+    if (Number(project.estimatedCosts || 0) > 0 && metrics.actualCosts > Number(project.estimatedCosts)) {
+      alerts.push({ type: 'project-cost-over-estimate', severity: 'high', projectId: project.id, actualCosts: metrics.actualCosts, estimatedCosts: roundMoney(project.estimatedCosts), action: 'Review project costs' });
+    }
+  }
+
+  const planned = expenses.filter(x => x.status === 'Planned' || x.planned === true);
+  const upcomingExpenseTotal = roundMoney(planned.reduce((sum, x) => {
+    const date = new Date(x.expenseDate || x.date || 0);
+    return date >= now && date <= horizonLimit ? sum + Number(x.amount || 0) : sum;
+  }, 0));
+  const forecast = calculateCashflowForecast(source, now, horizonDays);
+  if (forecast.forecastNetCash < 0) {
+    alerts.push({ type: 'low-upcoming-cashflow', severity: 'high', amount: forecast.forecastNetCash, upcomingExpenses: upcomingExpenseTotal, action: 'Protect cash runway and accelerate collections' });
+  }
+
+  const activeLeads = (Array.isArray(source.leads) ? source.leads : []).filter(x => !['won','lost','closed','cancelled'].includes(String(x.status || '').toLowerCase()));
+  const pipelineTotal = roundMoney(activeLeads.reduce((sum, x) => sum + Number(x.value || 0), 0));
+  const concentrationThreshold = Number(options.pipelineConcentrationThreshold ?? 0.5);
+  if (activeLeads.length > 1 && pipelineTotal > 0) {
+    const largest = Math.max(...activeLeads.map(x => Number(x.value || 0)));
+    if (largest / pipelineTotal >= concentrationThreshold) alerts.push({ type: 'pipeline-concentration', severity: 'medium', share: roundMoney(largest / pipelineTotal * 100), action: 'Diversify active pipeline' });
+  }
+  return alerts;
+}
+
+function formatMoney(value, currency = 'EUR', locale = 'en-US') {
+  const safeCurrency = /^[A-Z]{3}$/.test(String(currency)) ? String(currency) : 'EUR';
+  return new Intl.NumberFormat(locale, { style: 'currency', currency: safeCurrency, maximumFractionDigits: 2 }).format(Number(value || 0));
+}
+
+const STORAGE_KEY = 'business-os-store-v1';
+const CURRENT_SCHEMA_VERSION = 2;
+
+const COLLECTIONS = ['clients', 'leads', 'proposals', 'projects', 'invoices', 'payments', 'expenses'];
+const RELATION_FIELDS = {
+  leads: { clientId: 'clients' },
+  proposals: { clientId: 'clients', leadId: 'leads' },
+  projects: { clientId: 'clients', proposalId: 'proposals' },
+  invoices: { clientId: 'clients', projectId: 'projects' },
+  payments: { invoiceId: 'invoices', clientId: 'clients' },
+  expenses: { projectId: 'projects', clientId: 'clients' }
+};
+
+const EMPTY_STORE = Object.freeze({
+  schemaVersion: CURRENT_SCHEMA_VERSION,
+  archivedRecords: [],
+  clients: [],
+  leads: [],
+  proposals: [],
+  projects: [],
+  invoices: [],
+  payments: [],
+  expenses: []
+});
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function createId(prefix = 'record') {
+  return prefix + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+}
+
+function createEmptyStore() {
+  return clone(EMPTY_STORE);
+}
+
+function migrateStore(input) {
+  const source = input && typeof input === 'object' ? input : {};
+  const rawVersion = source.schemaVersion == null || source.schemaVersion === '' ? 1 : Number(source.schemaVersion);
+  if (!Number.isInteger(rawVersion) || rawVersion < 1) {
+    throw new Error('Invalid BUSINESS OS schema version');
+  }
+  const version = rawVersion;
+  if (version > CURRENT_SCHEMA_VERSION) throw new Error('Unsupported BUSINESS OS schema version');
+  if (version === 1) return { ...source, schemaVersion: CURRENT_SCHEMA_VERSION, archivedRecords: Array.isArray(source.archivedRecords) ? source.archivedRecords : [] };
+  return source;
+}
+
+function validateStore(input) {
+  const source = input && typeof input === 'object' ? input : {};
+  const errors = [];
+  if (!Number.isInteger(Number(source.schemaVersion)) || Number(source.schemaVersion) !== CURRENT_SCHEMA_VERSION) {
+    errors.push('schemaVersion must equal ' + CURRENT_SCHEMA_VERSION);
+  }
+
+  const findById = (collection, id) =>
+    (Array.isArray(source[collection]) ? source[collection] : []).find(item => item.id === id);
+
+  const archived = source.archivedRecords;
+  if (!Array.isArray(archived)) {
+    errors.push('archivedRecords must be an array');
+  } else {
+    const seenArchived = new Set();
+    for (const record of archived) {
+      if (!record || typeof record !== 'object' || Array.isArray(record)) {
+        errors.push('archivedRecords contains a non-object record');
+        continue;
+      }
+      if (!record.id || typeof record.id !== 'string') {
+        errors.push('archivedRecords contains a record without a valid id');
+      }
+      if (!COLLECTIONS.includes(record.collection)) {
+        errors.push('archivedRecords contains an invalid collection: ' + String(record.collection));
+      }
+      if (record.id && COLLECTIONS.includes(record.collection)) {
+        const key = record.collection + ':' + record.id;
+        if (seenArchived.has(key)) errors.push('duplicate archived id: ' + key);
+        seenArchived.add(key);
+      }
+    }
+  }
+
+  const seenIds = new Set();
+  for (const collection of COLLECTIONS) {
+    const records = source[collection];
+    if (!Array.isArray(records)) {
+      errors.push(`${collection} must be an array`);
+      continue;
+    }
+    for (const record of records) {
+      if (!record || typeof record !== 'object' || Array.isArray(record)) {
+        errors.push(`${collection} contains a non-object record`);
+        continue;
+      }
+      if (!record.id || typeof record.id !== 'string') {
+        errors.push(`${collection} contains a record without a valid id`);
+      } else {
+        const key = `${collection}:${record.id}`;
+        if (seenIds.has(key)) errors.push(`duplicate id: ${key}`);
+        seenIds.add(key);
+      }
+    }
+  }
+
+  if (Array.isArray(archived)) {
+    for (const record of archived) {
+      if (!record?.id || !COLLECTIONS.includes(record.collection)) continue;
+      const active = Array.isArray(source[record.collection])
+        ? source[record.collection].some(item => item?.id === record.id)
+        : false;
+      if (active) {
+        errors.push('archived record conflicts with active record: ' + record.collection + ':' + record.id);
+      }
+    }
+  }
+
+  const validateMoneyField = (collection, field) => {
+    for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
+      if (record?.[field] == null || record[field] === '') continue;
+      const value = Number(record[field]);
+      if (!Number.isFinite(value) || value < 0) {
+        errors.push(`${collection}.${record.id || '<unknown>'}.${field} must be a finite non-negative number`);
+      }
+    }
+  };
+
+  for (const [collection, field] of [
+    ['leads', 'value'], ['proposals', 'subtotal'], ['proposals', 'tax'], ['proposals', 'total'],
+    ['projects', 'revenue'], ['projects', 'estimatedCosts'], ['projects', 'actualCosts'],
+    ['invoices', 'amount'], ['invoices', 'value'], ['payments', 'amount'], ['expenses', 'amount']
+  ]) validateMoneyField(collection, field);
+
+  for (const invoice of Array.isArray(source.invoices) ? source.invoices : []) {
+    if (!Array.isArray(invoice.lineItems)) continue;
+    for (const item of invoice.lineItems) {
+      if (!item || typeof item !== 'object') {
+        errors.push(`invoices.${invoice.id || '<unknown>'}.lineItems contains a non-object item`);
+        continue;
+      }
+      const quantity = Number(item.quantity ?? 0);
+      const unitPrice = Number(item.unitPrice ?? 0);
+      if (!Number.isFinite(quantity) || quantity < 0) errors.push(`invoices.${invoice.id || '<unknown>'}.lineItems.quantity must be finite and non-negative`);
+      if (!Number.isFinite(unitPrice) || unitPrice < 0) errors.push(`invoices.${invoice.id || '<unknown>'}.lineItems.unitPrice must be finite and non-negative`);
+    }
+  }
+
+  for (const collection of COLLECTIONS) {
+    for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
+      for (const [field, target] of Object.entries(RELATION_FIELDS[collection] || {})) {
+        const value = record?.[field];
+        if (value == null || value === '') continue;
+        if (!findById(target, value)) {
+          errors.push(`${collection}.${record.id || '<unknown>'}.${field} -> ${value}`);
+        }
+      }
+    }
+  }
+
+  const checks = [
+    ['proposals', 'leadId', 'leads', 'clientId'],
+    ['projects', 'proposalId', 'proposals', 'clientId'],
+    ['invoices', 'projectId', 'projects', 'clientId'],
+    ['payments', 'invoiceId', 'invoices', 'clientId'],
+    ['expenses', 'projectId', 'projects', 'clientId']
+  ];
+
+  for (const [collection, relationField, targetCollection, clientField] of checks) {
+    for (const record of Array.isArray(source[collection]) ? source[collection] : []) {
+      const relationId = record?.[relationField];
+      if (relationId == null || relationId === '') continue;
+      const target = findById(targetCollection, relationId);
+      if (!target) continue;
+      const recordClient = record?.clientId;
+      const targetClient = target?.[clientField];
+      if (recordClient && targetClient && recordClient !== targetClient) {
+        errors.push(`${collection}.${record.id || '<unknown>'}.${relationField} client mismatch: ${recordClient} != ${targetClient}`);
+      }
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+function normalizeStore(input) {
+  const source = migrateStore(input);
+  return {
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+    archivedRecords: Array.isArray(source.archivedRecords) ? source.archivedRecords : [],
+    clients: Array.isArray(source.clients) ? source.clients : [],
+    leads: Array.isArray(source.leads) ? source.leads : [],
+    proposals: Array.isArray(source.proposals) ? source.proposals : [],
+    projects: Array.isArray(source.projects) ? source.projects : [],
+    invoices: Array.isArray(source.invoices) ? source.invoices : [],
+    payments: Array.isArray(source.payments) ? source.payments : [],
+    expenses: Array.isArray(source.expenses) ? source.expenses : []
+  };
+}
+
+function loadStore(storage) {
+  const raw = storage.getItem(STORAGE_KEY);
+  if (!raw) return createEmptyStore();
+  try {
+    const normalized = normalizeStore(JSON.parse(raw));
+    const validation = validateStore(normalized);
+    if (!validation.valid) {
+      throw new Error('Invalid BUSINESS OS persisted store: ' + validation.errors.join(', '));
+    }
+    return normalized;
+  } catch (error) {
+    throw new Error('Cannot load BUSINESS OS store: ' + error.message);
+  }
+}
+
+function saveStore(storage, store) {
+  const normalized = normalizeStore(store);
+  const validation = validateStore(normalized);
+  if (!validation.valid) {
+    throw new Error('Cannot save invalid BUSINESS OS store: ' + validation.errors.join(', '));
+  }
+  storage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+  return normalized;
+}
+
+function assertCollection(collection) {
+  if (!COLLECTIONS.includes(collection)) {
+    throw new Error('Unknown BUSINESS OS collection: ' + collection);
+  }
+}
+
+function archiveRecord(store, collection, id) {
+  assertCollection(collection);
+  const normalized = normalizeStore(store);
+  const list = Array.isArray(normalized[collection]) ? normalized[collection] : [];
+  const record = list.find(item => item.id === id);
+  if (!record) return normalized;
+
+  const dependents = [];
+  for (const [childCollection, relations] of Object.entries(RELATION_FIELDS)) {
+    for (const [field, targetCollection] of Object.entries(relations)) {
+      if (targetCollection === collection) {
+        for (const child of normalized[childCollection] || []) {
+          if (child?.[field] === id) dependents.push(childCollection + '.' + child.id);
+        }
+      }
+    }
+  }
+  if (dependents.length) {
+    throw new Error('Cannot archive record with active dependents: ' + dependents.join(', '));
+  }
+
+  const candidate = normalizeStore({
+    ...normalized,
+    [collection]: list.filter(item => item.id !== id),
+    archivedRecords: [...(normalized.archivedRecords || []), { ...record, collection, archivedAt: new Date().toISOString() }]
+  });
+  const validation = validateStore(candidate);
+  if (!validation.valid) {
+    throw new Error('Cannot archive invalid BUSINESS OS store: ' + validation.errors.join(', '));
+  }
+  return candidate;
+}
+
+function restoreRecord(store, archivedId) {
+  const normalized = normalizeStore(store);
+  const matches = (normalized.archivedRecords || []).filter(item => item.id === archivedId);
+  if (!matches.length) return normalized;
+  if (matches.length > 1) {
+    throw new Error('Cannot restore ambiguous archived record: ' + archivedId);
+  }
+  const archived = matches[0];
+  assertCollection(archived.collection);
+
+  const { collection, archivedAt, ...record } = archived;
+  const candidate = normalizeStore({
+    ...normalized,
+    [collection]: [...(normalized[collection] || []), record],
+    archivedRecords: (normalized.archivedRecords || []).filter(item => !(item.id === archivedId && item.collection === collection))
+  });
+  const validation = validateStore(candidate);
+  if (!validation.valid) {
+    throw new Error('Cannot restore record: ' + validation.errors.join(', '));
+  }
+  return candidate;
+}
+
+function upsertRecord(store, collection, record) {
+  assertCollection(collection);
+  const normalized = normalizeStore(store);
+  const list = Array.isArray(normalized[collection]) ? [...normalized[collection]] : [];
+  const now = new Date().toISOString();
+  const next = {
+    id: record.id || createId(collection.slice(0, -1)),
+    createdAt: record.createdAt || now,
+    updatedAt: now,
+    ...record
+  };
+  const index = list.findIndex(item => item.id === next.id);
+  if (index === -1) list.push(next);
+  else list[index] = next;
+  const candidate = normalizeStore({ ...normalized, [collection]: list });
+  const validation = validateStore(candidate);
+  if (!validation.valid) {
+    throw new Error('Cannot upsert invalid BUSINESS OS store: ' + validation.errors.join(', '));
+  }
+  return candidate;
+}
+
+function removeRecord(store, collection, id) {
+  assertCollection(collection);
+  const normalized = normalizeStore(store);
+  const candidate = normalizeStore({
+    ...normalized,
+    [collection]: (normalized[collection] || []).filter(item => item.id !== id)
+  });
+  const validation = validateStore(candidate);
+  if (!validation.valid) {
+    throw new Error('Cannot remove record: ' + validation.errors.join(', '));
+  }
+  return candidate;
+}
+
+function exportStore(store) {
+  return JSON.stringify(normalizeStore(store), null, 2);
+}
+
+function importStore(json) {
+  const parsed = typeof json === 'string' ? JSON.parse(json) : json;
+  if (!parsed || typeof parsed !== 'object') throw new Error('Invalid BUSINESS OS export');
+  if (parsed.schemaVersion && Number(parsed.schemaVersion) > CURRENT_SCHEMA_VERSION) throw new Error('Unsupported BUSINESS OS schema version');
+  const normalized = normalizeStore(parsed);
+  const validation = validateStore(normalized);
+  if (!validation.valid) throw new Error(`Invalid BUSINESS OS relationships: ${validation.errors.join(', ')}`);
+  return normalized;
+}
+
+function clearStore(storage) {
+  storage.removeItem(STORAGE_KEY);
+  return createEmptyStore();
+}
+
+function asDate(value) {
+  const date = value instanceof Date ? new Date(value) : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function startOfDay(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function endOfDay(date) {
+  const d = new Date(date);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
+
+function getDashboardDateRange(period = 'month', now = new Date()) {
+  const current = asDate(now) || new Date();
+  const year = current.getFullYear();
+  const month = current.getMonth();
+  let start;
+  let end = endOfDay(current);
+
+  if (period === 'quarter') {
+    const quarterStartMonth = Math.floor(month / 3) * 3;
+    start = new Date(year, quarterStartMonth, 1);
+  } else if (period === 'year') {
+    start = new Date(year, 0, 1);
+  } else if (period === 'all') {
+    start = new Date(0);
+  } else {
+    start = new Date(year, month, 1);
+  }
+
+  return { start: startOfDay(start), end };
+}
+
+function isDateInRange(value, range) {
+  const date = asDate(value);
+  return Boolean(date && range && date >= range.start && date <= range.end);
+}
+
+function filterByDateRange(records = [], dateFields = [], range) {
+  const list = Array.isArray(records) ? records : [];
+  return list.filter(record => dateFields.some(field => isDateInRange(record?.[field], range)));
+}
+
+function amount(value) {
+  return Number.isFinite(Number(value)) ? Number(value) : 0;
+}
+
+function calculateDashboardAnalytics(store = {}, period = 'month', now = new Date()) {
+  const source = store && typeof store === 'object' ? store : {};
+  const range = getDashboardDateRange(period, now);
+  const invoices = Array.isArray(source.invoices) ? source.invoices : [];
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const expenses = Array.isArray(source.expenses) ? source.expenses : [];
+  const leads = Array.isArray(source.leads) ? source.leads : [];
+
+  const scopedPayments = filterByDateRange(payments, ['paymentDate', 'date', 'createdAt'], range);
+  const scopedExpenses = filterByDateRange(expenses, ['expenseDate', 'date', 'createdAt'], range);
+  const scopedInvoices = filterByDateRange(invoices, ['issueDate', 'invoiceDate', 'createdAt'], range);
+  const activeLeads = leads.filter(item => !['won', 'lost', 'closed', 'cancelled'].includes(String(item.status || '').toLowerCase()));
+
+  const paid = roundMoney(scopedPayments.reduce((sum, item) => sum + amount(item.amount), 0));
+  const expensesTotal = roundMoney(scopedExpenses
+    .filter(item => item.status !== 'Planned' && item.planned !== true)
+    .reduce((sum, item) => sum + amount(item.amount), 0));
+
+  const invoiced = roundMoney(scopedInvoices.reduce((sum, invoice) => sum + amount(invoice.total ?? invoice.amount ?? invoice.value), 0));
+  const outstanding = roundMoney(scopedInvoices.reduce((sum, invoice) => {
+    const total = amount(invoice.total ?? invoice.amount ?? invoice.value);
+    const linkedPaid = payments
+      .filter(payment => payment.invoiceId === invoice.id)
+      .reduce((totalPaid, payment) => totalPaid + amount(payment.amount), 0);
+    return sum + Math.max(total - linkedPaid, 0);
+  }, 0));
+
+  const pipeline = roundMoney(activeLeads.reduce((sum, lead) => sum + amount(lead.value), 0));
+  const weightedPipeline = roundMoney(activeLeads.reduce((sum, lead) => sum + amount(lead.value) * Math.max(0, Math.min(100, amount(lead.probability))) / 100, 0));
+  const actualProfit = roundMoney(paid - expensesTotal);
+
+  return {
+    period,
+    range,
+    invoiced,
+    paid,
+    outstanding,
+    expenses: expensesTotal,
+    actualProfit,
+    pipeline,
+    weightedPipeline,
+    counts: {
+      invoices: scopedInvoices.length,
+      payments: scopedPayments.length,
+      expenses: scopedExpenses.length,
+      activeLeads: activeLeads.length
+    },
+    empty: scopedInvoices.length === 0 && scopedPayments.length === 0 && scopedExpenses.length === 0 && activeLeads.length === 0
+  };
+}
+
+function buildDashboardSeries(store = {}, period = 'year', now = new Date()) {
+  const source = store && typeof store === 'object' ? store : {};
+  const current = asDate(now) || new Date();
+  const buckets = [];
+  const count = period === 'month' ? 4 : period === 'quarter' ? 3 : 12;
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const expenses = Array.isArray(source.expenses) ? source.expenses : [];
+
+  if (period === 'month') {
+    for (let i = count - 1; i >= 0; i -= 1) {
+      const end = new Date(current);
+      end.setDate(end.getDate() - (i * 7));
+      const start = new Date(end);
+      start.setDate(start.getDate() - 6);
+      buckets.push({ start: startOfDay(start), end: endOfDay(end), label: `W${count - i}`, income: 0, expenses: 0, net: 0 });
+    }
+  } else if (period === 'quarter') {
+    for (let i = count - 1; i >= 0; i -= 1) {
+      const d = new Date(current.getFullYear(), current.getMonth() - i, 1);
+      buckets.push({ start: startOfDay(d), end: endOfDay(new Date(d.getFullYear(), d.getMonth() + 1, 0)), label: d.toLocaleString('en', { month: 'short' }), income: 0, expenses: 0, net: 0 });
+    }
+  } else {
+    for (let i = count - 1; i >= 0; i -= 1) {
+      const d = new Date(current.getFullYear(), current.getMonth() - i, 1);
+      buckets.push({ start: startOfDay(d), end: endOfDay(new Date(d.getFullYear(), d.getMonth() + 1, 0)), label: d.toLocaleString('en', { month: 'short' }), income: 0, expenses: 0, net: 0 });
+    }
+  }
+
+  payments.forEach(item => {
+    const date = asDate(item.paymentDate || item.date || item.createdAt);
+    if (!date) return;
+    const bucket = buckets.find(x => date >= x.start && date <= x.end);
+    if (bucket) bucket.income = roundMoney(bucket.income + amount(item.amount));
+  });
+
+  expenses.filter(item => item.status !== 'Planned' && item.planned !== true).forEach(item => {
+    const date = asDate(item.expenseDate || item.date || item.createdAt);
+    if (!date) return;
+    const bucket = buckets.find(x => date >= x.start && date <= x.end);
+    if (bucket) bucket.expenses = roundMoney(bucket.expenses + amount(item.amount));
+  });
+
+  return buckets.map(bucket => ({ ...bucket, net: roundMoney(bucket.income - bucket.expenses) }));
+}
+
+function getDashboardLabels(language = 'en') {
+  const labels = {
+    en: { month: 'This month', quarter: 'This quarter', year: 'This year', all: 'All time', empty: 'No financial data for this period.' },
+    ru: { month: 'Этот месяц', quarter: 'Этот квартал', year: 'Этот год', all: 'Всё время', empty: 'За этот период нет финансовых данных.' },
+    es: { month: 'Este mes', quarter: 'Este trimestre', year: 'Este año', all: 'Todo el tiempo', empty: 'No hay datos financieros para este periodo.' },
+    de: { month: 'Dieser Monat', quarter: 'Dieses Quartal', year: 'Dieses Jahr', all: 'Gesamtzeitraum', empty: 'Keine Finanzdaten für diesen Zeitraum.' },
+    fr: { month: 'Ce mois', quarter: 'Ce trimestre', year: 'Cette année', all: 'Toute la période', empty: 'Aucune donnée financière pour cette période.' }
+  };
+  return labels[language] || labels.en;
+}
+
+function buildCashflowExportRows(store = {}, period = 'month', now = new Date()) {
+  const analytics = calculateDashboardAnalytics(store, period, now);
+  return [
+    ['Metric', 'Value'],
+    ['Period', period],
+    ['Invoiced', analytics.invoiced],
+    ['Paid', analytics.paid],
+    ['Outstanding', analytics.outstanding],
+    ['Expenses', analytics.expenses],
+    ['Actual Profit', analytics.actualProfit],
+    ['Pipeline', analytics.pipeline],
+    ['Weighted Pipeline', analytics.weightedPipeline]
+  ];
+}
+
+function buildProfitExportRows(store = {}, period = 'month', now = new Date()) {
+  const analytics = calculateDashboardAnalytics(store, period, now);
+  return [
+    ['Metric', 'Value'],
+    ['Period', period],
+    ['Revenue / Paid', analytics.paid],
+    ['Expenses', analytics.expenses],
+    ['Net Profit', analytics.actualProfit]
+  ];
+}
+
+const PROPOSAL_CONVERTIBLE_STATUSES = new Set(['won', 'accepted']);
+const PROPOSAL_TERMINAL_STATUSES = new Set(['won', 'accepted', 'lost', 'cancelled', 'closed']);
+const PROJECT_STATUSES = new Set(['new', 'active', 'on hold', 'completed', 'cancelled']);
+const INVOICE_STATUSES = new Set(['draft', 'sent', 'partially paid', 'paid', 'overdue', 'cancelled']);
+
+function normalizeStatus(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function normalizeProposalStatus(value) {
+  const status = normalizeStatus(value);
+  return status || 'draft';
+}
+
+function canConvertProposalToProject(proposal, projects = []) {
+  if (!proposal || !PROPOSAL_CONVERTIBLE_STATUSES.has(normalizeProposalStatus(proposal.status))) {
+    return { valid: false, reason: 'proposal-not-accepted' };
+  }
+  if (!proposal.clientId) return { valid: false, reason: 'proposal-client-required' };
+  if ((Array.isArray(projects) ? projects : []).some(project => project.proposalId === proposal.id)) {
+    return { valid: false, reason: 'project-already-exists' };
+  }
+  const value = Number(proposal.value ?? proposal.amount ?? proposal.total ?? 0);
+  if (!Number.isFinite(value) || value <= 0) return { valid: false, reason: 'proposal-value-required' };
+  return { valid: true };
+}
+
+function buildProjectFromProposal(proposal, projects = [], createId = () => 'project', now = new Date()) {
+  const check = canConvertProposalToProject(proposal, projects);
+  if (!check.valid) throw new Error(check.reason);
+  const value = Number(proposal.value ?? proposal.amount ?? proposal.total ?? 0);
+  const timestamp = now.toISOString();
+  return {
+    id: createId('project'),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    name: (proposal.name || proposal.title || 'Untitled proposal') + ' Project',
+    status: 'Active',
+    clientId: proposal.clientId,
+    proposalId: proposal.id,
+    revenue: value,
+    budget: value,
+    budgetType: 'Fee',
+    billingType: 'Fixed Fee',
+    actualCosts: 0,
+    actualHours: 0,
+    labourRate: 0,
+    nextAction: proposal.nextAction || 'Define project kickoff',
+    notes: proposal.notes || ''
+  };
+}
+
+function canCreateInvoiceFromProject(project, invoices = []) {
+  if (!project) return { valid: false, reason: 'project-not-found' };
+  if (normalizeStatus(project.billingType) === 'non-billable') return { valid: false, reason: 'project-non-billable' };
+  if (!project.clientId) return { valid: false, reason: 'project-client-required' };
+  if ((Array.isArray(invoices) ? invoices : []).some(invoice => invoice.projectId === project.id)) {
+    return { valid: false, reason: 'invoice-already-exists' };
+  }
+  const amount = Number(project.revenue ?? project.budget ?? 0);
+  if (!Number.isFinite(amount) || amount <= 0) return { valid: false, reason: 'project-amount-required' };
+  return { valid: true };
+}
+
+function buildInvoiceFromProject(project, invoices = [], createId = () => 'invoice', now = new Date()) {
+  const check = canCreateInvoiceFromProject(project, invoices);
+  if (!check.valid) throw new Error(check.reason);
+  const amount = Number(project.revenue ?? project.budget ?? 0);
+  const timestamp = now.toISOString();
+  return {
+    id: createId('invoice'),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    name: (project.name || 'Project') + ' Invoice',
+    status: 'Draft',
+    clientId: project.clientId,
+    projectId: project.id,
+    value: amount,
+    amount,
+    taxRate: 0,
+    discountType: 'none',
+    discountValue: 0,
+    dueDate: null,
+    lineItems: [{ description: project.name || 'Project services', quantity: 1, unitPrice: amount }],
+    nextAction: 'Send invoice',
+    notes: project.notes || ''
+  };
+}
+
+function validateB10Lifecycle(store, now = new Date()) {
+  const source = store && typeof store === 'object' ? store : {};
+  const errors = [...validateStore(source).errors];
+  const clients = Array.isArray(source.clients) ? source.clients : [];
+  const clientIds = new Set(clients.map(x => x.id));
+  const proposals = Array.isArray(source.proposals) ? source.proposals : [];
+  const projects = Array.isArray(source.projects) ? source.projects : [];
+  const invoices = Array.isArray(source.invoices) ? source.invoices : [];
+  const payments = Array.isArray(source.payments) ? source.payments : [];
+  const projectIds = new Set(projects.map(x => x.id));
+  const invoiceIds = new Set(invoices.map(x => x.id));
+
+  for (const proposal of proposals) {
+    if (proposal.clientId && !clientIds.has(proposal.clientId)) errors.push('proposal client missing: ' + proposal.id);
+    if (proposal.leadId && !Array.isArray(source.leads) ? true : false) errors.push('proposal lead relation invalid: ' + proposal.id);
+  }
+  for (const project of projects) {
+    if (project.proposalId && !proposals.some(x => x.id === project.proposalId)) errors.push('project proposal missing: ' + project.id);
+    if (project.status && !PROJECT_STATUSES.has(normalizeStatus(project.status))) errors.push('invalid project status: ' + project.id);
+  }
+  for (const invoice of invoices) {
+    const metric = calculateInvoice(invoice, now);
+    if (metric.total < 0 || metric.outstanding < 0) errors.push('invalid invoice financial state: ' + invoice.id);
+    if (invoice.status && !INVOICE_STATUSES.has(normalizeStatus(invoice.status))) errors.push('invalid invoice status: ' + invoice.id);
+    if (invoice.paymentPlan?.installments) {
+      const plan = calculatePaymentPlan(metric.total, invoice.paymentPlan.installments, now);
+      if (!plan.valid) errors.push('invalid invoice payment plan: ' + invoice.id);
+    }
+  }
+  for (const payment of payments) {
+    if (payment.invoiceId && !invoiceIds.has(payment.invoiceId)) errors.push('payment invoice missing: ' + payment.id);
+    if (payment.amount == null || Number(payment.amount) <= 0) errors.push('payment amount must be positive: ' + payment.id);
+    if (payment.installmentIndex != null) {
+      const invoice = invoices.find(x => x.id === payment.invoiceId);
+      const count = invoice?.paymentPlan?.installments?.length || 0;
+      if (!Number.isInteger(payment.installmentIndex) || payment.installmentIndex < 0 || payment.installmentIndex >= count) {
+        errors.push('payment installment index invalid: ' + payment.id);
+      }
+    }
+  }
+  for (const invoice of invoices) {
+    const allocation = allocatePaymentPlan(invoice, payments, now);
+    if (allocation.unallocatedPayments > 0.01) errors.push('payment exceeds invoice payment plan: ' + invoice.id);
+    const state = calculateInvoicePaymentStatus(invoice, payments, now);
+    if (state.outstanding < 0) errors.push('invoice outstanding below zero: ' + invoice.id);
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+const DEFAULT_PIPELINE_STAGES = Object.freeze(['New','Qualified','Proposal','Negotiation','Won']);
+const TERMINAL_STAGES = Object.freeze(['Won','Lost','Closed','Cancelled']);
+
+function normalizeStage(value) {
+  const raw = String(value || '').trim();
+  const allStages = [...DEFAULT_PIPELINE_STAGES, ...TERMINAL_STAGES.filter(stage => !DEFAULT_PIPELINE_STAGES.includes(stage))];
+  const match = allStages.find(stage => stage.toLowerCase() === raw.toLowerCase());
+  return match || 'New';
+}
+
+function normalizeLead(lead = {}) {
+  const now = new Date().toISOString();
+  return {
+    id: String(lead.id || ''),
+    name: String(lead.name || lead.title || '').trim(),
+    company: String(lead.company || '').trim(),
+    email: String(lead.email || '').trim(),
+    phone: String(lead.phone || '').trim(),
+    source: String(lead.source || '').trim(),
+    status: normalizeStage(lead.status),
+    value: Math.max(Number(lead.value || 0), 0),
+    probability: Math.min(Math.max(Number(lead.probability ?? 0), 0), 100),
+    nextAction: String(lead.nextAction || '').trim(),
+    nextActionDate: lead.nextActionDate || null,
+    clientId: lead.clientId || null,
+    notes: String(lead.notes || '').trim(),
+    createdAt: lead.createdAt || now,
+    updatedAt: now
+  };
+}
+
+function calculateCrmPipeline(leads = [], options = {}) {
+  const source = Array.isArray(leads) ? leads : [];
+  const query = String(options.query || '').trim().toLowerCase();
+  const stage = options.stage ? normalizeStage(options.stage) : null;
+  const filtered = source
+    .map(normalizeLead)
+    .filter(lead => !query || [lead.name, lead.company, lead.email, lead.phone, lead.source].some(value => value.toLowerCase().includes(query)))
+    .filter(lead => !stage || lead.status === stage);
+  const active = filtered.filter(lead => !TERMINAL_STAGES.includes(lead.status));
+  const pipelineValue = active.reduce((sum, lead) => sum + lead.value, 0);
+  const weightedValue = active.reduce((sum, lead) => sum + lead.value * lead.probability / 100, 0);
+  const byStage = Object.fromEntries(DEFAULT_PIPELINE_STAGES.map(name => [name, filtered.filter(lead => lead.status === name)]));
+  return {
+    stages: DEFAULT_PIPELINE_STAGES,
+    leads: filtered,
+    byStage,
+    activeCount: active.length,
+    pipelineValue: Math.round((pipelineValue + Number.EPSILON) * 100) / 100,
+    weightedValue: Math.round((weightedValue + Number.EPSILON) * 100) / 100
+  };
+}
+
+function convertLeadToClient(lead, clients = []) {
+  const source = normalizeLead(lead);
+  if (!source.id) throw new Error('Lead id is required');
+  if (source.status !== 'Won') throw new Error('Only Won leads can be converted');
+  if (source.clientId) return { client: null, lead: source, existingClientId: source.clientId };
+  const duplicate = (Array.isArray(clients) ? clients : []).find(client => {
+    const email = String(client.email || '').trim().toLowerCase();
+    return email && source.email && email === source.email.toLowerCase();
+  });
+  if (duplicate) return { client: duplicate, lead: { ...source, clientId: duplicate.id }, existingClientId: duplicate.id };
+  const client = {
+    id: 'client_' + source.id,
+    name: source.name || source.company || 'Unnamed client',
+    company: source.company || '',
+    email: source.email || '',
+    phone: source.phone || '',
+    sourceLeadId: source.id,
+    status: 'Active',
+    createdAt: source.createdAt,
+    updatedAt: new Date().toISOString()
+  };
+  return { client, lead: { ...source, clientId: client.id }, existingClientId: null };
+}
+
+function validateCrm(store = {}) {
+  const errors = [];
+  const leads = Array.isArray(store.leads) ? store.leads : [];
+  const clients = Array.isArray(store.clients) ? store.clients : [];
+  const clientIds = new Set(clients.map(client => client.id));
+  const leadIds = new Set();
+  for (const lead of leads) {
+    if (!lead || typeof lead !== 'object' || !lead.id) errors.push('lead must have an id');
+    if (leadIds.has(lead.id)) errors.push('duplicate lead id: ' + lead.id);
+    leadIds.add(lead.id);
+    if (lead.clientId && !clientIds.has(lead.clientId)) errors.push('lead client relation missing: ' + lead.clientId);
+    if (Number(lead.value || 0) < 0) errors.push('lead value must be non-negative: ' + lead.id);
+    if (Number(lead.probability || 0) < 0 || Number(lead.probability || 0) > 100) errors.push('lead probability out of range: ' + lead.id);
+  }
+  return { valid: errors.length === 0, errors };
+}
+
 const copy={en:{g:'Good morning',s:'Here’s what’s happening with your business today.',search:'⌕ Search clients, projects, invoices…',nav:['Dashboard','Leads','Clients','Proposals','Projects','Invoices','Payments','Expenses','Profit','Cashflow','Settings']},ru:{g:'Доброе утро',s:'Вот что происходит с вашим бизнесом сегодня.',search:'⌕ Поиск клиентов, проектов, счетов…',nav:['Обзор','Лиды','Клиенты','Предложения','Проекты','Счета','Платежи','Расходы','Прибыль','Cashflow','Настройки']},es:{g:'Buenos días',s:'Esto es lo que ocurre con tu negocio hoy.',search:'⌕ Buscar clientes, proyectos, facturas…',nav:['Panel','Leads','Clientes','Propuestas','Proyectos','Facturas','Pagos','Gastos','Beneficio','Cashflow','Ajustes']},de:{g:'Guten Morgen',s:'Das passiert heute in deinem Unternehmen.',search:'⌕ Kunden, Projekte, Rechnungen suchen…',nav:['Dashboard','Leads','Kunden','Angebote','Projekte','Rechnungen','Zahlungen','Ausgaben','Gewinn','Cashflow','Einstellungen']},fr:{g:'Bonjour',s:'Voici ce qui se passe dans votre activité aujourd’hui.',search:'⌕ Rechercher clients, projets, factures…',nav:['Tableau de bord','Leads','Clients','Propositions','Projets','Factures','Paiements','Dépenses','Bénéfice','Cashflow','Paramètres']}};
 
 const screenCopy={
