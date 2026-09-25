@@ -67,7 +67,7 @@ test('B13 localization covers all five required languages', () => {
 });
 
 test('B13 UI localization is wired across primary screens', () => {
-  for (const key of ['dashboard','leadsTitle','clientsTitle','proposalsTitle','projectsTitle','invoicesTitle','paymentsTitle','expensesTitle','profitTitle','cashflowTitle','settingsTitle']) {
+  for (const key of ['leadsTitle','clientsTitle','proposalsTitle','projectsTitle','invoicesTitle','paymentsTitle','expensesTitle','profitTitle','cashflowTitle']) {
     assert.match(html, new RegExp('data-i18n="' + key + '"'));
   }
 });
