@@ -33,11 +33,13 @@ test.describe('B14 module navigation and functional surfaces', () => {
 
   test('dashboard, profit and cashflow surfaces expose their core outputs', async ({ page }) => {
     await page.goto('/app/index.html');
-    for (const index of ['0', '8', '9']) {
-      await page.locator(`#nav button[data-screen="${index}"]`).click();
-      await expect(page.locator('.screen.active')).toBeVisible();
-    }
+    await page.locator('#nav button[data-screen="0"]').click();
+    await expect(page.locator('#dashboardScreen')).toHaveClass(/active/);
+    await page.locator('#nav button[data-screen="8"]').click();
+    await expect(page.locator('#profitScreen')).toHaveClass(/active/);
     await expect(page.locator('#profitGrossRevenue')).toBeVisible();
+    await page.locator('#nav button[data-screen="9"]').click();
+    await expect(page.locator('#cashflowScreen')).toHaveClass(/active/);
     await expect(page.locator('#cashflowReceived')).toBeVisible();
   });
 
