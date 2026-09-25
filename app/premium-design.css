@@ -73,3 +73,20 @@ html,body{background:var(--nd-bg);color:var(--nd-text)}body{font-family:Inter,ui
 #proposalsScreen .badge{white-space:nowrap}
 #proposalsScreen .actions{white-space:nowrap}
 @media(max-width:720px){#proposalsScreen .page-title{align-items:flex-start;flex-direction:column}#proposalsScreen .page-title .primary{width:100%}#proposalsScreen .card{overflow:auto}}
+
+/* ND.7/9 — final interaction polish */
+#leadsScreen .deal:focus-within,#leadsScreen .stage:focus-within,#proposalsScreen tr:focus-within{box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+#leadsScreen .deal .btn,#proposalsScreen .actions .btn{transition:transform .15s ease,box-shadow .15s ease}
+#leadsScreen .deal .btn:hover,#proposalsScreen .actions .btn:hover{transform:translateY(-1px)}
+/* ND.10 — Projects premium surface */
+#projectsScreen .page-title h1{font-weight:800}
+#projectsScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm);overflow:hidden}
+#projectsScreen .project-card{border:1px solid var(--nd-border);border-radius:var(--nd-radius-md);background:var(--nd-surface);padding:16px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+#projectsScreen .project-card:hover{transform:translateY(-1px);box-shadow:var(--nd-shadow-md);border-color:#d5ddec}
+#projectsScreen .project-card h3{margin:0;font-size:15px;font-weight:750}
+#projectsScreen .project-meta{color:var(--nd-muted);font-size:12px}
+#projectsScreen .project-card .progress{margin-top:12px}
+#projectsScreen .project-card .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+#projectsScreen .data-table tbody tr:hover{background:#f8faff}
+#projectsScreen .badge{white-space:nowrap}
+@media(max-width:720px){#projectsScreen .page-title{align-items:flex-start;flex-direction:column}#projectsScreen .page-title .primary{width:100%}#projectsScreen .project-card{padding:14px}}
