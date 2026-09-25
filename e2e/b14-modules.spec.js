@@ -48,8 +48,8 @@ test.describe('B14 module navigation and functional surfaces', () => {
     await page.locator('#nav button[data-screen="10"]').click();
     await expect(page.locator('#settingsScreen')).toHaveClass(/active/);
     await expect(page.locator('#archiveList')).toBeVisible();
-    await expect(page.locator('#exportData')).toBeVisible();
-    await expect(page.locator('#importData')).toBeVisible();
+    await expect(page.locator('#settingsExportData')).toBeVisible();
+    await expect(page.locator('#settingsImportData')).toBeVisible();
   });
 
   test('all core screens remain horizontally contained on mobile', async ({ page }) => {
