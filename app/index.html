@@ -2220,6 +2220,9 @@ window.setBusinessOSLanguage=function(nextLang){
   try{refreshSettingsLabels();}catch(e){}
   try{refreshDashboardMetrics();}catch(e){console.warn('BUSINESS OS dashboard recovery',e);}
   try{renderStoredRecords();}catch(e){console.warn('BUSINESS OS records recovery',e);}
+  try{window.refreshMobileNavLabels?.();}catch(e){}
+  try{window.refreshProfitLabels?.();}catch(e){}
+  try{window.refreshCashflowLabels?.();}catch(e){}
   return lang;
 };
 
@@ -2575,19 +2578,22 @@ const mobileNavCopy={
  fr:{dashboard:'Aperçu',leads:'Prospects',clients:'Clients',projects:'Projets',invoices:'Factures',more:'Plus'}
 };
 function refreshCashflowLabels(){
- const copy=cashflowUiCopy[activeLanguage]||cashflowUiCopy.en;
+ const copy=cashflowUiCopy[window.activeLanguage]||cashflowUiCopy.en;
  document.querySelectorAll('#cashflowScreen [data-ui]').forEach(el=>{const key=el.dataset.ui;if(copy[key])el.textContent=copy[key];});
 }
 function refreshProfitLabels(){
- const copy=profitUiCopy[activeLanguage]||profitUiCopy.en;
+ const copy=profitUiCopy[window.activeLanguage]||profitUiCopy.en;
  document.querySelectorAll('[data-ui]').forEach(el=>{const key=el.dataset.ui;if(copy[key])el.textContent=copy[key];});
  document.querySelectorAll('[data-ui-label="costs"]').forEach(el=>el.textContent=copy.costs);
  const empty=document.querySelector('#profitabilityBody .empty'); if(empty&&copy.noProjectData)empty.textContent=copy.noProjectData;
 }
 function refreshMobileNavLabels(){
- const copy=mobileNavCopy[activeLanguage]||mobileNavCopy.en;
+ const copy=mobileNavCopy[window.activeLanguage]||mobileNavCopy.en;
  document.querySelectorAll('[data-mobile-label]').forEach(el=>{const key=el.dataset.mobileLabel;if(copy[key])el.textContent=copy[key];});
 }
+window.refreshCashflowLabels=refreshCashflowLabels;
+window.refreshProfitLabels=refreshProfitLabels;
+window.refreshMobileNavLabels=refreshMobileNavLabels;
 refreshMobileNavLabels();
 refreshProfitLabels();
 refreshCashflowLabels();
