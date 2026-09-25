@@ -335,8 +335,8 @@ B14 полностью подтверждён фактическим выпол�
 | ND.11 | Invoices redesign | 100% |
 | ND.12 | Payments redesign | 100% |
 | ND.13 | Expenses redesign | 100% |
-| ND.14 | Profit redesign | 65% |
-| ND.15 | Cashflow redesign | 65% |
+| ND.14 | Profit redesign | 100% |
+| ND.15 | Cashflow redesign | 100% |
 | ND.16 | Settings / persistence / export-import redesign | 0% |
 | ND.17 | Forms / drawers / dialogs / validation states | 0% |
 | ND.18 | Empty / zero / error / success / loading states | 0% |
@@ -429,3 +429,10 @@ B14 полностью подтверждён фактическим выпол�
 - ND.14: 65% — Profit premium surface added with KPI/stat hierarchy, analysis table treatment, empty state and responsive layout.
 - ND.15: 65% — Cashflow premium surface added with KPI/stat hierarchy, table treatment, empty state and responsive layout.
 - GitHub commit: `9c75fd6e6d6ecf4ba0d85e18faf896003f323771`.
+
+
+### Design checkpoint — Profit + Cashflow completed / Settings started
+- ND.14: 100% — Profit premium surface completed with KPI hierarchy, analysis table, positive/negative metric treatment, empty state and responsive behavior.
+- ND.15: 100% — Cashflow premium surface completed with KPI hierarchy, table treatment, positive/negative metric treatment, empty state and responsive behavior.
+- ND.16: 55% — Settings/persistence surface started with settings grid, persistence controls, archive area, danger-zone treatment and mobile layout.
+- GitHub commit: `cafa1411a8395e3d84e216eaacc72244fde8cb2f`.
