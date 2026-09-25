@@ -78,7 +78,7 @@ test('B14 export controls are present and executable', async ({ page }) => {
 });
 
 test('B14 reload preserves persisted records', async ({ page }) => {
-  await page.getByRole('button', { name: 'Leads', exact: true }).click();
+  await page.locator('#nav button[data-screen="1"]').click();
   await page.getByRole('button', { name: /New lead/i }).click();
   await page.locator('#fName').fill('Reload Test');
   await page.locator('#drawerSave').click();
