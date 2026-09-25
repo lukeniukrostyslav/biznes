@@ -471,3 +471,8 @@ B14 полностью подтверждён фактическим выпол�
 ### Design checkpoint — ND.21 completed
 - ND.21: 100% — Accessibility polish finalized: visible focus states, disabled-state treatment, high-contrast support and reduced-motion behavior.
 - GitHub commit: `46a4b02d9ccd34f296edcb6bcab2212a4753c1bd`.
+
+
+### Design checkpoint — ND.22 completed
+- ND.22: 100% — Unified page titles, descriptions, controls, cards, tables, badges, toolbars and empty-state treatment across all product modules.
+- GitHub commit: `a86459435ae374fdb1286a73830843a66bd992b9`.
