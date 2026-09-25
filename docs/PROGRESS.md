@@ -322,11 +322,11 @@ B14 полностью подтверждён фактическим выпол�
 
 | Подблок | Название | Прогресс |
 |---|---|---:|
-| ND.1 | Product UI audit и mapping существующих функций | 0% |
-| ND.2 | Premium visual direction / design principles | 0% |
-| ND.3 | Design tokens: colors / typography / spacing / radius / elevation | 0% |
-| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 0% |
-| ND.5 | Core component system | 0% |
+| ND.1 | Product UI audit и mapping существующих функций | 100% |
+| ND.2 | Premium visual direction / design principles | 100% |
+| ND.3 | Design tokens: colors / typography / spacing / radius / elevation | 100% |
+| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 40% |
+| ND.5 | Core component system | 35% |
 | ND.6 | Overview / Dashboard redesign | 0% |
 | ND.7 | Leads / CRM redesign | 0% |
 | ND.8 | Clients redesign | 0% |
@@ -349,6 +349,15 @@ B14 полностью подтверждён фактическим выпол�
 | ND.25 | Final manual acceptance + preview link | 0% |
 
 Полная спецификация: docs/NEW_DESIGN_MASTER_SPEC.md.
+
+### NEW DESIGN — фактически выполнено на текущем этапе
+- ND.1 закрыт: проведён аудит существующего product surface и зафиксировано правило «дизайн не меняет бизнес-логику».
+- ND.2 закрыт: зафиксировано направление Premium B2B без декоративного перегруза, с приоритетом ясности, иерархии и действий. Подход согласуется с современными рекомендациями по B2B dashboard UX: сначала решения пользователя, затем данные и визуализация. citeturn0search0turn0search2
+- ND.3 закрыт: создан `app/premium-design.css` с токенами цветов, поверхностей, текста, границ, радиусов, теней и responsive/accessibility правилами.
+- ND.4 начат: новый visual layer подготовлен для shell, sidebar, topbar и mobile navigation.
+- ND.5 начат: базовые общие стили для cards, KPI, tables, drawers, forms, badges, empty states и mobile navigation подготовлены.
+
+Важно: ND.4/ND.5 не подняты до 100%, потому что новый stylesheet ещё не активирован в `app/index.html` и не прошёл браузерную проверку. Это сделано намеренно — проценты не завышаются.
 
 Правило: процент повышается только после фактической реализации и проверки. Финальный NEW DESIGN = 100% только после зелёной регрессии и доступного preview, который можно открыть и вручную проверить кликами.
 
