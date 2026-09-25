@@ -708,7 +708,7 @@ function exportProfitAnalysis(){
   const payments=businessStore.payments||[];
   const grossRevenue=payments.reduce((sum,p)=>sum+Number(p.amount||0),0);
   const directCosts=projects.reduce((sum,project)=>sum+Number(calculateProjectProfit(project,{expenses}).directCosts||0),0);
-  const operatingCosts=expenses.filter(e=>!e.projectId).reduce((sum,e)=>sum+Number(e.amount||0),0);
+  const operatingCosts=expenses.filter(e=>!e.projectId && e.status!=='Planned' && e.planned!==true).reduce((sum,e)=>sum+Number(e.amount||0),0);
   rows.push([]);
   rows.push(['Metric','Value']);
   rows.push(['Gross revenue',grossRevenue]);
@@ -936,7 +936,6 @@ document.getElementById('drawerSave').addEventListener('click',()=>{
     if(!selectedInvoiceId || paymentAmount<=0){toast(t('paymentInput'));return;}
     const invoice=businessStore.invoices.find(x=>x.id===selectedInvoiceId);
     if(!invoice){toast(t('invoiceMissing'));return;}
-    if(invoice.clientId && relations.clientId && invoice.clientId!==relations.clientId){toast(t('paymentClient'));return;}
     relations.clientId=invoice.clientId||relations.clientId;
     const linkedPayments=(businessStore.payments||[]).filter(p=>p.id!==editingId);
     const invoiceStatus=calculateInvoicePaymentStatus(invoice,linkedPayments,new Date());
