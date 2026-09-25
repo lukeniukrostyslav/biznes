@@ -182,3 +182,27 @@ html,body{background:var(--nd-bg);color:var(--nd-text)}body{font-family:Inter,ui
 #cashflowScreen .empty{min-height:180px;display:grid;place-items:center}
 @media(max-width:900px){#cashflowScreen .stat-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:720px){#cashflowScreen .page-title{align-items:flex-start;flex-direction:column}#cashflowScreen .page-title .primary{width:100%}#cashflowScreen .stat-grid{grid-template-columns:1fr}#cashflowScreen .card{overflow:auto}}
+
+/* ND.14/15 — completion polish */
+#profitScreen .card-header,#cashflowScreen .card-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#profitScreen .card-header h2,#cashflowScreen .card-header h2{margin:0;font-size:15px;font-weight:750}
+#profitScreen .stat-card,#cashflowScreen .stat-card{transition:transform .15s ease,box-shadow .15s ease}
+#profitScreen .stat-card:hover,#cashflowScreen .stat-card:hover{transform:translateY(-1px);box-shadow:var(--nd-shadow-sm)}
+#profitScreen .metric-positive,#cashflowScreen .metric-positive{color:var(--nd-success)}
+#profitScreen .metric-negative,#cashflowScreen .metric-negative{color:var(--nd-danger)}
+@media(max-width:720px){#profitScreen .card-header,#cashflowScreen .card-header{align-items:flex-start;flex-direction:column}}
+/* ND.16 — Settings / persistence premium surface */
+#settingsScreen .page-title h1{font-weight:800}
+#settingsScreen .settings-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:16px}
+#settingsScreen .card{border:1px solid var(--nd-border);box-shadow:var(--nd-shadow-sm);overflow:hidden}
+#settingsScreen .card-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#settingsScreen .card-header h2{margin:0;font-size:15px;font-weight:750}
+#settingsScreen .setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--nd-border)}
+#settingsScreen .setting-row:last-child{border-bottom:0}
+#settingsScreen .setting-label{font-weight:700;color:var(--nd-text)}
+#settingsScreen .setting-help{font-size:12px;color:var(--nd-muted);margin-top:3px}
+#settingsScreen .data-table tbody tr:hover{background:#f8faff}
+#settingsScreen .danger-zone{border-color:#f1c7c7}
+#settingsScreen .archive-list{max-height:360px;overflow:auto}
+@media(max-width:820px){#settingsScreen .settings-grid{grid-template-columns:1fr}}
+@media(max-width:720px){#settingsScreen .page-title{align-items:flex-start;flex-direction:column}#settingsScreen .setting-row{align-items:flex-start;flex-direction:column}#settingsScreen .setting-row .btn{width:100%}}
