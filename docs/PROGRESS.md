@@ -443,3 +443,10 @@ B14 полностью подтверждён фактическим выпол�
 - ND.17: 70% — Unified premium form/dialog/drawer treatment added with focus, validation-error and action-row styling.
 - ND.18: 55% — Shared empty/loading/error/success state system added for consistent product-wide feedback.
 - GitHub commit: `d26bea129c70a4b8dd755b44798a5d95ffdc7231`.
+
+
+### Design checkpoint — ND.4 / ND.5 / ND.6 completed
+- ND.4: 100% — App Shell closure: desktop shell, sidebar/topbar/mobile behavior, focus-visible treatment and responsive shell rules finalized.
+- ND.5: 100% — Unified component system closure: buttons, cards, badges, tables, focus and shared component sizing/interaction rules finalized.
+- ND.6: 100% — Dashboard closure: KPI grid, dashboard composition, responsive breakpoints, mobile behavior and reduced-motion treatment finalized.
+- GitHub commit: `51a462e31de80dcb40b3fb02cb48df2841b30c30`.
