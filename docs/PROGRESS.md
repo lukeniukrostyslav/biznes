@@ -21,7 +21,7 @@
 | B12 | Persistence / Export / Import | 100% |
 | B13 | Technical UI / Localization / Responsive | 100% |
 | B14 | Functional / E2E QA | 100% |
-| NEW DESIGN | Новый Premium Design с нуля | 0% |
+| NEW DESIGN | Новый Premium Design с нуля | 20% |
 | B15 | Commercial Packaging | 0% |
 | B16 | Sales / Marketplaces | 0% |
 
@@ -325,9 +325,9 @@ B14 полностью подтверждён фактическим выпол�
 | ND.1 | Product UI audit и mapping существующих функций | 100% |
 | ND.2 | Premium visual direction / design principles | 100% |
 | ND.3 | Design tokens: colors / typography / spacing / radius / elevation | 100% |
-| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 70% |
-| ND.5 | Core component system | 55% |
-| ND.6 | Overview / Dashboard redesign | 0% |
+| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 90% |
+| ND.5 | Core component system | 80% |
+| ND.6 | Overview / Dashboard redesign | 70% |
 | ND.7 | Leads / CRM redesign | 0% |
 | ND.8 | Clients redesign | 0% |
 | ND.9 | Proposals redesign | 0% |
@@ -368,3 +368,13 @@ B14 полностью подтверждён фактическим выпол�
 - Commit: `a1c1cce3030df9dcc5a3ca396386c8e766c82944`.
 - Preview deployment created: `https://business-4irdpkgds-lukeniukrostyslav.vercel.app`.
 - Deployment is currently BUILDING; final visual QA and B14 regression remain pending until deployment is READY.
+
+
+### Design checkpoint — продолжение 2026-09-25
+- Проверен Vercel production deployment: текущий deployment `dpl_6MYhq9QZp6VzfSc8BnmobYH7Pkkx` находится в состоянии READY.
+- Последний завершённый production deployment содержит предыдущий design checkpoint; после следующего design commit требуется новый deployment для публикации свежих изменений.
+- ND.4 повышен до 90%: global shell, sidebar, topbar, navigation и mobile navigation имеют единый premium visual layer; финальная проверка будет после обновления deployment и browser QA.
+- ND.5 повышен до 80%: унифицированы cards, KPI, tables, forms, drawers, badges, empty states, buttons, focus и responsive primitives.
+- ND.6 повышен до 70%: Dashboard получил отдельную premium composition поверх существующих KPI, Revenue & Profit, Cashflow, Follow-ups, Overdue Invoices и Project Profitability без изменения бизнес-логики.
+- GitHub commit: `3edfbba6058002409948920b24b75ad16dd7188e`.
+- Проценты ND.4–ND.6 не считаются финальными: после публикации свежего deployment будет выполнена фактическая визуальная/browser проверка.
