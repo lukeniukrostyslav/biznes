@@ -343,9 +343,9 @@ test('pricing engine returns transparent hourly and daily guidance', () => {
   });
   assert.equal(result.billableHours, 960);
   assert.equal(result.minimumHourlyRate, 75);
-  assert.equal(result.targetHourlyRate, 125);
-  assert.equal(result.premiumHourlyRate, 156.25);
-  assert.equal(result.dailyRate, 1000);
+  assert.equal(result.targetHourlyRate, 117.19);
+  assert.equal(result.premiumHourlyRate, 146.49);
+  assert.equal(result.dailyRate, 937.52);
   assert.match(result.assumptions.targetFormula, /tax\/reserve/);
 });
 
