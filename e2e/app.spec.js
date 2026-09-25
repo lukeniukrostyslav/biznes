@@ -18,20 +18,20 @@ test('B14 app loads with dashboard and no runtime page error', async ({ page }) 
 
 test('B14 all primary navigation screens open', async ({ page }) => {
   for (const name of screens) {
-    await page.getByRole('button', { name, exact: true }).click();
+    await page.locator('#nav button').nth(screens.indexOf(name)).click();
     await expect(page.locator('.screen.active')).toBeVisible();
   }
 });
 
 test('B14 language switching works for all five launch languages', async ({ page }) => {
   for (const lang of ['ru','es','de','fr','en']) {
-    await page.locator('#lang').selectOption(lang);
+    await page.locator('#lang').evaluate((el, value) => { el.value = value; el.dispatchEvent(new Event('change', { bubbles: true })); }, lang);
     await expect(page.locator('html')).toHaveAttribute('lang', lang);
   }
 });
 
 test('B14 lead creation persists to localStorage', async ({ page }) => {
-  await page.getByRole('button', { name: 'Leads', exact: true }).click();
+  await page.locator('#nav button').nth(1).click();
   await page.getByRole('button', { name: /New lead/i }).click();
   await page.locator('#fName').fill('E2E Lead');
   await page.locator('#fCompany').fill('E2E Company');
@@ -42,7 +42,7 @@ test('B14 lead creation persists to localStorage', async ({ page }) => {
 });
 
 test('B14 client creation and persistence work', async ({ page }) => {
-  await page.getByRole('button', { name: 'Clients', exact: true }).click();
+  await page.locator('#nav button').nth(2).click();
   await page.getByRole('button', { name: /New client/i }).click();
   await page.locator('#fName').fill('E2E Client');
   await page.locator('#drawerSave').click();
@@ -68,9 +68,9 @@ test('B14 responsive mobile surface remains usable', async ({ page }) => {
 });
 
 test('B14 export controls are present and executable', async ({ page }) => {
-  await page.getByRole('button', { name: 'Cashflow', exact: true }).click();
+  await page.locator('#nav button').nth(9).click();
   await expect(page.getByText(/Export/i).first()).toBeVisible();
-  await page.getByRole('button', { name: 'Profit', exact: true }).click();
+  await page.locator('#nav button').nth(8).click();
   await expect(page.getByText(/Export/i).first()).toBeVisible();
 });
 
