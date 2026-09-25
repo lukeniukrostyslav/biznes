@@ -16,7 +16,7 @@
 <body>
 <div id="toast" class="toast" role="status"></div><div class="app">
 <aside class="sidebar">
-<div class="brand"><div class="logo">B</div><div><strong>BUSINESS OS</strong><small id="brandTagline">Your business. One place.</small></div></div>
+<div class="brand"><div class="logo">♛</div><div><strong>BUSINESS OS</strong><small id="brandTagline">Your business. One place.</small></div></div>
 <nav class="nav" id="nav"></nav><div class="spacer"></div><div class="user"><strong id="workspaceLabel">My Workspace</strong><br><small id="workspaceMode">Local-first</small></div>
 </aside>
 <main class="main">
@@ -25,7 +25,7 @@
     <div class="identity-value"><strong data-v2="brandValue">All your business. One place.</strong><span data-v2="brandValueSub">Clients · Projects · Proposals · Invoices · Profit · Cashflow</span></div>
   </div>
 <input id="importDataInput" type="file" accept="application/json" hidden>
-<header class="topbar"><div class="search" id="search">⌕ Search clients, projects, invoices…</div><div class="top-actions"><button class="secondary" id="exportData">Export</button><button class="secondary" id="importData">Import</button><button class="new" id="newTopAction">＋ New</button><span>🔔</span><select class="lang" id="lang" aria-label="Language"><option value="en">🇬🇧 EN</option><option value="ru">🇷🇺 RU</option><option value="es">🇪🇸 ES</option><option value="de">🇩🇪 DE</option><option value="fr">🇫🇷 FR</option></select></div></header>
+<header class="topbar"><div class="search" id="search">⌕ Search clients, projects, invoices…</div><div class="top-actions"><button class="secondary" id="exportData">Export</button><button class="secondary" id="importData">Import</button><button class="new" id="newTopAction">＋ New</button><button class="mobile-menu" id="mobileMenu" type="button" aria-label="Menu">☰</button><span>🔔</span><select class="lang" id="lang" aria-label="Language"><option value="en">🇬🇧 EN</option><option value="ru">🇷🇺 RU</option><option value="es">🇪🇸 ES</option><option value="de">🇩🇪 DE</option><option value="fr">🇫🇷 FR</option></select></div></header>
 <section class="content">
 <div id="dashboardScreen" class="screen active">
   <section class="dashboard-hero">
@@ -318,9 +318,9 @@ function updateDashboardDate(lang){
 function render(lang){const currentScreen=document.querySelector('.screen.active')?.id||'dashboardScreen';activeLanguage=lang;window.activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;updateDashboardDate(lang);document.getElementById('nav').innerHTML=c.nav.map((x,i)=>{
   const badgeMap={1:(businessStore.leads||[]).length,3:(businessStore.proposals||[]).length,4:(businessStore.projects||[]).length,5:(businessStore.invoices||[]).length};
   const badge=badgeMap[i]?'<span class="nav-badge" aria-hidden="true">'+badgeMap[i]+'</span>':'';
-  return '<button class="'+(mapScreenIndex(currentScreen)===i?'active':'')+'" data-screen="'+i+'">'+x+badge+'</button>';
+  const icons=['⌂','♙','♧','▤','▱','▣','▢','◫','◔','◉','⚙']; return '<button class="'+(mapScreenIndex(currentScreen)===i?'active':'')+'" data-screen="'+i+'"><span class="nav-icon" aria-hidden="true">'+icons[i]+'</span><span class="nav-label">'+x+'</span>'+badge+'</button>';
 }).join('');applyUiCopy(lang);refreshSettingsLabels();bindNav();refreshProjectMetrics();renderDashboardRealData();renderStoredRecords();renderArchive();}
-function bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
+document.addEventListener('click',e=>{if(e.target.closest('#mobileMenu')){document.querySelector('.sidebar')?.classList.toggle('mobile-open');}});\nfunction bindNav(){document.querySelectorAll('.nav button').forEach((b,i)=>b.onclick=()=>{const map=['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'];document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(map[i]||'dashboardScreen').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});}
 function mapScreenIndex(screenId){return ['dashboardScreen','leadsScreen','clientsScreen','proposalsScreen','projectsScreen','invoicesScreen','paymentsScreen','expensesScreen','profitScreen','cashflowScreen','settingsScreen'].indexOf(screenId);}
 
 const STORE_KEY='business-os-store-v1';
