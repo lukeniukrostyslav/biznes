@@ -239,10 +239,16 @@ function upsertRecord(store, collection, record) {
 }
 
 function removeRecord(store, collection, id) {
-  return normalizeStore({
-    ...store,
-    [collection]: (store[collection] || []).filter(item => item.id !== id)
+  const normalized = normalizeStore(store);
+  const candidate = normalizeStore({
+    ...normalized,
+    [collection]: (normalized[collection] || []).filter(item => item.id !== id)
   });
+  const validation = validateStore(candidate);
+  if (!validation.valid) {
+    throw new Error('Cannot remove record: ' + validation.errors.join(', '));
+  }
+  return candidate;
 }
 
 function exportStore(store) {
