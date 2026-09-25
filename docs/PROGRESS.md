@@ -1,564 +1,66 @@
 # BUSINESS OS — ПРОГРЕСС
 
-**Постоянное правило проекта:** перед существенными продуктовыми решениями проверять актуальный интернет и конкурентов; результаты учитывать в архитектуре и сохранять в GitHub.
+Последнее обновление: 2026-09-25 — B07 schema validation hardening
 
-Последнее обновление: 2026-09-24 — B13 localization consistency pass
-
-## Текущая стадия
-
-Продукт: **BUSINESS OS — Freelancer & Agency Business Command Center**
-
-Целевая модель: самостоятельное локальное web-приложение, единоразовая покупка ориентировочно $79–99.
-
-Ключевой поток:
-
-**Lead → Proposal → Project → Invoice → Payment → Profit → Repeat**
-
-## Блоки проекта
+## Текущий рабочий baseline
 
 | Блок | Название | Прогресс |
 |---|---|---:|
-| B00 | Репозиторий и базовая фиксация | 100% |
-| B01 | Продуктовая концепция | 100% |
-| B02 | Анализ рынка и конкурентов | 100% |
-| B03 | Клиент и позиционирование | 100% |
-| B04 | Архитектура продукта | 100% |
-| B05 | UX/UI дизайн | 100% |
-| B06 | Система локализации | 100% |
-| B07 | Core-функциональность | 89% |
-| B08 | Расчёты денег и прибыли | 76% |
+| B00 | Repo Base | 100% |
+| B01 | Product Concept | 100% |
+| B02 | Market & Competitors | 100% |
+| B03 | Client & Positioning | 100% |
+| B04 | Product Architecture | 100% |
+| B05 | Старый UX/UI — FROZEN | 100% исторически |
+| B06 | Localization | 100% |
+| B07 | Core Functionality | 89% |
+| B08 | Money & Profit | 76% |
 | B09 | CRM / Leads / Pipeline | 6% |
 | B10 | Projects / Proposals / Invoices / Payments | 44% |
 | B11 | Cashflow / Dashboard / Analytics | 35% |
 | B12 | Persistence / Export / Import | 74% |
-| B13 | Responsive / Mobile QA | 22% |
+| B13 | Technical UI / Localization / Responsive | 15% |
 | B14 | Functional / E2E QA | 0% |
+| NEW DESIGN | Новый Premium Design с нуля | 0% |
 | B15 | Commercial Packaging | 0% |
-| B16 | Продажи / площадки | 0% |
+| B16 | Sales / Marketplaces | 0% |
 
-## Почему B02 = 100%
+## Архитектурное решение
 
-Проверены актуальные предложения в категории freelancer/business OS. На Gumroad есть продукты за $79–99+ с заметным количеством продаж. Например, Freelance OS от Easlo стоит $79 и показывает 858 продаж; Business OS от Imagination Labs — $85 и показывает 3,142 продажи; JNKX Freelance Business OS — $39+ и показывает 2,391 продажу. Это подтверждает наличие спроса на категорию, но не гарантирует продажи нашего продукта.
+B05 / старый визуальный прототип FROZEN. Он остаётся reference и больше не развивается как финальный дизайн.
 
-Одновременно рынок насыщен Notion-шаблонами. Поэтому наше отличие должно быть не в названии «OS», а в самостоятельном приложении и связке денег:
+Новый Premium Design будет создан с нуля после завершения основной функциональности и B14 Functional/E2E QA.
 
-**Lead → Proposal → Project → Invoice → Payment → Profit → Repeat**
+Рабочий порядок:
 
-## B03 — закрыт
+B07 → B08 → B09 → B10 → B11 → B12 → B13 → B14 → NEW DESIGN → B15 → B16
 
-ICP, не-ICP, jobs-to-be-done, основная боль, позиционирование и конкурентная дифференциация зафиксированы в `docs/ICP_AND_POSITIONING_V1.md`.
+## B07 — schema version validation hardening — 2026-09-25
 
-## B04 — закрыт
+Усилен persistence core:
 
-Архитектура V1 зафиксирована в `docs/ARCHITECTURE_V1.md`: единая модель Client/Lead/Proposal/Project/Invoice/Payment/Expense, денежные derived metrics, pricing engine, local-first persistence, localization, responsive и коммерческие границы.
+- migrateStore() теперь явно отклоняет malformed schema versions;
+- принимаются только целые положительные версии;
+- schemaVersion abc, 0 и 1.5 теперь не проходят миграцию;
+- validateStore() дополнительно требует текущую schema version;
+- importStore() получает защиту через общий migration/validation path;
+- добавлены regression tests для malformed schema versions в migration/import;
+- добавлен test на отказ validateStore() для устаревшей версии.
 
-## B05 — дизайн
-
-B05 = **100%** — визуальный UX/UI prototype V1 закрыт.
-
-Фактически выполнено:
-- UX screen architecture;
-- design system V1;
-- responsive layout rules;
-- interaction rules;
-- конкурентный UX review 2026-09-24;
-- coded Dashboard;
-- навигация Dashboard / Leads / Clients / Proposals / Projects / Invoices / Payments / Expenses / Profit / Cashflow;
-- Kanban Leads;
-- Clients / Projects / Invoices / Payments / Expenses / Profit / Cashflow screens;
-- entity 360° detail view;
-- create/detail drawer;
-- EN/RU/ES/DE/FR переключатель;
-- responsive desktop/mobile shell;
-- mobile bottom navigation.
-
-B05 закрыт именно как **дизайн и UI prototype**. Это не означает, что все экраны уже работают на реальных данных.
-
-## B08 — финансовый движок
-
-B08 = **70%**. Финансовая модель V1 зафиксирована и реализована в `src/core/financial-engine.js`: invoice totals/status, project profit/margin, weighted pipeline, cashflow и locale-aware currency formatting. Добавлены автоматические Node tests; локальная проверка прошла: **6/6 тестов успешно**. Остались расширенные edge-case tests, интеграция с persistence/data model и подключение engine к UI.
-
-Документ: `docs/B08_FINANCIAL_ENGINE_V1.md`.
-
-## B07 — core-функциональность
-
-B07 = **75%**.
-
-Выполнено:
-- финансовый engine как общая доменная библиотека;
-- автоматические тесты engine;
-- единая схема Client / Lead / Proposal / Project / Invoice / Payment / Expense;
-- правила derived metrics;
-- связи между сущностями;
-- зафиксирована стратегия перехода к local-first persistence.
-
-Выполнено B07.2 (первый слой): schemaVersioned local-first store на localStorage, стабильные локальные ID, сохранение новых записей из UI и toast-подтверждение. Реализовано: schemaVersioned local-first store в UI и отдельный `src/core/persistence.js` с create/load/save/upsert/remove/export/import. Добавлены автоматические тесты persistence. Дополнительно выполнено: защита импорта от будущих schemaVersion, безопасный reset persisted store с тестами, пользовательские Export/Import JSON прямо из интерфейса. Следующий шаг: полноценное подключение всех экранов к store, валидация полей и миграции.
-
-## Конкурентный контроль — 2026-09-24
-
-Актуальная проверка рынка показывает, что зрелые all-in-one решения уже объединяют CRM, proposals, contracts, invoicing, payments, projects и time tracking, а цены подписки остаются существенными: например, опубликованное исследование с проверкой цен в августе 2026 указывает HoneyBook $29/$49/$109 в месяц при годовой оплате, Dubsado $335/$525 в год, Bonsai $9/$19/$29/$49 за пользователя в месяц при годовой оплате и Moxie $10/$20/$32 в месяц при годовой оплате. citeturn0search0
-Одновременно рынок lifetime/Notion-продуктов показывает спрос на ценовой диапазон около $79: Easlo Freelance OS сейчас указан за $79 и показывает 858 продаж; это Notion-продукт, поэтому для BUSINESS OS остаётся важным отличаться не названием OS, а настоящим standalone-приложением. citeturn0search1
-Конкурентный вывод: не копируем отдельные функции ради количества. Усиливаем связку **локальные данные + единый финансовый граф + profit-first + отсутствие обязательной подписки**. Это будет проверяться на каждом следующем продуктовом блоке.
-
-
-
-Проведён свежий обзор рынка. Easlo Freelance OS сейчас показывает $79 и 858 продаж; это Notion-продукт с CRM, pipeline, projects/tasks и invoice tracker. citeturn0search0
-Публичные обзоры 2026 также показывают, что HoneyBook, Dubsado, Bonsai и Moxie уже объединяют CRM, proposals, contracts, invoicing/payments и project-management функции, поэтому BUSINESS OS не должен конкурировать только количеством модулей. citeturn0search3turn0search14
-Рыночный вывод для разработки: усиливаем наше отличие — **local-first, one-time purchase, единая денежная модель и profit-first workflow**, а не копируем SaaS-модель подписки или Notion-шаблон.
-
-## B06 — локализация
-
-Зафиксированы пять языков:
-- English
-- Spanish
-- German
-- French
-- Russian
-
-Русский обязателен. Английский — основной коммерческий язык.
-
-## Конкурентный контроль — 2026-09-24 (вечер)
-
-Свежая проверка показала, что HoneyBook уже имеет cashflow planner, project profitability и financial reports; опубликованные материалы также указывают, что текущий Cash Flow & Project Profit показывает paid payments, а отдельный cashflow planner умеет показывать будущие booked payments и projected expenses. citeturn0search2turn0search3
-
-Следствие для BUSINESS OS: недостаточно иметь просто KPI Revenue/Profit. Нужно разделить **Actual Cashflow** и **Forecast Cashflow**, связать прогноз с due dates счетов, ожидаемыми платежами и плановыми расходами, а также показывать источник каждого показателя. Это улучшает прозрачность и делает финансовый dashboard проверяемым.
-
-HoneyBook также публикует pricing от $29/$49/$109 в месяц при годовой оплате, а независимая проверка North от августа 2026 фиксирует Bonsai $19/$25 за tier с proposals/contracts/invoicing и другие подписные варианты. citeturn0search0turn0search1 Поэтому наше local-first/one-time позиционирование сохраняется, но ценность должна исходить из глубины workflow, а не только отсутствия подписки.
-
-## B07/B11 — текущий технический результат
-
-Dashboard KPI подключены к local store и больше не используют исходные статические финансовые значения. Добавлена базовая денежная агрегация Revenue, Outstanding, Pipeline и Profit. Следующий шаг — сделать эти расчёты типизированными через общий financial engine и затем разделить actual/forecast cashflow.
-
-## Правило процентов
-
-Процент повышается только после фактического выполнения и проверки блока. Концепт, идея или план не считаются реализованными функциями.
-
-
-## B07/B11 обновление — 2026-09-24
-
-Dashboard KPI теперь читаются из local-first store: Revenue = полученные платежи, Outstanding = выставлено минус получено, Pipeline = сумма value/amount лидов, Profit = получено минус расходы. Это первый шаг отказа от демонстрационных финансовых значений. Пока UI не предоставляет полноценное редактирование всех полей и связей, поэтому процент не повышается выше 60%.
-
-Конкурентный контроль продолжается: зрелые продукты категории уже связывают CRM, pipeline, proposals, projects и invoicing в единую цепочку; Bonsai отдельно документирует передачу клиента из CRM в проекты/документы/счета. citeturn1search4turn1search11 BUSINESS OS должен отвечать на тот же workflow без копирования SaaS-модели подписки и с local-first моделью данных.
-
-
-## B07 обновление — 2026-09-24 (ночной checkpoint)
-
-Реализован единый typed create flow для Lead / Client / Proposal / Project / Invoice / Payment / Expense: кнопки создания теперь открывают общий drawer, принимают клиент/название, статус, сумму, следующее действие и заметки и сохраняют запись в local-first store. Это заменяет предыдущий упрощённый instant-create placeholder. Следующий шаг — отображение сохранённых записей в соответствующих таблицах/Kanban и полноценное редактирование/удаление.
-
-Конкурентный контроль: Bonsai объединяет CRM, pipeline, proposals, projects и invoices, а принятые proposals могут автоматически создавать invoice. citeturn0search2turn0search4 HoneyBook отдельно показывает actual cashflow/project profit и projections, поэтому BUSINESS OS продолжает развивать единый local-first граф данных и прозрачное разделение actual/forecast.
-
-
-## B07 обновление — 2026-09-24
-
-Сохранённые записи теперь рендерятся обратно в интерфейс: local-first store больше не является только скрытым хранилищем. После создания данные отображаются в соответствующих business screens. Добавлено безопасное HTML-экранирование пользовательских значений перед вставкой в таблицы. Следующий слой — полноценные entity-specific формы, редактирование/удаление и связи между сущностями.
-
-## Конкурентный контроль — 2026-09-24
-
-Проверка рынка подтверждает, что зрелые продукты уже оцениваются по полному client lifecycle, а не отдельным функциям. HoneyBook предоставляет отчёты по leads, projects, clients, bookings и collected/outstanding payments. citeturn0search10 North при проверке цен 11 августа 2026 фиксирует HoneyBook $29/$49/$109, Dubsado $335/$525 в год и Bonsai $19/$29/$49 за более полные уровни, а также подчёркивает важность сравнения именно tier, включающего proposals/contracts/invoicing. citeturn0search0 BUSINESS OS поэтому продолжает строить единый local-first lifecycle вместо копирования отдельных экранов конкурентов.
-
-
-## B07.3 — entity-aware CRUD и реальные store-строки
-
-B07.3 = **82%**.
-
-Выполнено:
-- таблицы Clients / Proposals / Projects / Invoices / Payments / Expenses теперь строятся из local-first store;
-- добавлены entity-aware колонки вместо общего demo-формата;
-- Leads Kanban теперь строится из реальных lead-записей store;
-- реализовано редактирование существующих записей через общий drawer;
-- реализовано локальное удаление записей;
-- после CRUD автоматически обновляются dashboard metrics и списки;
-- добавлена базовая статусная индикация.
-
-Ограничения, поэтому B07 ещё не 100%:
-- связи Client/Lead/Proposal/Project/Invoice/Payment/Expense пока не являются полноценными foreign-key отношениями во всех формах;
-- валидация entity-specific полей ещё недостаточная;
-- финансовый engine пока не является единственным источником dashboard calculations;
-- нет полноценного archive/restore;
-- нужны relationship tests и edge-case QA.
-
-## B12 — persistence
-
-B12 = **70%**.
-
-Local-first store, schema versioning, save/load, upsert/remove, reset, JSON export/import и защита от будущей schemaVersion уже реализованы и протестированы. Оставшиеся 30% — миграции схемы, более строгая валидация импортируемых данных, relationship integrity и QA portable data.
-
-
-## B07.4 — execution checkpoint зафиксирован
-
-Рабочая цель: довести core-фундамент до production-ready состояния без искусственного повышения процента.
-
-Порядок реализации: entity relationships → entity-specific forms/validation → archive/restore → financial engine as single source of truth → relationship/edge-case tests → пересчёт процента только после проверки.
-
-**Правило проекта:** перед существенными продуктовыми решениями повторно проверять актуальный рынок и конкурентов; не копировать функции механически. В обзорах 2026 конкуренты закрывают широкий client lifecycle, включая CRM, proposals, contracts, invoicing, payments, projects и automation. Для BUSINESS OS сохраняется ставка на standalone local-first продукт, единый финансовый граф и profit-first workflow. citeturn0search0turn0search1turn0search2
-
-
-## Продуктовый контроль — 2026-09-24
-
-Перед продолжением B07 проведён свежий конкурентный review. В 2026 HoneyBook, Dubsado, Bonsai и Moxie продолжают закрывать широкий lifecycle: CRM, proposals/contracts, invoicing/payments и project/workflow management; HoneyBook также отдельно предлагает automations, client portal и reports. citeturn0search0turn0search1turn0search2
-
-Решение для BUSINESS OS: не наращивать функции ради количества. Следующий приоритет — целостный lifecycle и качество данных: строгие связи сущностей, финансовая достоверность, прозрачный Actual/Forecast Cashflow, быстрые entity-specific действия и простота local-first продукта. Конкурентные цены и возможности перепроверять перед каждым крупным коммерческим решением, поскольку публичные цены меняются. citeturn0search0turn0search5
-
-**Правило работы:** после каждого существенного изменения — тестирование, checkpoint и сохранение в GitHub; процент повышается только за реально реализованный и проверенный функционал.
-
-
-## B07.4 — core integrity implementation checkpoint — 2026-09-24
-
-Реализован следующий слой B07.4 в core-слое, без искусственного повышения процента:
-
-- src/core/persistence.js переведён на schemaVersion 2 с миграцией v1 → v2;
-- добавлена модель допустимых связей Lead → Client, Proposal → Client/Lead, Project → Client/Proposal, Invoice → Client/Project, Payment → Invoice/Client, Expense → Project/Client;
-- добавлен validateStore() для проверки целостности ссылок;
-- импорт JSON теперь отклоняет store с отсутствующими связанными сущностями;
-- добавлены archiveRecord() и restoreRecord() вместо обязательного физического удаления в core;
-- src/core/financial-engine.js расширен единым calculateBusinessMetrics() с разделением Actual и Forecast: paid, invoiced, outstanding, actual profit, expected payments, planned expenses, forecast cash, overdue и weighted pipeline;
-- добавлен тест единого financial metrics engine.
-
-UI пока не считается закрывшим B07.4: формы должны передавать реальные foreign-key связи, archive/restore должен быть подключён к интерфейсу, а dashboard должен использовать единый engine вместо локальных дублирующих формул. Поэтому проценты B07/B08/B12 не повышаются до завершения UI integration и тестовой проверки.
-
-### Свежий конкурентный контроль — 24.09.2026
-
-Актуальный рынок по-прежнему показывает широкий lifecycle в одном продукте: CRM, proposals/contracts, invoicing/payments, project management и automation. HoneyBook публикует Starter от $29/месяц при годовой оплате и включает proposals/contracts, invoices/payments, client portal и reports; более высокий уровень добавляет automations и QuickBooks integration. citeturn0search1 Независимая проверка цен августа 2026 фиксирует HoneyBook $29/$49/$109, Dubsado $335/$525 в год, Bonsai $9/$19/$29/$49 за пользователя в месяц при годовой оплате и Moxie $10/$20/$32 при годовой оплате. citeturn0search0
-
-Отдельно Bonsai сейчас подчёркивает real-time budget monitoring, actual costs, budget forecasting и profit margin tracking. citeturn1search3 Следствие для BUSINESS OS: financial engine должен быть не декоративным KPI-слоем, а единым источником расчётов по связанным сущностям. Наш следующий шаг — довести этот engine до UI и добавить прозрачный Actual/Forecast Cashflow без копирования SaaS-модели подписки.
-
-
-## B08.1 — unified financial engine UI integration — 2026-09-24
-
-Реализован и сохранён следующий фактический шаг без повышения процента блока до завершения QA:
-
-- `calculateBusinessMetrics()` теперь разделяет **Actual Expenses** и **Planned Expenses**, чтобы planned расходы не вычитались дважды;
-- расчёт invoice status теперь принимает единый `now`, что делает overdue/forecast расчёты детерминированнее;
-- Dashboard UI подключён к единому financial engine вместо локальных дублирующих формул;
-- Import UI теперь принимает schema v2 и дополнительно проверяет relationship references перед сохранением;
-- UI default store обновлён до schema v2 с `archivedRecords`;
-- сохранён принцип: B08 остаётся 70%, пока тестовый прогон и edge-case QA не подтверждены.
-
-### Коммерческий контроль — 24.09.2026
-
-Свежий review рынка подтверждает, что HoneyBook, Dubsado и Bonsai продолжают продавать recurring SaaS вокруг CRM, proposals/contracts, invoicing/payments и project/workflow management. HoneyBook публикует $29/$49/$109 в месяц при годовой оплате; Dubsado — $35/$55 в месяц или $335/$525 в год; Bonsai — от $9/user/month при годовой оплате. citeturn0search0turn0search1turn0search4
-
-BUSINESS OS сохраняет другую коммерческую модель: **standalone + one-time purchase на внешних площадках**, без обязательной ежемесячной подписки. Это не основание для копирования функций конкурентов; приоритет остаётся на качестве lifecycle, финансовой достоверности, local-first данных и простоте продукта.
-
-
-## B07.5 — entity-specific relationship forms — 2026-09-24
-
-Реализован UI-слой реальных связей без повышения общего процента B07 до прохождения QA:
-
-- общий демонстрационный Client text input заменён на entity-aware поля;
-- Lead может быть связан с Client;
-- Proposal — с Client и Lead;
-- Project — с Client и Proposal;
-- Invoice — с Client и Project;
-- Payment — с Client и Invoice;
-- Expense — с Client и Project;
-- формы автоматически показывают только допустимые связи для текущей сущности;
-- перед сохранением candidate store проходит validateStoredRelationships();
-- при нарушении foreign-key связи запись не сохраняется;
-- существующие записи открываются с восстановленными связями;
-- после сохранения Dashboard и таблицы обновляются.
-
-### Почему процент B07 пока не меняется
-
-Core и UI integration теперь значительно ближе к целевой модели, но production-ready статус требует отдельного тестирования create/edit всех семи сущностей, relationship edge cases, archive/restore и мобильного сценария. Поэтому **B07 остаётся 82%**, пока эти проверки не пройдены.
-
-### Свежий конкурентный контроль — 24.09.2026
-
-HoneyBook сейчас объединяет CRM, leads, clients, projects, proposals, contracts, invoices, payments, scheduling, automations и client portal; опубликованный Starter стоит $29/месяц при годовой оплате. citeturn0search0turn0search2 Bonsai в Essentials/Premium также объединяет CRM, проекты, invoices/payments, proposals/contracts, expenses, pipeline и profit/productivity reporting. citeturn0search1
-
-Следствие для BUSINESS OS: наша цель — не максимальное число функций, а цельный lifecycle с сильными связями данных, финансовой достоверностью и local-first простотой. Коммерческая модель остаётся **one-time purchase на внешних площадках**, а не recurring SaaS.
-
-
-## B08.2 — financial relationship integrity — 2026-09-24
-
-Усилен financial engine:
-
-- invoice balance в business metrics теперь рассчитывается по реальным связанным Payment records через invoiceId;
-- поле invoice.paid больше не является единственным источником истины для dashboard/forecast;
-- outstanding считается как сумма реальных остатков по счетам;
-- добавлены тесты на stale invoice.paid, linked payments, planned expenses и overdue с фиксированной датой;
-- B08 остаётся **70%**, потому что тесты добавлены, но полный execution QA в окружении проекта ещё не выполнен.
-
-### Рыночный контроль — 24.09.2026
-
-Свежие официальные страницы конкурентов показывают, что HoneyBook включает invoices/payments, proposals/contracts, CRM и client/project management, а Bonsai объединяет CRM, pipeline, projects, invoices/payments, expenses и profit/productivity reports. citeturn0search0turn0search2turn0search7 Dubsado также включает invoicing, payment plans, client portals и financial reporting, а более высокий уровень добавляет public proposals и automation. citeturn0search3turn0search4
-
-Для BUSINESS OS это подтверждает приоритет: финансовые связи должны быть настоящими, а не просто визуальными KPI. Мы продолжаем строить единый graph Lead → Client → Proposal → Project → Invoice → Payment → Expense, сохраняя standalone/local-first и one-time purchase модель.
-
-
-## B10.1 — typed invoice form — 2026-09-24
-
-UI drawer для Invoice усилен:
-
-- описание позиции;
-- количество;
-- цена за единицу;
-- налоговая ставка;
-- срок оплаты;
-- сохранение lineItems, taxRate и dueDate вместо generic-only Value;
-- при редактировании Invoice существующие line item/tax/due date восстанавливаются;
-- generic Value скрывается для Invoice, чтобы не было двух конкурирующих источников суммы.
-
-B10 остаётся **0%** до полного функционального QA всего Invoice lifecycle. B07 остаётся **82%**, B08 — **70%**.
-
-
-## B10.2 — typed payments and overpayment guard — 2026-09-24
-
-Усилена форма Payment:
-
-- сумма платежа;
-- дата платежа;
-- метод платежа;
-- transaction reference;
-- обязательная связь с Invoice;
-- проверка существования Invoice;
-- защита от платежа больше текущего остатка Invoice;
-- редактирование существующего Payment учитывает его собственный id при расчёте остатка.
-
-Это пока не считается завершённым production QA: B10 остаётся **0%**, B07 — **82%**, B08 — **70%**.
-
-
-## B10.3 — typed project finance fields — 2026-09-24
-
-Project drawer получил финансовую модель:
-
-- Billing type: Fixed Fee / Time and Materials / Retainer / Non-billable;
-- Budget type: Fee / Time;
-- Budget;
-- Revenue;
-- Actual costs;
-- Actual hours;
-- Labour cost/hour.
-
-Это отражает рыночную модель project billing/budget/profitability, но не считается завершённым QA. B10 остаётся **0%**, B07 — **82%**, B08 — **70%**.
-
-
-## B08.3 — project financial intelligence — 2026-09-24
-
-Financial engine расширен для Project:
-
-- actual direct costs;
-- linked actual project expenses;
-- planned project expenses;
-- labour cost = actual hours × labour rate;
-- total actual costs;
-- actual profit and margin;
-- fee/time budget usage;
-- remaining budget;
-- forecast costs;
-- forecast profit;
-- forecast margin.
-
-Добавлены regression tests для fee budget и time budget. Процент B08 пока не повышен: полный QA и UI integration ещё не завершены.
-
-
-## B11.1 — project financial view integration — 2026-09-24
-
-Project list теперь использует единый financial engine и показывает для сохранённых проектов:
-
-- Revenue;
-- Actual Profit / Margin;
-- Forecast Profit;
-- Remaining Budget.
-
-Это убирает отдельные UI-формулы и связывает Project UI с реальными Expenses. Процент B11 пока не повышен: Dashboard/Cashflow ещё содержит demo/static areas и требует полного QA.
-
-
-## B07.6 — typed expense tracking — 2026-09-24
-
-Expense drawer усилен:
-
-- категория расхода;
-- дата расхода;
-- признак billable to client;
-- отдельный статус Planned для планируемых расходов;
-- UI теперь передаёт эти поля в local-first store.
-
-Рыночный контроль показал, что зрелые продукты связывают расходы с проектами и используют их для project profitability/cashflow; HoneyBook требует привязки расхода к проекту для точной project profit аналитики, а Bonsai разделяет billable/non-billable расходы в profitability calculations. citeturn0search0turn0search5turn0search7
-
-Проценты не повышены до QA.
-
-
-## B13.1 — UI localization + currency consistency — 2026-09-24
-
-После B13 audit выполнен первый реальный consistency pass без добавления новых бизнес-функций.
-
-Сделано:
-- добавлен единый UI currency source-of-truth: EUR, согласованный с default currency financial engine;
-- topbar Export / Import / New переведены через общий UI dictionary;
-- Dashboard labels для Revenue / Outstanding / Pipeline / Profit / Cashflow и связанных блоков переведены;
-- основной create/edit drawer получил единый переводческий слой для EN/RU/ES/DE/FR;
-- invoice line labels динамически используют текущий язык;
-- payment-plan labels и installment types динамически используют текущий язык;
-- payment installment Auto-allocation label локализован;
-- status options в drawer локализуются;
-- язык применяется и при первоначальной загрузке, и после переключения;
-- сохранён единый visual architecture без нового feature creep.
-
-GitHub commit: `c45161f8c627f38d45864f290902c7c9f50cc00a`
+GitHub commits:
+- 3c13262e40506bf4b56872d68f70e318aea07fec — fix: validate BUSINESS OS schema versions
+- c331a3c2bf49a4655b23f932abf95ce1e7dc7089 — test: harden schema version validation
 
 ### QA status
 
-Проверка исходного кода после изменения подтвердила наличие:
-- `UI_CURRENCY='EUR'`;
-- `uiCopy`;
-- `applyUiCopy(lang)`;
-- локализации динамических invoice lines;
-- локализации payment-plan rows;
-- локализации Auto-allocate;
-- применения UI dictionary при старте.
+Изменения проверены source-level через актуальный GitHub source.
 
-Полный browser/mobile/E2E QA ещё НЕ выполнен, поэтому B13 не закрыт и B14 остаётся 0%.
+Полный npm test и GitHub Actions execution для нового commit пока не подтверждены. Поэтому процент B07 не повышается и остаётся 89%.
 
-### Current progress baseline
+## Правило процентов
 
-Эта таблица является текущим рабочим baseline после последнего checkpoint:
+Процент повышается только после фактического выполнения и проверки соответствующего объёма работы. Наличие нового кода или regression tests само по себе не считается основанием для повышения процента без подтверждённого execution.
 
-| Блок | Прогресс |
-|---|---:|
-| B00 | 100% |
-| B01 | 100% |
-| B02 | 100% |
-| B03 | 100% |
-| B04 | 100% |
-| B05 | 100% |
-| B06 | 100% |
-| B07 | 89% |
-| B08 | 76% |
-| B09 | 6% |
-| B10 | 44% |
-| B11 | 35% |
-| B12 | 74% |
-| B13 | 15% |
-| B14 | 0% |
-| B15 | 0% |
-| B16 | 0% |
+## Следующий технический приоритет
 
-B13 повышен только частично: выполнен и зафиксирован первый localization/currency consistency pass. Browser/mobile visual QA всё ещё впереди.
-
-
-## B13 — текущий статус
-
-Выполнен первый UI consistency pass: единая UI-валюта EUR, локализация основных Dashboard/create-edit/invoice/payment-plan элементов для EN/RU/ES/DE/FR, локализация динамических строк при переключении языка. Browser/mobile visual QA пока не выполнен; статические demo-блоки Dashboard ещё требуют подключения к реальным данным или корректных empty states.
-
-
-## B13 — dashboard data consistency pass
-
-Dashboard больше не использует фиктивные финансовые значения в ключевых блоках. KPI уже были подключены к financial engine; теперь Revenue & Profit history, Cashflow Overview, Follow-ups Today, Overdue Invoices и Project Profitability строятся из local-first store/financial engine. При отсутствии данных показывается empty state, а не выдуманная история. Browser/mobile visual QA всё ещё не выполнен, поэтому B13 не считается закрытым.
-
-## B13 — localization consistency pass
-
-Добавлен общий слой локализации для dashboard metric labels (Actual/Факт и заголовки Project/Revenue/Profit/Margin) на EN/RU/ES/DE/FR. Остаточные hardcoded labels в отдельных таблицах/вторичных областях будут проверены на browser/mobile QA. Процент увеличен только на фактически выполненный consistency pass.
-
-
-## B07.7 — Persistence validation — 2026-09-24
-
-Усилена validateStore: проверяются обязательные ID, дубли ID внутри коллекций, типы записей, основные неотрицательные денежные поля и quantity/unitPrice invoice line items. Добавлен regression test. Полный npm test в текущей execution environment не запускался из-за отсутствия сетевого доступа для клонирования репозитория, поэтому **B07 остаётся 89%** до фактической test verification.
-
-Checkpoint: `docs/B07.7_PERSISTENCE_VALIDATION.md`.
-
-
-## B13 — localization/data re-render checkpoint — 2026-09-24
-
-Исправлен важный UI consistency edge case: после переключения языка Dashboard повторно строится из local-first данных; Project Profitability headers локализуются; dynamic status badges используют текущий язык. Новых бизнес-функций не добавлялось. Browser/mobile visual QA и полный npm test execution ещё не выполнены, поэтому проценты не повышаются.
-
-Commits: `f754e10ad8b1896be22e11611c715a2915938fe6`, `7a1b1d7cdca74c8d2fc59b213f5aff6547d83266`, checkpoint `80a9bea0e7ee98bd79f5c70e1da8a1a2b3780250`.
-
-
-## B07/B12 — relationship-safe archive/restore checkpoint — 2026-09-24
-
-Обнаружена и исправлена критическая целостность данных: прежний core archive мог архивировать родительскую сущность, оставляя активные записи с битой foreign-key ссылкой; restore мог вернуть запись с отсутствующей связью. Теперь archive блокируется, если у записи есть активные dependents, а restore предварительно прогоняет candidate store через validateStore(). Добавлены regression tests для обоих сценариев.
-
-GitHub commits: `fc753550d96126fb44c5232d06c96e611709fb46`, `60f95c71a5b22b86d56ebe6888cb1b3d5e2b898c`.
-
-QA: source-level verification выполнена. GitHub Actions в репозитории сейчас не имеет workflow runs (0 runs), поэтому автоматический CI execution не подтверждён. Проценты B07/B12 не повышаются до фактического test execution.
-
-## B11 — Dashboard/Cashflow structural regression guard — 2026-09-25
-
-После последних исправлений Dashboard/Cashflow добавлен дополнительный static regression test: проверяется наличие и wiring ключевых функций `renderCashflow`, `renderDashboardRealData`, `refreshDashboardMetrics`, `refreshDashboardVisuals`, `exportCashflowReport`. Это фиксирует текущую границу функций после серии синтаксических исправлений.
-
-GitHub commit: `e0cf4ed76b4c7b28183550352cd657a304f511cc`.
-
-Полный GitHub Actions run для последнего commit пока не подтверждён (workflow runs отсутствуют), поэтому **B11 остаётся 35%**, а B14 остаётся 0%. Процент не повышается только за наличие static test — нужен фактический execution/browser QA.
-
-## Архитектурное решение — B05 заморожен, новый финальный дизайн после функциональной готовности — 2026-09-25
-
-Зафиксировано решение проекта: текущий B05 / существующий UX/UI prototype считается **FROZEN** и больше не развивается как финальный визуальный дизайн. Он сохраняется только как исторический/архитектурный reference.
-
-Новый финальный **Premium Design** будет создан отдельным этапом **после завершения основной функциональности и полного Functional/E2E QA**. До этого визуальный redesign не является приоритетом.
-
-Рабочий порядок: **B07 → B08 → B09 → B10 → B11 → B12 → B13 → B14 → NEW FINAL DESIGN → B15 → B16**.
-
-Проценты существующих блоков не изменяются этим решением.
-
-## B07 — relationship-safe remove checkpoint — 2026-09-25
-
-Усилен core persistence API: `removeRecord()` теперь не может удалить родительскую запись, если после удаления остаются активные foreign-key ссылки. Candidate store проходит `validateStore()`; при нарушении целостности операция отклоняется. Добавлены regression tests для удаления записи с зависимостями и удаления leaf-record.
-
-GitHub commits: `3aad70292d31cfbedb6498bfd909cf1293088d0b`, `528c1a74624291836e9fb3762fa91369e710af6d`.
-
-Это фактическое усиление B07, но процент пока не повышается: нужен подтверждённый полный test execution. **B07 остаётся 89%.**
-
-## B07 — persistence API boundary checkpoint — 2026-09-25
-
-Дополнительно усилен core persistence: `upsertRecord()`, `removeRecord()`, `archiveRecord()` и `restoreRecord()` теперь отклоняют неизвестные collection names вместо тихого no-op/потери операции. Добавлены regression tests для всех четырёх mutators.
-
-GitHub commits: `7b934bc81efee820e6ca144c2f66d02915f6ab52`, `14d32d38f02a74e8c5b57a619c7faccc73160871`.
-
-Процент B07 не повышен: локальный полный запуск тестов недоступен в текущем окружении, а GitHub Actions для последних изменений пока не подтверждён. **B07 остаётся 89%.**
-
-## B07 — validated upsert checkpoint — 2026-09-25
-
-Усилен основной путь записи данных: `upsertRecord()` теперь валидирует candidate store через `validateStore()` до возврата результата. Relationship-breaking изменения больше не проходят через core API. Добавлен regression test, подтверждающий отказ и сохранение исходного состояния.
-
-GitHub commits: `50c87eff7508136c863de270630fe3eb6b72f551`, `0803807790b471060038d7aed92551a67f4efbf7`.
-
-Процент пока не повышен без подтверждённого полного запуска тестов. **B07 = 89%.**
-
-## B07 — upsert normalization fix + valid-path regression — 2026-09-25
-
-После дополнительной проверки обнаружен и сразу исправлен дефект в новом validation-path: `upsertRecord()` теперь корректно нормализует store перед построением candidate state. Добавлен тест на валидное создание и обновление записи, чтобы защищать не только error-path, но и обычный CRUD-path.
-
-GitHub commits: `b5fd5545a06bd7fe44987c73b38d7f3fee52ceb3`, `219d0fca84b72fba82e0947d34a8b35c4a7562e4`.
-
-Процент B07 не повышен: **89%**, до подтверждённого полного test execution.
-
-## B07 — restore metadata integrity checkpoint — 2026-09-25
-
-Усилен restore-path: malformed archived metadata с неизвестной collection теперь явно отклоняется через общий `assertCollection()`, вместо тихого игнорирования записи. Добавлен regression test, подтверждающий отказ и сохранение исходного archive state.
-
-GitHub commits: `19557ac5baaaf6c02bfb6c22cf21079dde3c70f4`, `2193b2a94cc790c1dd83ae07ad342f8a6e100515`.
-
-Процент не повышен до подтверждения полного test execution. **B07 = 89%.**
-
-## B07 — archived metadata validation checkpoint — 2026-09-25
-
-Усилена целостность `archivedRecords`: теперь `validateStore()` проверяет, что архив — массив, элементы являются объектами, имеют валидный id, допустимую collection и не содержат дубликатов `collection:id`. Добавлен regression test.
-
-GitHub commits: `32ff73eaa4204466421baee84f6c062a35b49052`, `1255bdaf9ebd50b6929e27deff1a9230802be97a`.
-
-Процент не повышен без подтверждения полного test execution. **B07 = 89%.**
-
-## B07 — active/archive ID collision checkpoint — 2026-09-25
-
-Усилена целостность архива: `validateStore()` теперь отклоняет состояние, где архивная запись имеет тот же `collection:id`, что и активная запись. Это предотвращает конфликт при последующем restore.
-
-GitHub commits: `4efed03d0ae1e285928f9b6963d8e189f81702ee`, `4a9007238e674d170af135049fbf570a4a731ca0`.
-
-Процент не повышен без подтверждения полного test execution. **B07 = 89%.**
-
-## B07 — critical guard restoration checkpoint — 2026-09-25
-
-При повторной инспекции `persistence.js` обнаружено, что вызовы `assertCollection()` присутствовали, но сама функция-guard отсутствовала в текущем файле. Это исправлено: определение `assertCollection()` восстановлено перед persistence mutators, добавлен отдельный regression test.
-
-GitHub commits: `6d2bedc38988cebf922c3a28e29cbf2a0fb92502`, `6200cb93a7337a9dc6b34e7b268fe4d162b9ecf0`.
-
-Процент не повышен: необходим полный подтверждённый test execution. **B07 = 89%.**
-
-## B07 — ambiguous archive restore checkpoint — 2026-09-25
-
-Усилен `restoreRecord()`: если несколько архивных записей имеют одинаковый `id` в разных коллекциях, восстановление теперь не выбирает запись случайно, а отклоняет неоднозначный запрос. Добавлен regression test.
-
-GitHub commits: `3f4afb7b3ddf319b804d79adea0e2ac7a7411805`, `a6c5d0560828a0c9c9d658e10ff7c73323886358`.
-
-Процент не повышен без полного подтверждённого test execution. **B07 = 89%.**
+Продолжаем B07, пока не будет закрыта оставшаяся core-функциональность и подтверждён полный test execution. После закрытия B07 переходим строго к B08, не перескакивая к новому дизайну.
