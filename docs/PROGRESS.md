@@ -328,10 +328,10 @@ B14 полностью подтверждён фактическим выпол�
 | ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 95% |
 | ND.5 | Core component system | 90% |
 | ND.6 | Overview / Dashboard redesign | 85% |
-| ND.7 | Leads / CRM redesign | 85% |
+| ND.7 | Leads / CRM redesign | 100% |
 | ND.8 | Clients redesign | 100% |
-| ND.9 | Proposals redesign | 35% |
-| ND.10 | Projects redesign | 0% |
+| ND.9 | Proposals redesign | 70% |
+| ND.10 | Projects redesign | 30% |
 | ND.11 | Invoices redesign | 0% |
 | ND.12 | Payments redesign | 0% |
 | ND.13 | Expenses redesign | 0% |
@@ -400,3 +400,10 @@ B14 полностью подтверждён фактическим выпол�
 - ND.8: 100% — Clients premium surface completed: hierarchy, table treatment, statuses, actions and mobile behavior.
 - ND.9: 35% — Proposals premium surface started with table hierarchy, status treatment, actions and responsive handling.
 - GitHub commit: `822dd5434f09dcafc66af9da3fb3baea71b47c40`.
+
+
+### Design checkpoint — Leads completed / Proposals advanced / Projects started
+- ND.7: 100% — Leads/CRM premium visual treatment and interaction polish completed; final global regression remains under ND.23.
+- ND.9: 70% — Proposals hierarchy, status/action treatment, responsive surface and interaction polish advanced.
+- ND.10: 30% — Projects premium surface started with card hierarchy, metadata, progress/action treatment and mobile behavior.
+- GitHub commit: `44b02c582a960040e851d0f1bf5925001bd24214`.
