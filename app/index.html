@@ -175,8 +175,17 @@ fr:{export:'Exporter',import:'Importer',newTop:'＋ Nouveau',thisMonth:'Ce mois-
 };
 function applyUiCopy(lang){
   const c=uiCopy[lang]||uiCopy.en;
-  const textMap={exportData:'export',importData:'import',newTopAction:'newTop',dashboardPeriod:'thisMonth'};
+  const textMap={exportData:'export',importData:'import',newTopAction:'newTop'};
   Object.entries(textMap).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.textContent=c[key];});
+  const periodLabels={
+    en:{month:'This month',quarter:'This quarter',year:'This year',all:'All time'},
+    ru:{month:'Этот месяц',quarter:'Этот квартал',year:'Этот год',all:'Всё время'},
+    es:{month:'Este mes',quarter:'Este trimestre',year:'Este año',all:'Todo el tiempo'},
+    de:{month:'Dieser Monat',quarter:'Dieses Quartal',year:'Dieses Jahr',all:'Gesamte Zeit'},
+    fr:{month:'Ce mois-ci',quarter:'Ce trimestre',year:'Cette année',all:'Toute la période'}
+  }[lang]||{};
+  const periodEl=document.getElementById('dashboardPeriod');
+  if(periodEl)Array.from(periodEl.options).forEach(o=>{if(periodLabels[o.value])o.textContent=periodLabels[o.value];});
   document.querySelectorAll('[data-ui]').forEach(el=>{const key=el.dataset.ui;if(c[key])el.textContent=c[key];});
   document.querySelectorAll('[data-ui-label]').forEach(el=>{const key=el.dataset.uiLabel;if(uiLabels[lang]?.[key])el.textContent=uiLabels[lang][key];});
   const statusLabels={en:['New','Active','Qualified','Proposal','Negotiation','Won','Accepted','Awaiting','Viewed','Sent','Paid','Overdue','Planned','Draft','Lost','Closed','Cancelled'],ru:['Новый','Активный','Квалифицирован','Предложение','Переговоры','Выигран','Принят','Ожидание','Просмотрено','Отправлен','Оплачен','Просрочен','Запланирован','Черновик','Проигран','Закрыт','Отменён'],es:['Nuevo','Activo','Cualificado','Propuesta','Negociación','Ganado','Aceptado','En espera','Visto','Enviado','Pagado','Vencido','Planificado','Borrador','Perdido','Cerrado','Cancelado'],de:['Neu','Aktiv','Qualifiziert','Angebot','Verhandlung','Gewonnen','Akzeptiert','Wartend','Angesehen','Gesendet','Bezahlt','Überfällig','Geplant','Entwurf','Verloren','Geschlossen','Storniert'],fr:['Nouveau','Actif','Qualifié','Proposition','Négociation','Gagné','Accepté','En attente','Vu','Envoyé','Payé','En retard','Planifié','Brouillon','Perdu','Clôturé','Annulé']}[lang]||[];
