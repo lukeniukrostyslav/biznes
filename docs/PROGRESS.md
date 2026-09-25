@@ -913,3 +913,15 @@ This gate is separate from the historical B00–B14 completion percentages and f
 External quality references used for the gate:
 - Accessibility baseline: WCAG 2.2, including keyboard operation, visible focus, target-size and contrast requirements.
 - Performance baseline: Core Web Vitals / real-user performance targets, measured separately for mobile and desktop.
+
+
+### Launch QA checkpoint — LQ01 closed — 2026-09-25
+
+- **LQ01 Source / JavaScript syntax / HTML integrity: 100%**
+- Verified on current main commit `4a3dad2499b4083afbbeed2f74cd65b38c6a698d`.
+- Current Core Tests run #313: **SUCCESS**.
+- The current `src/app-static.test.js` explicitly extracts the production inline module from `app/index.html` and executes Node `--check` against it, in addition to the static integrity assertions.
+- Current B14 E2E #190: **SUCCESS** and Design Regression #128: **SUCCESS** on the same commit.
+- Therefore LQ01 is no longer pending a syntax re-run.
+
+**Next gate:** LQ02 Runtime boot / no page errors — remains 0% until the current production deployment is checked with explicit page-error monitoring.
