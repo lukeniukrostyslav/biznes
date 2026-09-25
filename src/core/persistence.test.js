@@ -34,6 +34,15 @@ test('validateStore rejects a non-current schema version',()=>{
 });
 test('rejects invalid relationship import',()=>assert.throws(()=>importStore({schemaVersion:2,projects:[{id:'p1',clientId:'missing'}]}),/relationships/));
 test('archives and restores',()=>{let store=upsertRecord(createEmptyStore(),'clients',{id:'c1',name:'Nova'});store=archiveRecord(store,'clients','c1');assert.equal(store.clients.length,0);store=restoreRecord(store,'c1');assert.equal(store.clients[0].name,'Nova');});
+test('archiveRecord refuses to return an invalid candidate store',()=>{
+  let store=createEmptyStore();
+  store.clients=[{id:'c1',name:'Nova'}];
+  store.archivedRecords=[
+    {id:'arch1',collection:'clients',name:'Old'},
+    {id:'arch1',collection:'clients',name:'Duplicate'}
+  ];
+  assert.throws(()=>archiveRecord(store,'clients','c1'),/Cannot archive invalid BUSINESS OS store/);
+});
 test('clears persisted store',()=>{const s=memoryStorage(); saveStore(s,upsertRecord(createEmptyStore(),'clients',{name:'Nova'})); clearStore(s); assert.equal(loadStore(s).clients.length,0);});
 test('validateStore rejects duplicate ids and malformed money fields', () => {
   const store = createEmptyStore();
