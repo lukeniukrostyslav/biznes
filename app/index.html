@@ -606,7 +606,6 @@ function renderDashboardRealData(){
     const result=calculateProjectProfit(project,{invoices:businessStore.invoices||[],payments:businessStore.payments||[],expenses:businessStore.expenses||[]});
     return '<tr><td>'+escapeHtml(project.name||project.title||'Project')+'</td><td>'+money(result.revenue||0)+'</td><td class="green">'+money(result.actualProfit||0)+'</td><td>'+Number(result.actualMargin||0).toFixed(0)+'%</td></tr>';
   }).join('')||'<tr><td colspan="4" class="empty" data-ui="noProjects">No projects</td></tr>';
-}
 
   const metrics=calculateBusinessMetrics(businessStore);
   const paid=Number(metrics.paid||0), expenses=Number(metrics.expenses||0), profit=Number(metrics.actualProfit||0);
@@ -646,7 +645,8 @@ function renderDashboardRealData(){
   const projectHtml=projects.length?projects.slice(0,5).map(p=>{const pr=calculateProjectProfit(p,{expenses:businessStore.expenses||[]});return '<tr><td>'+recordLabel(p)+'</td><td>'+money(pr.revenue)+'</td><td class="green">'+money(pr.profit)+'</td><td>'+escapeHtml(pr.margin!=null?pr.margin+'%':'—')+'</td></tr>';}).join(''):'<tr><td colspan="4" class="empty">'+t.none+'</td></tr>';
   if(cols[0])cols[0].innerHTML='<div class="card-title"><h2>'+t.follow+'</h2><span class="muted">'+follow.length+'</span></div><div class="list">'+followHtml+'</div>';
   if(cols[1])cols[1].innerHTML='<div class="card-title"><h2>'+t.overdue+'</h2><span class="danger">'+overdue.length+'</span></div><div class="list">'+overdueHtml+'</div>';
-  if(cols[2])cols[2].innerHTML='<div class="card-title"><h2>'+t.profit+'</h2><span class="muted">'+t.view+'</span></div><table class="profit-table"><thead><tr><th>Project</th><th>Revenue</th><th>Profit</th><th>Margin</th></tr></thead><tbody>'+projectHtml+'</tbody></table>';const invoiceProposalUiCopy={
+  if(cols[2])cols[2].innerHTML='<div class="card-title"><h2>'+t.profit+'</h2><span class="muted">'+t.view+'</span></div><table class="profit-table"><thead><tr><th>Project</th><th>Revenue</th><th>Profit</th><th>Margin</th></tr></thead><tbody>'+projectHtml+'</tbody></table>';}
+const invoiceProposalUiCopy={
  en:{invoiced:'Invoiced',paid:'Paid',outstanding:'Outstanding',overdue:'Overdue',drafts:'Drafts',sent:'Sent',awaitingDecision:'Awaiting decision',winRate:'Win rate'},
  ru:{invoiced:'Выставлено',paid:'Оплачено',outstanding:'К оплате',overdue:'Просрочено',drafts:'Черновики',sent:'Отправлено',awaitingDecision:'Ожидают решения',winRate:'Конверсия в выигрыш'},
  es:{invoiced:'Facturado',paid:'Cobrado',outstanding:'Pendiente',overdue:'Vencido',drafts:'Borradores',sent:'Enviadas',awaitingDecision:'Esperando decisión',winRate:'Tasa de éxito'},
