@@ -9,7 +9,7 @@ const appPath = new URL('../app/index.html', import.meta.url);
 const html = fs.readFileSync(appPath, 'utf8');
 
 test('app module script is syntactically valid JavaScript', () => {
-  const match = html.match(/<script>\s*\/\* BUSINESS OS runtime bundle[\s\S]*?<\/script>/);
+  const match = html.match(/<script>\s*(\/\* BUSINESS OS runtime bundle[\s\S]*?)<\/script>/);
   assert.ok(match, 'classic BUSINESS OS runtime script must exist');
   const file = path.join(os.tmpdir(), 'business-os-app-check.mjs');
   fs.writeFileSync(file, match[1], 'utf8');
