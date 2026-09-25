@@ -236,7 +236,12 @@ function upsertRecord(store, collection, record) {
   const index = list.findIndex(item => item.id === next.id);
   if (index === -1) list.push(next);
   else list[index] = next;
-  return normalizeStore({ ...store, [collection]: list });
+  const candidate = normalizeStore({ ...normalized, [collection]: list });
+  const validation = validateStore(candidate);
+  if (!validation.valid) {
+    throw new Error('Cannot upsert invalid BUSINESS OS store: ' + validation.errors.join(', '));
+  }
+  return candidate;
 }
 
 function removeRecord(store, collection, id) {
