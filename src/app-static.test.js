@@ -8,9 +8,9 @@ import { execFileSync } from 'node:child_process';
 const appPath = new URL('../app/index.html', import.meta.url);
 const html = fs.readFileSync(appPath, 'utf8');
 
-test('app module script is syntactically valid JavaScript', () => {
-  const match = html.match(/<script>\s*(\/\* BUSINESS OS runtime bundle[\s\S]*?)<\/script>/);
-  assert.ok(match, 'classic BUSINESS OS runtime script must exist');
+test('app runtime module is syntactically valid JavaScript', () => {
+  const match = html.match(/<script type="module">([\s\S]*?)<\/script>/);
+  assert.ok(match, 'runtime module script must exist');
   const file = path.join(os.tmpdir(), 'business-os-app-check.mjs');
   fs.writeFileSync(file, match[1], 'utf8');
   try { execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' }); }
@@ -159,4 +159,11 @@ test('B14 responsive functional surfaces exist for desktop, tablet and mobile', 
   assert.match(html, /@media\(max-width:600px\)/);
   assert.match(html, /\.drawer-panel/);
   assert.match(html, /\.table-card\{overflow:auto\}/);
+});
+
+
+test('production create bridge is exposed to the fallback click handler', () => {
+  assert.match(html, /window\.openCreateDrawer\s*=\s*openCreateDrawer/);
+  assert.doesNotMatch(html, /\}\);\\nfunction bindNav/);
+  assert.doesNotMatch(html, /\n\s*\\n\s*const lower/);
 });
