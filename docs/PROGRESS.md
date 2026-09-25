@@ -498,3 +498,11 @@ B14 полностью подтверждён фактическим выпол�
 - Production alias: `business-os-lukeniukrostyslav.vercel.app`.
 - HTTP verification: **200 OK**; live HTML отдаётся с активным `premium-design.css`.
 - ND.25 остаётся **0%** до финальной ручной acceptance-проверки кликами в live-приложении.
+
+
+### Design checkpoint — FINAL VISUAL PASS / 2026-09-25
+- Выполнен новый визуальный проход BUSINESS OS по предоставленному референсу: shell, sidebar, topbar, KPI, dashboard analytics, financial cards, tables и mobile navigation получили более выраженную premium B2B иерархию.
+- Существующая бизнес-логика и модели данных не изменялись.
+- Language selector визуально усилен пятью языками (EN/RU/ES/DE/FR).
+- Исправления сохранены в GitHub и опубликованы в Vercel production.
+- ND.25 остаётся **0%** до фактической ручной проверки live-интерфейса кликами.
