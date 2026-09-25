@@ -1125,3 +1125,25 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
   #dashboardScreen .dashboard-chart-card .chart-bars .bar{display:block!important;width:7px!important;min-width:0!important;border-radius:3px 3px 1px 1px!important}
   #dashboardScreen .dashboard-chart-card .chart-label{font-size:7px!important;padding-top:4px!important}
 }
+
+
+/* V2.25 — final reference composition: remove non-reference workspace module rail */
+@media(min-width:721px){
+  #dashboardScreen .dashboard-module-section{display:none!important}
+  #dashboardScreen .dashboard-profit-card{margin-bottom:0!important}
+  #dashboardScreen .dashboard-chart-card .chart{position:relative!important}
+  #dashboardScreen .dashboard-chart-card .chart-bars{position:relative!important;z-index:1!important}
+  #dashboardScreen .dashboard-chart-card .profit-line-svg{
+    position:absolute!important;left:0!important;right:0!important;top:8px!important;width:100%!important;height:160px!important;
+    z-index:3!important;pointer-events:none!important;overflow:visible!important
+  }
+  #dashboardScreen .dashboard-chart-card .profit-line-svg polyline{
+    fill:none!important;stroke:#7447df!important;stroke-width:3!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+    vector-effect:non-scaling-stroke!important
+  }
+  #dashboardScreen .dashboard-chart-card .profit-line-point{display:none!important}
+}
+@media(max-width:720px){
+  #dashboardScreen .dashboard-module-section{display:none!important}
+  #dashboardScreen .dashboard-chart-card .profit-line-svg{display:none!important}
+}
