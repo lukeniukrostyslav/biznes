@@ -816,3 +816,22 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 .sidebar .nav button:nth-child(11){margin-top:auto!important}
 .sidebar>.spacer{display:none!important}
 .sidebar .user{margin-top:auto!important}
+
+
+/* V2.11 — premium shell finishing pass: topbar, identity rail and dashboard density */
+.main{background:#f4f7fb!important}
+.product-identity-bar{min-height:58px!important;padding:10px 22px!important;background:#fff!important;border-bottom:1px solid #e7edf5!important;box-shadow:0 1px 0 rgba(12,31,58,.02)!important}
+.identity-brand{gap:10px!important}.identity-logo{width:34px!important;height:34px!important;border-radius:10px!important;display:grid!important;place-items:center!important;background:linear-gradient(135deg,#1f6ff0,#5b57df)!important;color:#fff!important;box-shadow:0 7px 18px rgba(49,94,251,.18)!important}
+.identity-brand strong{font-size:11px!important;letter-spacing:.04em!important;color:#172944!important}.identity-brand span{font-size:8px!important;color:#8b98aa!important;margin-top:2px!important}.identity-value{padding-left:18px!important;border-left:1px solid #e8edf4!important}.identity-value strong{font-size:10px!important;color:#40506a!important}.identity-value span{font-size:8px!important;color:#9aa6b6!important}
+.topbar{height:68px!important;padding:0 22px!important;background:rgba(255,255,255,.96)!important;border-bottom:1px solid #e6ebf2!important;box-shadow:0 4px 18px rgba(20,42,76,.035)!important;position:sticky!important;top:0!important;z-index:20!important}
+.search{height:38px!important;min-width:300px!important;border:1px solid #e1e7ef!important;border-radius:10px!important;background:#f8fafc!important;color:#7c899d!important;padding:0 13px!important;display:flex!important;align-items:center!important;font-size:11px!important;transition:border-color .15s ease,background .15s ease,box-shadow .15s ease!important}
+.search:hover{background:#fff!important;border-color:#cfd9e7!important}.search:focus-within{background:#fff!important;border-color:#9bbcf3!important;box-shadow:0 0 0 3px rgba(49,94,251,.08)!important}
+.top-actions{gap:8px!important}.top-actions button{min-height:36px!important;border-radius:9px!important;font-size:10px!important;font-weight:750!important}.top-actions .new{box-shadow:0 7px 16px rgba(49,94,251,.18)!important}.lang{height:36px!important;border-radius:9px!important;border:1px solid #e1e7ef!important;background:#fff!important;font-weight:700!important;color:#44546b!important}
+.content{padding:22px 24px 34px!important;max-width:1540px!important}
+.dashboard-hero{border-radius:18px!important;border:1px solid #dce5f0!important;box-shadow:0 14px 35px rgba(20,42,76,.07)!important;overflow:hidden!important}
+#dashboardScreen .kpi{border:1px solid #e0e7f0!important;background:linear-gradient(180deg,#fff 0%,#fbfcfe 100%)!important;box-shadow:0 7px 22px rgba(20,42,76,.045)!important;border-radius:14px!important}
+#dashboardScreen .kpi:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(20,42,76,.075)!important}
+#dashboardScreen .wide,#dashboardScreen .lower>.card{border:1px solid #e0e7f0!important;box-shadow:0 8px 25px rgba(20,42,76,.045)!important;border-radius:15px!important;background:#fff!important}
+.dashboard-module-grid{gap:10px!important}.module-card{min-height:112px!important;border-radius:12px!important;box-shadow:0 5px 18px rgba(20,42,76,.04)!important}.module-card:hover{transform:translateY(-2px)!important;box-shadow:0 11px 25px rgba(20,42,76,.085)!important}
+@media(max-width:900px){.search{min-width:220px!important}.product-identity-bar{padding:10px 16px!important}.content{padding:18px 16px 30px!important}}
+@media(max-width:720px){.product-identity-bar{min-height:52px!important;padding:8px 14px!important}.identity-value{display:none!important}.topbar{height:58px!important;padding:0 14px!important}.search{min-width:0!important;flex:1!important;font-size:10px!important}.top-actions{gap:5px!important}.top-actions .new{padding:0 10px!important}.content{padding:14px 12px 78px!important}.dashboard-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.module-card{min-height:104px!important}}
