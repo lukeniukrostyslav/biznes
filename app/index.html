@@ -1648,7 +1648,13 @@ const recordUiCopy={
     de:{headers:{clients:['Kunde','Projekte','Umsatz','Offen','Status'],proposals:['Angebot','Status','Wert','Nächste Aktion','Aktion','Datensatz'],projects:['Projekt','Status','Umsatz','Gewinn / Marge','Prognose / Budget','Aktion'],invoices:['Rechnung','Status','Betrag','Nächste Aktion','Datensatz'],payments:['Zahlung','Status','Betrag','Nächste Aktion','Datensatz'],expenses:['Ausgabe','Status','Betrag','Nächste Aktion','Datensatz']},forecast:'Prognose',budgetLeft:'Budget übrig',edit:'Bearbeiten',delete:'Löschen',noLeads:'Keine Leads',opportunity:'Chance',nextAction:'Nächste Aktion'},
     fr:{headers:{clients:['Client','Projets','Chiffre d’affaires','À encaisser','Statut'],proposals:['Proposition','Statut','Valeur','Prochaine action','Action','Enregistrement'],projects:['Projet','Statut','Chiffre d’affaires','Profit / Marge','Prévision / Budget','Action'],invoices:['Facture','Statut','Montant','Prochaine action','Enregistrement'],payments:['Paiement','Statut','Montant','Prochaine action','Enregistrement'],expenses:['Dépense','Statut','Montant','Prochaine action','Enregistrement']},forecast:'Prévision',budgetLeft:'Budget restant',edit:'Modifier',delete:'Supprimer',noLeads:'Aucun prospect',opportunity:'Opportunité',nextAction:'Prochaine action'}
   };
-const projectUiCopy={en:{activeProjects:'Active projects',contracted:'Contracted',expectedProfit:'Expected profit',avgMargin:'Avg. margin'},ru:{activeProjects:'Активные проекты',contracted:'По контрактам',expectedProfit:'Ожидаемая прибыль',avgMargin:'Средняя маржа'},es:{activeProjects:'Proyectos activos',contracted:'Contratado',expectedProfit:'Beneficio esperado',avgMargin:'Margen medio'},de:{activeProjects:'Aktive Projekte',contracted:'Vertraglich vereinbart',expectedProfit:'Erwarteter Gewinn',avgMargin:'Durchschnittliche Marge'},fr:{activeProjects:'Projets actifs',contracted:'Sous contrat',expectedProfit:'Profit attendu',avgMargin:'Marge moyenne'}};
+const projectUiCopy={
+ en:{activeProjects:'Active projects',contracted:'Contracted',expectedProfit:'Expected profit',avgMargin:'Avg. margin',headers:['Project','Progress','Revenue','Margin']},
+ ru:{activeProjects:'Активные проекты',contracted:'По контрактам',expectedProfit:'Ожидаемая прибыль',avgMargin:'Средняя маржа',headers:['Проект','Прогресс','Выручка','Маржа']},
+ es:{activeProjects:'Proyectos activos',contracted:'Contratado',expectedProfit:'Beneficio esperado',avgMargin:'Margen medio',headers:['Proyecto','Progreso','Ingresos','Margen']},
+ de:{activeProjects:'Aktive Projekte',contracted:'Vertraglich vereinbart',expectedProfit:'Erwarteter Gewinn',avgMargin:'Durchschnittliche Marge',headers:['Projekt','Fortschritt','Umsatz','Marge']},
+ fr:{activeProjects:'Projets actifs',contracted:'Sous contrat',expectedProfit:'Profit attendu',avgMargin:'Marge moyenne',headers:['Projet','Progression','Chiffre d’affaires','Marge']}
+};
 const projectHealthCopy={
   en:{healthTitle:'Project health',noProjects:'No project data yet.',marginStrong:'Healthy margin',marginWeak:'Margin needs attention',overBudget:'Budget pressure',overdue:'Invoice overdue'},
   ru:{healthTitle:'Состояние проектов',noProjects:'Пока нет данных по проектам.',marginStrong:'Здоровая маржа',marginWeak:'Маржа требует внимания',overBudget:'Давление на бюджет',overdue:'Просрочен счёт'},
@@ -1662,6 +1668,9 @@ function renderProjectHealth(){
   if(!body||!health)return;
   const projects=businessStore.projects||[];
   const copy=projectHealthCopy[activeLanguage]||projectHealthCopy.en;
+  const tableCopy=projectUiCopy[activeLanguage]||projectUiCopy.en;
+  const thead=document.querySelector('#projectsDataTable thead tr');
+  if(thead)thead.innerHTML=tableCopy.headers.map(label=>'<th>'+label+'</th>').join('');
   if(!projects.length){
     body.innerHTML='<tr><td colspan="4" class="empty">'+copy.noProjects+'</td></tr>';
     health.innerHTML='<div class="empty">'+copy.noProjects+'</div>';
@@ -1674,6 +1683,7 @@ function renderProjectHealth(){
     const progressText=Number.isFinite(progress)&&progress>0?Math.round(progress)+'%':'—';
     return '<tr data-record-type="projects" data-record-id="'+escapeHtml(project.id)+'"><td><strong>'+recordLabel(project)+'</strong></td><td>'+progressText+'</td><td>'+money(calc.revenue)+'</td><td class="green">'+(calc.margin==null?'—':Number(calc.margin).toFixed(1)+'%')+'</td></tr>';
   }).join('');
+  body.querySelectorAll('tr[data-record-id]').forEach(row=>row.addEventListener('click',()=>{const rec=projects.find(x=>x.id===row.dataset.recordId);if(rec)openEditDrawer('projects',rec);}));
   const healthItems=[];
   projects.forEach(project=>{
     const calc=calculateProjectProfit(project,{expenses});
@@ -1791,7 +1801,7 @@ function renderEntity(type,id){
 function renderStoredRecords(){
   
   const tc=recordUiCopy[activeLanguage]||recordUiCopy.en;
-  const configs=[['clientsScreen','clients'],['proposalsScreen','proposals'],['projectsScreen','projects'],['invoicesScreen','invoices'],['paymentsScreen','payments'],['expensesScreen','expenses']];
+  const configs=[['clientsScreen','clients'],['proposalsScreen','proposals'],['invoicesScreen','invoices'],['paymentsScreen','payments'],['expensesScreen','expenses']];
   configs.forEach(([screenId,type])=>{
     const screen=document.getElementById(screenId),table=screen?.querySelector('table'),tbody=table?.querySelector('tbody'),thead=table?.querySelector('thead tr');
     if(!tbody||!thead)return;
