@@ -196,11 +196,12 @@ function normalizeStore(input) {
 }
 
 function loadStore(storage) {
+  const raw = storage.getItem(STORAGE_KEY);
+  if (!raw) return createEmptyStore();
   try {
-    const raw = storage.getItem(STORAGE_KEY);
-    return normalizeStore(raw ? JSON.parse(raw) : createEmptyStore());
-  } catch {
-    return createEmptyStore();
+    return normalizeStore(JSON.parse(raw));
+  } catch (error) {
+    throw new Error('Cannot load BUSINESS OS store: ' + error.message);
   }
 }
 
