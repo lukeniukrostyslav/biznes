@@ -1611,20 +1611,11 @@ function updateDashboardDate(lang){
 }
 function applyRussianDashboardFix(){
   if(activeLanguage!=='ru')return;
-  const map={
-    'Revenue':'Выручка','Outstanding':'К оплате','Pipeline':'Воронка','Profit':'Прибыль','Revenue & Profit':'Выручка и прибыль','Expenses':'Расходы',
-    'Cashflow Overview':'Обзор денежных средств','Cashflow':'Денежный поток','Cash in Bank':'Деньги в банке','View all →':'Посмотреть всё →','No follow-ups':'Нет задач на сегодня','No overdue invoices':'Нет просроченных счетов',
-    'Active Projects':'Активные проекты','No projects':'Нет проектов','Project Profitability':'Прибыльность проектов','Project':'Проект','Client':'Клиент','Costs':'Затраты','Margin':'Маржа','Status':'Статус',
-    'This month':'Этот месяц','This quarter':'Этот квартал','This year':'Этот год','All time':'Всё время','Total Income':'Всего поступило','Total Expenses':'Всего расходов','Net Profit':'Чистая прибыль',
-    'Follow-ups Today':'Задачи на сегодня','Overdue Invoices':'Просроченные счета','Collections requiring attention':'Требует внимания','Next actions that need attention':'Следующие действия, требующие внимания',
-    'Current financial position':'Текущее финансовое положение','Performance across your selected period':'Динамика за выбранный период','No data yet.':'Пока нет данных.','Actual':'Факт','No project data yet.':'Пока нет данных по проектам.'
-  };
-  const root=document.getElementById('dashboardScreen');
-  if(!root)return;
-  root.querySelectorAll('*').forEach(el=>{
-    if(el.children.length===0){const text=el.textContent.trim();if(map[text])el.textContent=map[text];}
-  });
-  root.querySelectorAll('option').forEach(el=>{const text=el.textContent.trim();if(map[text])el.textContent=map[text];});
+  const map={'Revenue':'Выручка','Outstanding':'К оплате','Pipeline':'Воронка','Profit':'Прибыль','Revenue & Profit':'Выручка и прибыль','Expenses':'Расходы','Cashflow':'Денежный поток','Cashflow Overview':'Обзор денежных средств','Cash in Bank':'Деньги в банке','View all →':'Посмотреть всё →','No follow-ups':'Нет задач на сегодня','No overdue invoices':'Нет просроченных счетов','No projects':'Нет проектов','No data yet.':'Пока нет данных.','No project data yet.':'Пока нет данных по проектам.','Actual':'Факт','Active Projects':'Активные проекты','Project Profitability':'Прибыльность проектов','Project':'Проект','Client':'Клиент','Costs':'Затраты','Margin':'Маржа','Status':'Статус','This month':'Этот месяц','This quarter':'Этот квартал','This year':'Этот год','All time':'Всё время','Total Income':'Всего поступило','Total Expenses':'Всего расходов','Net Profit':'Чистая прибыль','Follow-ups Today':'Задачи на сегодня','Overdue Invoices':'Просроченные счета','Collections requiring attention':'Требует внимания','Next actions that need attention':'Следующие действия, требующие внимания','Current financial position':'Текущее финансовое положение','Performance across your selected period':'Динамика за выбранный период'};
+  const root=document.getElementById('dashboardScreen');if(!root)return;
+  const translate=()=>root.querySelectorAll('*').forEach(el=>{if(el.children.length===0){const s=el.textContent.trim();if(map[s])el.textContent=map[s];}['title','aria-label'].forEach(a=>{const s=el.getAttribute(a);if(s&&map[s.trim()])el.setAttribute(a,map[s.trim()]);});});
+  translate();
+  if(!window.__ruDashboardObserver){const observer=new MutationObserver(()=>{if(window.activeLanguage==='ru')translate();});observer.observe(root,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['title','aria-label']});window.__ruDashboardObserver=observer;}
 }
 function render(lang){const currentScreen=document.querySelector('.screen.active')?.id||'dashboardScreen';activeLanguage=lang;window.activeLanguage=lang;const c=copy[lang];const sc=screenCopy[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{if(sc[el.dataset.i18n])el.textContent=sc[el.dataset.i18n];});document.documentElement.lang=lang;document.getElementById('greeting').textContent=c.g;document.getElementById('subtitle').textContent=c.s;document.getElementById('search').textContent=c.search;updateDashboardDate(lang);document.getElementById('nav').innerHTML=c.nav.map((x,i)=>{
   const badgeMap={1:(businessStore.leads||[]).length,3:(businessStore.proposals||[]).length,4:(businessStore.projects||[]).length,5:(businessStore.invoices||[]).length};
