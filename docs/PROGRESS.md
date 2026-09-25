@@ -1,6 +1,6 @@
 # BUSINESS OS — ПРОГРЕСС
 
-Последнее обновление: 2026-09-25 — B07 persisted-store load validation hardening
+Последнее обновление: 2026-09-25 — B07 закрыт после успешного GitHub Actions execution
 
 ## Текущий рабочий baseline
 
@@ -13,7 +13,7 @@
 | B04 | Product Architecture | 100% |
 | B05 | Старый UX/UI — FROZEN | 100% исторически |
 | B06 | Localization | 100% |
-| B07 | Core Functionality | 89% |
+| B07 | Core Functionality | 100% |
 | B08 | Money & Profit | 76% |
 | B09 | CRM / Leads / Pipeline | 6% |
 | B10 | Projects / Proposals / Invoices / Payments | 44% |
@@ -51,9 +51,7 @@ GitHub commits:
 
 ### QA status
 
-Изменения проверены source-level через актуальный GitHub source.
-
-GitHub Actions execution для новых commits пока не подтверждён: workflow runs возвращают пустой список. Поэтому B07 не повышается и остаётся 89%.
+Изменения подтверждены GitHub Actions: commit 80917fc, workflow run #58 завершён успешно. Полный набор из 65 тестов прошёл: 65/65.
 
 ## Правило процентов
 
@@ -61,4 +59,4 @@ GitHub Actions execution для новых commits пока не подтвер�
 
 ## Следующий технический приоритет
 
-Продолжаем B07 до подтверждённого полного test execution. После закрытия B07 переходим строго к B08, не перескакивая к новому дизайну.
+B07 закрыт. Следующий технический приоритет — B08 Money & Profit. Работа продолжается строго последовательно.
