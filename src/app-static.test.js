@@ -28,3 +28,12 @@ test('app wires every primary create action to a collection', () => {
     assert.match(html, new RegExp(key + ':'));
   }
 });
+
+test('dashboard and cashflow render functions stay explicitly wired', () => {
+  for (const fn of ['renderCashflow','renderDashboardRealData','refreshDashboardMetrics','refreshDashboardVisuals','exportCashflowReport']) {
+    assert.match(html, new RegExp('function\\s+' + fn + '\\s*\\('));
+  }
+  assert.match(html, /refreshDashboardMetrics\\(\\);/);
+  assert.match(html, /refreshDashboardVisuals\\(\\);/);
+  assert.match(html, /renderDashboardRealData\\(\\);/);
+});
