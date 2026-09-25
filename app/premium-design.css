@@ -1622,3 +1622,18 @@ body{background:linear-gradient(180deg,#edf3f9 0,#f7f9fc 65%,#eef3f9 100%)!impor
 }
 
 
+
+/* FINAL DESKTOP/MOBILE CLEANUP — single source of truth for sidebar icons and main positioning. */
+@media(min-width:721px){
+  .app{display:flex!important}
+  .sidebar{width:230px!important;flex:0 0 230px!important}
+  .main{margin-left:0!important;width:auto!important;min-width:0!important;flex:1 1 auto!important}
+}
+.sidebar .nav button::before{content:none!important;display:none!important}
+.sidebar .nav button{gap:10px!important}
+.sidebar .nav .nav-icon{display:inline-flex!important;flex:0 0 20px!important;width:20px!important;height:20px!important;align-items:center!important;justify-content:center!important;font-size:15px!important;line-height:1!important;color:currentColor!important}
+.sidebar .nav .nav-label{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+@media(max-width:720px){
+  .sidebar{display:none!important}
+  .main{margin-left:0!important;width:100%!important;min-width:0!important}
+}
