@@ -21,7 +21,7 @@
 | B12 | Persistence / Export / Import | 100% |
 | B13 | Technical UI / Localization / Responsive | 100% |
 | B14 | Functional / E2E QA | 100% |
-| NEW DESIGN | Новый Premium Design с нуля | 92% |
+| NEW DESIGN | Новый Premium Design с нуля | 96% |
 | B15 | Commercial Packaging | 0% |
 | B16 | Sales / Marketplaces | 0% |
 
@@ -345,7 +345,7 @@ B14 полностью подтверждён фактическим выпол�
 | ND.21 | Accessibility / focus / interaction polish | 100% |
 | ND.22 | Cross-module visual consistency | 100% |
 | ND.23 | Full B14 regression after redesign | 100% |
-| ND.24 | Production preview deployment | 0% |
+| ND.24 | Production preview deployment | 100% |
 | ND.25 | Final manual acceptance + preview link | 0% |
 
 Полная спецификация: docs/NEW_DESIGN_MASTER_SPEC.md.
@@ -489,3 +489,12 @@ B14 полностью подтверждён фактическим выпол�
 - Run: `36148050520`.
 
 Следующий этап: **ND.24 Production Preview deployment**, затем ND.25 финальная ручная acceptance-проверка live-приложения.
+
+
+### Design checkpoint — ND.24 закрыт / 2026-09-25
+- ND.24: **100%** — свежий Premium Design опубликован в Vercel production.
+- Production deployment: `dpl_9uypkFBE4wQkW7vhP2uZUXXVPPHs`.
+- Status: **READY**.
+- Production alias: `business-os-lukeniukrostyslav.vercel.app`.
+- HTTP verification: **200 OK**; live HTML отдаётся с активным `premium-design.css`.
+- ND.25 остаётся **0%** до финальной ручной acceptance-проверки кликами в live-приложении.
