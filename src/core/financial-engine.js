@@ -382,10 +382,9 @@ function calculateFinancialAlerts(store = {}, now = new Date(), options = {}) {
   const activeLeads = (Array.isArray(source.leads) ? source.leads : []).filter(x => !['won','lost','closed','cancelled'].includes(String(x.status || '').toLowerCase()));
   const pipelineTotal = roundMoney(activeLeads.reduce((sum, x) => sum + Number(x.value || 0), 0));
   const concentrationThreshold = Number(options.pipelineConcentrationThreshold ?? 0.5);
-  const active = (Array.isArray(source.leads) ? source.leads : []).filter(x => !['won','lost','closed','cancelled'].includes(String(x.status || '').toLowerCase()));
   if (activeLeads.length > 1 && pipelineTotal > 0) {
     const largest = Math.max(...activeLeads.map(x => Number(x.value || 0)));
-    if (largest / pipelineTotal >= concentrationThreshold) alerts.push({ type: 'pipeline-concentration', severity: 'medium', share: roundMoney(largest / pipeline * 100), action: 'Diversify active pipeline' });
+    if (largest / pipelineTotal >= concentrationThreshold) alerts.push({ type: 'pipeline-concentration', severity: 'medium', share: roundMoney(largest / pipelineTotal * 100), action: 'Diversify active pipeline' });
   }
   return alerts;
 }
