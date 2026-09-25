@@ -315,3 +315,40 @@ B14 полностью подтверждён фактическим выпол�
 После исправлений финальный E2E стал полностью зелёным: 28/28.
 
 Следующий технический приоритет — NEW DESIGN.
+
+## NEW DESIGN — ПОДБЛОКИ И ПРАВИЛА
+
+Новый дизайн создаётся с нуля поверх уже завершённой функциональности. Старый B05 UI остаётся frozen reference. Дизайн не добавляет вымышленных функций и не ломает существующие бизнес-процессы.
+
+| Подблок | Название | Прогресс |
+|---|---|---:|
+| ND.1 | Product UI audit и mapping существующих функций | 0% |
+| ND.2 | Premium visual direction / design principles | 0% |
+| ND.3 | Design tokens: colors / typography / spacing / radius / elevation | 0% |
+| ND.4 | Global App Shell / Sidebar / Topbar / Mobile Navigation | 0% |
+| ND.5 | Core component system | 0% |
+| ND.6 | Overview / Dashboard redesign | 0% |
+| ND.7 | Leads / CRM redesign | 0% |
+| ND.8 | Clients redesign | 0% |
+| ND.9 | Proposals redesign | 0% |
+| ND.10 | Projects redesign | 0% |
+| ND.11 | Invoices redesign | 0% |
+| ND.12 | Payments redesign | 0% |
+| ND.13 | Expenses redesign | 0% |
+| ND.14 | Profit redesign | 0% |
+| ND.15 | Cashflow redesign | 0% |
+| ND.16 | Settings / persistence / export-import redesign | 0% |
+| ND.17 | Forms / drawers / dialogs / validation states | 0% |
+| ND.18 | Empty / zero / error / success / loading states | 0% |
+| ND.19 | Responsive desktop / tablet / mobile | 0% |
+| ND.20 | EN / RU / ES / DE / FR visual QA | 0% |
+| ND.21 | Accessibility / focus / interaction polish | 0% |
+| ND.22 | Cross-module visual consistency | 0% |
+| ND.23 | Full B14 regression after redesign | 0% |
+| ND.24 | Production preview deployment | 0% |
+| ND.25 | Final manual acceptance + preview link | 0% |
+
+Полная спецификация: docs/NEW_DESIGN_MASTER_SPEC.md.
+
+Правило: процент повышается только после фактической реализации и проверки. Финальный NEW DESIGN = 100% только после зелёной регрессии и доступного preview, который можно открыть и вручную проверить кликами.
+
