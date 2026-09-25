@@ -851,3 +851,18 @@ Commits:
 - `f653ed87e7364768d3ddb1a606265482e0f61f4b`
 
 Live acceptance remains pending.
+
+
+### Design checkpoint — V2.28 / cashflow reference completeness — 2026-09-25
+
+Approved reference parity continued:
+- Cashflow Overview now includes the fourth reference metric, **Cash in Bank**.
+- Cash in Bank is populated from the existing cashflow forecast/current-net-cash calculation rather than hard-coded.
+- The old “30-day view / Local data” footer was removed from the visual Dashboard surface because it is not present in the approved reference.
+- Cashflow row spacing, meter hierarchy and purple cash-in-bank meter were tightened to the reference.
+
+Commits:
+- `5b844c6f7e509c08a246b9a1b6080073eb04c916`
+- `25e7599b0d94bd10f3cbc495faccbff24e8950b6`
+
+Live visual acceptance remains pending.
