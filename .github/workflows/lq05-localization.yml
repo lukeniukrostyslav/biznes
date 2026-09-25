@@ -43,3 +43,5 @@ jobs:
             playwright-report/
             test-results/
           if-no-files-found: ignore
+
+# LQ05 rerun trigger
