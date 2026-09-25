@@ -306,9 +306,12 @@ localStorage.setItem('business-os-lang',lang);
     const saved=localStorage.getItem('business-os-lang')||'en';
     apply(saved);
     const lang=document.getElementById('lang');
-    if(lang && !lang.dataset.fallbackBound){
+    if(lang && !lang.dataset.fallbackBound && !lang.dataset.runtimeBound){
       lang.dataset.fallbackBound='1';
-      lang.addEventListener('change',e=>apply(e.target.value));
+      lang.addEventListener('change',e=>{
+        if(typeof window.setBusinessOSLanguage==='function')window.setBusinessOSLanguage(e.target.value);
+        else apply(e.target.value);
+      });
     }
     setTimeout(()=>{
       const nav=document.getElementById('nav');
@@ -1568,7 +1571,14 @@ const defaultStore={schemaVersion:2,clients:[],leads:[],proposals:[],projects:[]
 function loadStore(){return loadPersistentStore(localStorage)}
 function saveStore(store){const next=savePersistentStore(localStorage,store);document.dispatchEvent(new Event("business-store-updated"));return next}
 function uid(prefix){return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
-let businessStore=loadStore();
+let businessStore;
+try{
+  businessStore=loadStore();
+}catch(e){
+  console.warn('BUSINESS OS local store recovery',e);
+  try{localStorage.removeItem(STORE_KEY);}catch(_e){}
+  businessStore={...defaultStore,clients:[],leads:[],proposals:[],projects:[],invoices:[],payments:[],expenses:[],archivedRecords:[]};
+}
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1800)}
 const toastCopy={
   en:{saved:'Record saved locally',updated:'Record updated locally',proposalNotFound:'Proposal not found',proposalAccepted:'Proposal must be accepted first',projectExists:'Project already exists for this proposal',proposalClient:'Proposal needs a client before conversion',conversionBlocked:'Conversion blocked: check linked records',projectCreated:'Project created from proposal',projectNotFound:'Project not found',nonBillable:'Non-billable projects cannot be invoiced',invoiceExists:'An invoice already exists for this project',projectClient:'Project needs a client',projectAmount:'Project has no billable amount',invoiceBlocked:'Invoice creation blocked: check linked records',invoiceCreated:'Invoice created from project',imported:'Data imported',importError:'Import error',invoiceLine:'Invoice needs at least one line',paymentInput:'Error: select an invoice and enter a payment amount',invoiceMissing:'Error: invoice not found',paymentClient:'Error: payment client must match invoice client',paymentInvoiceAmount:'Error: payment exceeds invoice outstanding',installmentMissing:'Error: selected installment not found',paymentInstallmentAmount:'Error: payment exceeds selected installment outstanding',invoiceLines:'Error: check invoice lines',taxRate:'Error: tax rate must be between 0 and 100%',discount:'Error: check discount',paymentPlan:'Error: payment plan does not match invoice total',relations:'Error: check linked records',entityReady:'Entity details ready to connect to store',cashflowExported:'Cashflow report exported',profitExported:'Profit analysis exported'},
@@ -2196,10 +2206,30 @@ function importBusinessData(file){
   };
   reader.readAsText(file);
 }
-refreshDashboardMetrics();
-renderStoredRecords();
-const saved=localStorage.getItem('business-os-lang')||'en';document.getElementById('lang').value=saved;render(saved);document.getElementById('lang').addEventListener('change',e=>{localStorage.setItem('business-os-lang',e.target.value);render(e.target.value)});
-applyUiCopy(saved);
+const saved=localStorage.getItem('business-os-lang')||'en';
+const langControl=document.getElementById('lang');
+if(langControl)langControl.value=saved;
+
+window.setBusinessOSLanguage=function(nextLang){
+  const lang=['en','ru','es','de','fr'].includes(nextLang)?nextLang:'en';
+  localStorage.setItem('business-os-lang',lang);
+  window.activeLanguage=lang;
+  if(langControl)langControl.value=lang;
+  try{render(lang);}catch(e){console.warn('BUSINESS OS render recovery',e);}
+  try{applyUiCopy(lang);}catch(e){console.warn('BUSINESS OS copy recovery',e);}
+  try{refreshSettingsLabels();}catch(e){}
+  try{refreshDashboardMetrics();}catch(e){console.warn('BUSINESS OS dashboard recovery',e);}
+  try{renderStoredRecords();}catch(e){console.warn('BUSINESS OS records recovery',e);}
+  return lang;
+};
+
+if(langControl){
+  langControl.dataset.runtimeBound='1';
+  langControl.addEventListener('change',e=>window.setBusinessOSLanguage(e.target.value));
+}
+
+try{window.setBusinessOSLanguage(saved);}catch(e){console.warn('BUSINESS OS boot recovery',e);}
+window.__BUSINESS_OS_RUNTIME_READY__=true;
 document.getElementById('dashboardPeriod')?.addEventListener('change',e=>{
   dashboardPeriod=e.target.value||'month';
   refreshDashboardMetrics();
