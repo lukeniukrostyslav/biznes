@@ -209,7 +209,8 @@ function archiveRecord(store, collection, id) {
 function restoreRecord(store, archivedId) {
   const normalized = normalizeStore(store);
   const archived = (normalized.archivedRecords || []).find(item => item.id === archivedId);
-  if (!archived || !COLLECTIONS.includes(archived.collection)) return normalized;
+  if (!archived) return normalized;
+  assertCollection(archived.collection);
 
   const { collection, archivedAt, ...record } = archived;
   const candidate = normalizeStore({
