@@ -554,3 +554,11 @@ GitHub commits: `4efed03d0ae1e285928f9b6963d8e189f81702ee`, `4a9007238e674d170af
 GitHub commits: `6d2bedc38988cebf922c3a28e29cbf2a0fb92502`, `6200cb93a7337a9dc6b34e7b268fe4d162b9ecf0`.
 
 Процент не повышен: необходим полный подтверждённый test execution. **B07 = 89%.**
+
+## B07 — ambiguous archive restore checkpoint — 2026-09-25
+
+Усилен `restoreRecord()`: если несколько архивных записей имеют одинаковый `id` в разных коллекциях, восстановление теперь не выбирает запись случайно, а отклоняет неоднозначный запрос. Добавлен regression test.
+
+GitHub commits: `3f4afb7b3ddf319b804d79adea0e2ac7a7411805`, `a6c5d0560828a0c9c9d658e10ff7c73323886358`.
+
+Процент не повышен без полного подтверждённого test execution. **B07 = 89%.**
