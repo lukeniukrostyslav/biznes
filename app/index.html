@@ -323,6 +323,23 @@ function refreshProjectMetrics(){
   document.querySelectorAll('[data-project-ui]').forEach(el=>{const key=el.dataset.projectUi;if(copy[key])el.textContent=copy[key];});
   renderProjectHealth();
 }
+function convertLeadToClientInUi(leadId){
+  const lead=(businessStore.leads||[]).find(x=>x.id===leadId);
+  if(!lead)return;
+  try{
+    const result=convertLeadToClient(lead,businessStore.clients||[]);
+    let next={...businessStore,leads:(businessStore.leads||[]).map(x=>x.id===lead.id?{...x,...result.lead,updatedAt:new Date().toISOString()}:x)};
+    if(result.client){
+      next.clients=[...(businessStore.clients||[]).filter(x=>x.id!==result.client.id),result.client];
+    }
+    const errors=validateStoredRelationships(next);
+    if(errors.length){toast(t('conversionBlocked'));return;}
+    businessStore=saveStore(next);
+    toast({en:'Lead converted to client',ru:'Лид преобразован в клиента',es:'Lead convertido en cliente',de:'Lead in Kunden umgewandelt',fr:'Prospect converti en client'}[activeLanguage]||'Lead converted to client');
+    refreshDashboardMetrics();
+    renderStoredRecords();
+  }catch(error){toast({en:error.message,ru:'Конвертация невозможна: '+error.message,es:error.message,de:error.message,fr:error.message}[activeLanguage]||error.message);}
+}
 function renderLeads(){
   const screen=document.getElementById('leadsScreen');
   const pipeline=screen?.querySelector('.pipeline');
@@ -333,10 +350,11 @@ function renderLeads(){
   pipeline.innerHTML=result.stages.map(stage=>{
     const items=result.byStage[stage]||[];
     return '<div class="stage"><div class="stage-head"><span>'+escapeHtml(stage)+'</span><span>'+items.length+'</span></div>'+
-      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.company||x.email||x.notes||copy.opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+copy.nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><small>Probability · '+Number(x.probability||0)+'%</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div></div>').join(''):'<div class="empty" style="padding:22px 8px">'+copy.noLeads+'</div>')+
+      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.company||x.email||x.notes||copy.opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+copy.nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><small>Probability · '+Number(x.probability||0)+'%</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div>'+(String(x.status).toLowerCase()==='won'&&!x.clientId?'<button class="secondary lead-convert" style="margin-top:8px">'+leadConvertLabel+'</button>':'')+'</div>').join(''):'<div class="empty" style="padding:22px 8px">'+copy.noLeads+'</div>')+
       '</div>';
   }).join('');
   if(filter)filter.onchange=renderLeads;
+  pipeline.querySelectorAll('.lead-convert').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();convertLeadToClientInUi(btn.closest('.deal')?.dataset.recordId);}));
   pipeline.querySelectorAll('.deal').forEach(el=>el.addEventListener('click',()=>{
     const rec=(businessStore.leads||[]).find(x=>x.id===el.dataset.recordId);
     if(rec) openEditDrawer('leads',rec);
