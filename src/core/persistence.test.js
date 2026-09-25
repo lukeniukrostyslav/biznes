@@ -237,3 +237,13 @@ test('validateStore rejects malformed archived records and duplicate archived id
   assert.ok(validation.errors.some(error=>error.includes('invalid collection')));
   assert.ok(validation.errors.some(error=>error.includes('duplicate archived id')));
 });
+
+
+test('validateStore rejects archived records that collide with active ids',()=>{
+  const store=createEmptyStore();
+  store.clients=[{id:'c1',name:'Active'}];
+  store.archivedRecords=[{id:'c1',collection:'clients',name:'Archived duplicate'}];
+  const validation=validateStore(store);
+  assert.equal(validation.valid,false);
+  assert.ok(validation.errors.some(error=>error.includes('archived record conflicts with active record: clients:c1')));
+});
