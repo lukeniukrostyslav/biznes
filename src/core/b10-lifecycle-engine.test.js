@@ -87,7 +87,7 @@ test('rejects mismatched downstream client relationships', () => {
 test('rejects payment beyond payment-plan allocation', () => {
   const store = baseStore();
   store.projects = [{ id: 'project_1', clientId: 'client_1', proposalId: 'proposal_1', revenue: 100 }];
-  store.invoices = [{ id: 'invoice_1', clientId: 'client_1', projectId: 'project_1', status: 'Sent', lineItems: [{ description: 'x', quantity: 1, unitPrice: 100 }], paymentPlan: { installments: [{ amountType: 'equal', amount: 0, dueDate: '2026-10-01' }] } }];
+  store.invoices = [{ id: 'invoice_1', clientId: 'client_1', projectId: 'project_1', status: 'Sent', lineItems: [{ description: 'x', quantity: 1, unitPrice: 100 }], paymentPlan: { installments: [{ amountType: 'fixed', amount: 50, dueDate: '2026-10-01' }] } }];
   store.payments = [{ id: 'payment_1', invoiceId: 'invoice_1', clientId: 'client_1', amount: 100 }];
   const result = validateB10Lifecycle(store, date);
   assert.equal(result.valid, false);
