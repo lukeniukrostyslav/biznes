@@ -5,5 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test src/core/*.test.js src/app-static.test.js"
+  },
+  "devDependencies": {
+    "playwright": "1.55.0"
   }
 }
