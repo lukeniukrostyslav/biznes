@@ -20,7 +20,7 @@ jobs:
         run: npm install
       - name: Run core tests
         run: npm test
-      - name: Install Playwright
-        run: npx -y playwright@1.55.0 install --with-deps chromium
+      - name: Install Playwright browser matrix
+        run: npx -y playwright@1.55.0 install --with-deps chromium firefox webkit
       - name: Run browser E2E tests
         run: npx -y playwright@1.55.0 test
