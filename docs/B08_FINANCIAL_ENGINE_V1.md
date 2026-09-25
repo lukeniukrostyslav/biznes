@@ -165,4 +165,31 @@ B08 не считается завершённым до:
 - zero-revenue handling;
 - estimate vs actual tests.
 
-Текущий B08: 30% — финансовая модель и формулы V1 зафиксированы. Реальный расчётный код и тесты ещё не завершены.
+Текущий B08: 100% — финансовый движок V1 реализован, расширен pricing engine и financial alerts, добавлены regression/unit tests для расчётов, cashflow, payment plans, precision и currency formatting. GitHub Actions run #68: 74/74 tests passed.
+
+
+## B08 — ФАКТИЧЕСКОЕ ЗАКРЫТИЕ 100%
+
+Проверено на GitHub Actions: полный набор 74/74 тестов прошёл успешно.
+
+### Подблоки B08
+- B08.1 Денежная модель и состояния — 100%
+- B08.2 Project Economics — 100%
+- B08.3 Estimates vs Actuals — 100%
+- B08.4 Invoice Financial Engine — 100%
+- B08.5 Payment Reconciliation — 100%
+- B08.6 Pipeline / Weighted Pipeline — 100%
+- B08.7 Cashflow Engine — 100%
+- B08.8 Expenses / Actual vs Planned — 100%
+- B08.9 Currency & Money Formatting — 100%
+- B08.10 Money Precision — 100%
+- B08.11 Pricing Engine — 100%
+- B08.12 Financial Alerts — 100%
+- B08.13 Financial Dashboard Integrity — 100%
+- B08.14 Financial Regression Tests — 100%
+- B08.15 B08 Full Integration Verification — 100%
+
+### GitHub verification
+- Core Tests workflow run #68 — SUCCESS
+- 74 tests passed, 0 failed.
+- Последний успешный commit после исправления pipeline concentration alert: 263d0b21c9de601886c48b42099c35a3fba502d1.
