@@ -553,6 +553,7 @@ function deleteRecord(type,id){
   renderStoredRecords();
 }
 function renderCashflow(){
+function refreshDashboardVisuals(){
   const metrics=calculateBusinessMetrics(businessStore);
   const forecast=calculateCashflowForecast(businessStore,new Date(),30);
   document.getElementById('cashflowReceived').textContent=money(metrics.paid);
@@ -642,6 +643,7 @@ function renderDashboardRealData(){
   if(cols[1])cols[1].innerHTML='<div class="card-title"><h2>'+t.overdue+'</h2><span class="danger">'+overdue.length+'</span></div><div class="list">'+overdueHtml+'</div>';
   if(cols[2])cols[2].innerHTML='<div class="card-title"><h2>'+t.profit+'</h2><span class="muted">'+t.view+'</span></div><table class="profit-table"><thead><tr><th>Project</th><th>Revenue</th><th>Profit</th><th>Margin</th></tr></thead><tbody>'+projectHtml+'</tbody></table>';
 }
+}
 const invoiceProposalUiCopy={
  en:{invoiced:'Invoiced',paid:'Paid',outstanding:'Outstanding',overdue:'Overdue',drafts:'Drafts',sent:'Sent',awaitingDecision:'Awaiting decision',winRate:'Win rate'},
  ru:{invoiced:'Выставлено',paid:'Оплачено',outstanding:'К оплате',overdue:'Просрочено',drafts:'Черновики',sent:'Отправлено',awaitingDecision:'Ожидают решения',winRate:'Конверсия в выигрыш'},
@@ -712,6 +714,7 @@ function refreshDashboardMetrics(){
   renderCashflow();
   refreshOperationalMetrics();
   refreshInvoiceProposalMetrics();
+  refreshDashboardVisuals();
   renderProfitRealData();
   renderDashboardRealData();
 }
