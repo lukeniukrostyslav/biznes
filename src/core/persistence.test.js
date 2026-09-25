@@ -247,3 +247,11 @@ test('validateStore rejects archived records that collide with active ids',()=>{
   assert.equal(validation.valid,false);
   assert.ok(validation.errors.some(error=>error.includes('archived record conflicts with active record: clients:c1')));
 });
+
+
+test('collection guard is available to all persistence mutators',()=>{
+  const store=createEmptyStore();
+  assert.throws(()=>upsertRecord(store,'unknown',{id:'x'}),/Unknown BUSINESS OS collection/);
+  assert.throws(()=>removeRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
+  assert.throws(()=>archiveRecord(store,'unknown','x'),/Unknown BUSINESS OS collection/);
+});
