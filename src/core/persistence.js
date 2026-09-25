@@ -248,8 +248,12 @@ function archiveRecord(store, collection, id) {
 
 function restoreRecord(store, archivedId) {
   const normalized = normalizeStore(store);
-  const archived = (normalized.archivedRecords || []).find(item => item.id === archivedId);
-  if (!archived) return normalized;
+  const matches = (normalized.archivedRecords || []).filter(item => item.id === archivedId);
+  if (!matches.length) return normalized;
+  if (matches.length > 1) {
+    throw new Error('Cannot restore ambiguous archived record: ' + archivedId);
+  }
+  const archived = matches[0];
   assertCollection(archived.collection);
 
   const { collection, archivedAt, ...record } = archived;
