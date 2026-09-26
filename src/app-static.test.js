@@ -167,3 +167,18 @@ test('production create bridge is exposed to the fallback click handler', () => 
   assert.doesNotMatch(html, /\}\);\\nfunction bindNav/);
   assert.doesNotMatch(html, /\n\s*\\n\s*const lower/);
 });
+
+test('fresh BUSINESS OS workspace is clean and contains no seeded demo records', () => {
+  assert.match(html, /const EMPTY_STORE = Object\.freeze\(\{[\s\S]*clients: \[\][\s\S]*leads: \[\][\s\S]*proposals: \[\][\s\S]*projects: \[\][\s\S]*invoices: \[\][\s\S]*payments: \[\][\s\S]*expenses: \[\][\s\S]*\}\);/);
+  assert.match(html, /function loadPersistentStore\(storage\)[\s\S]*if \(!raw\) return createEmptyStore\(\);/);
+  for (const demoText of ['Rossi Studio','AB Design','Studio Nova','#INV-1048','Website redesign','Brand system','Landing page']) {
+    assert.equal(html.includes(demoText), false, 'production app must not contain demo record: ' + demoText);
+  }
+});
+
+test('empty workspace renders zero financial state before user data exists', () => {
+  for (const id of ['metricRevenue','metricOutstanding','metricPipeline','metricProfit','dashIncome','dashExpenses','dashNetProfit','dashCashInBank','invoicesInvoiced','invoicesPaid','invoicesOutstanding','invoicesOverdue']) {
+    assert.match(html, new RegExp('id="' + id + '">€0<'));
+  }
+});
+
