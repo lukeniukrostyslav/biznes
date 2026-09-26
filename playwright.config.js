@@ -3,6 +3,8 @@ import { defineConfig } from 'playwright/test';
 export default defineConfig({
   testDir: './e2e',
   timeout: 30000,
+  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 2 : 0,
   projects: [
     { name: 'chromium', use: { browserName: 'chromium', headless: true, trace: 'retain-on-failure' } },
     { name: 'firefox', use: { browserName: 'firefox', headless: true, trace: 'retain-on-failure' } },
