@@ -218,3 +218,16 @@ test('B07 production empty states are driven by store collections', () => {
   assert.match(html, /No projects|Пока нет данных/);
 });
 
+
+test('B07 dashboard decorative KPI charts are data-driven and do not ship seeded activity', () => {
+  assert.match(html, /never seed decorative values/);
+  assert.match(html, /const valid=values\.some\(v=>v>0\)/);
+  assert.match(html, /if\(!valid\)\{if\(spark\)spark\.remove\(\);return;\}/);
+});
+
+test('B07 dashboard empty collections render explicit empty states instead of fake records', () => {
+  assert.match(html, /follow\.length\?follow\.slice/);
+  assert.match(html, /dashboardOverdue\.length\?dashboardOverdue\.slice/);
+  assert.match(html, /dashboardProjects\.length\?dashboardProjects\.slice/);
+});
+
