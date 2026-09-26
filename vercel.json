@@ -1,32 +1,13 @@
 {
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/app/index.html"
-    },
-    {
-      "source": "/premium-design.css",
-      "destination": "/app/premium-design.css"
-    }
+    {"source": "/", "destination": "/app/index.html"},
+    {"source": "/premium-design.css", "destination": "/app/premium-design.css"},
+    {"source": "/profit-os", "destination": "/profit-os/index.html"},
+    {"source": "/profit-os/", "destination": "/profit-os/index.html"}
   ],
   "headers": [
-    {
-      "source": "/",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
-    },
-    {
-      "source": "/app/index.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
-    }
+    {"source": "/", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
+    {"source": "/app/index.html", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
+    {"source": "/profit-os/index.html", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]}
   ]
 }
