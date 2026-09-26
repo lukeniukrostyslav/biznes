@@ -182,3 +182,23 @@ test('empty workspace renders zero financial state before user data exists', () 
   }
 });
 
+
+test('commercial financial chain uses user records rather than seeded dashboard values', () => {
+  assert.match(html, /calculateDashboardAnalytics\(store/);
+  assert.match(html, /calculateBusinessMetrics\(store/);
+  assert.match(html, /renderStoredRecords\(store/);
+  assert.match(html, /refreshDashboardMetrics\(store/);
+  for (const demoText of ['€24,680','€10,920','€8,420','€18,640','€31.4k','€14.8k','#INV-1048','Rossi Studio','AB Design']) {
+    assert.equal(html.includes(demoText), false, 'commercial app must not ship hardcoded demo financial data: ' + demoText);
+  }
+});
+
+test('commercial lifecycle exposes client-to-project-to-invoice-to-payment relations', () => {
+  for (const fn of ['buildProjectFromProposal','buildInvoiceFromProject','calculateInvoicePaymentStatus','allocatePaymentPlan']) {
+    assert.match(html, new RegExp('function\\s+' + fn + '\\s*\\('));
+  }
+  assert.match(html, /projectId/);
+  assert.match(html, /invoiceId/);
+  assert.match(html, /clientId/);
+});
+
