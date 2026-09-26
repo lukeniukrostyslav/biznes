@@ -44,7 +44,7 @@
 <div class="bottom"><button class="pro">✦ Lifetime Pro <span>$79</span></button><div class="privacy">● Local & private<br><small>Your data stays on this device</small></div></div>
 </aside>
 <main class="main">
-<header class="top"><button class="mobile" id="mobile">☰</button><div class="crumb" id="crumb">Dashboard</div><div class="top-right"><button>⌕</button><button>?</button><button id="languageButton" aria-label="Language">EN⌄</button><button class="avatar">R</button></div></header>
+<header class="top"><button class="mobile" id="mobile">☰</button><div class="crumb" id="crumb">Dashboard</div><div class="top-right"><button>⌕</button><button>?</button><button type="button" id="languageButton" aria-label="Language">EN⌄</button><button class="avatar">R</button></div></header>
 <div class="content">
 
 <section class="page active" id="dashboard">
@@ -125,6 +125,7 @@ var start=window.location.hash.replace("#","");if(start&&document.getElementById
     en:{label:"English",tag:"en-US"},ru:{label:"Русский",tag:"ru-RU"},es:{label:"Español",tag:"es-ES"},de:{label:"Deutsch",tag:"de-DE"},fr:{label:"Français",tag:"fr-FR"}
   };
   const D={
+    "en":{},
     "ru":{
       "PROFIT OS — Business Command Center":"PROFIT OS — Центр управления бизнесом","Profit & Pricing Engine":"Прибыль и ценообразование","WORKSPACE":"РАБОЧЕЕ ПРОСТРАНСТВО","My Business":"Мой бизнес","Local-first · EUR":"Локально · EUR",
       "Dashboard":"Обзор","Leads":"Лиды","Clients":"Клиенты","Projects":"Проекты","Proposals":"Предложения","Invoices":"Счета","Payments":"Платежи","Expenses":"Расходы","Cashflow":"Денежный поток","Analytics":"Аналитика","Product Pricing":"Ценообразование","Target Profit":"Целевая прибыль","Break-even":"Точка безубыточности","What-if Scenarios":"Сценарии «что если»","Product Comparison":"Сравнение продуктов","Monthly Projection":"Прогноз на месяц","Freelancer":"Фрилансер","Real Estate":"Недвижимость","Fee Profiles":"Профили комиссий","Saved Calculations":"Сохранённые расчёты","Import / Export":"Импорт / экспорт","Settings":"Настройки","Help":"Помощь",
@@ -180,6 +181,7 @@ var start=window.location.hash.replace("#","");if(start&&document.getElementById
         original.set(n,raw);
         const key=raw.replace(/\s+/g," ").trim();
         if(!key) return;
+        if(lang==="en"){ n.nodeValue=raw; return; }
         const value=dict[key];
         if(value) n.nodeValue=raw.replace(key,value);
       });
