@@ -17,7 +17,7 @@ permissions:
 jobs:
   quality-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,19 +37,31 @@ jobs:
         run: npm test
 
       - name: "2. LQ02 Runtime Boot"
-        run: npx playwright test e2e/lq02-runtime.spec.js
+        run: npx playwright test e2e/lq02-runtime.spec.js --workers=1
 
       - name: "3. LQ04 CRUD Forms"
-        run: npx playwright test e2e/lq04-crud.spec.js
+        run: npx playwright test e2e/lq04-crud.spec.js --workers=1
 
       - name: "4. LQ05 Localization"
-        run: npx playwright test e2e/lq05-localization.spec.js
+        run: npx playwright test e2e/lq05-localization.spec.js --workers=1
 
-      - name: "5. Design Regression"
-        run: npm run test:e2e
+      - name: "5A. Design Regression — Chromium"
+        run: npx playwright test --project=chromium --workers=1 --max-failures=1
 
-      - name: "6. B14 E2E"
-        run: npm run test:e2e
+      - name: "5B. Design Regression — Firefox"
+        run: npx playwright test --project=firefox --workers=1 --max-failures=1
+
+      - name: "5C. Design Regression — WebKit"
+        run: npx playwright test --project=webkit --workers=1 --max-failures=1
+
+      - name: "6. B14 E2E — Chromium"
+        run: npx playwright test --project=chromium --workers=1 --max-failures=1
+
+      - name: "7. B14 E2E — Firefox"
+        run: npx playwright test --project=firefox --workers=1 --max-failures=1
+
+      - name: "8. B14 E2E — WebKit"
+        run: npx playwright test --project=webkit --workers=1 --max-failures=1
 
       - name: Upload Playwright report
         if: always()
