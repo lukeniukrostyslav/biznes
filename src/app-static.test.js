@@ -204,7 +204,8 @@ test('commercial lifecycle exposes client-to-project-to-invoice-to-payment relat
 
 
 test('B07 create drawer resets editable fields so previous user data cannot leak into a new record', () => {
-  assert.match(html, /function openCreateDrawer\(type\)\{[\s\S]*fName[\s\S]*\.value=''[\s\S]*fCompany[\s\S]*\.value=''[\s\S]*fEmail[\s\S]*\.value=''/);\n  assert.match(html, /\['fCompany','fEmail'[\s\S]*'fValue'[\s\S]*\]\.forEach\(id=>document\.getElementById\(id\)\.value=''/);
+  assert.match(html, /function openCreateDrawer\(type\)\{[\s\S]*fName[\s\S]*\.value=''[\s\S]*fCompany[\s\S]*\.value=''[\s\S]*fEmail[\s\S]*\.value=''/);
+  assert.match(html, /\['fCompany','fEmail'[\s\S]*'fValue'[\s\S]*\]\.forEach\(id=>document\.getElementById\(id\)\.value=''/);
   assert.match(html, /setInvoiceLines\(\[\{description:'',quantity:1,unitPrice:0\}\]\)/);
   assert.match(html, /setInvoicePlanLines\(\[\]\)/);
   assert.match(html, /fInvoiceTaxRate.*\.value='0'/);
