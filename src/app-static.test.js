@@ -248,3 +248,10 @@ test('B07 archive lifecycle protects active relationships and supports restore',
   assert.match(html, /businessStore=saveStore\(archiveRecord\(businessStore,type,id\)\)/);
   assert.match(html, /businessStore=saveStore\(restoreRecord\(businessStore,btn\.dataset\.id\)\)/);
 });
+
+
+test('B07 leads expose archive action without breaking lead-to-client conversion', () => {
+  assert.match(html, /lead-convert/);
+  assert.match(html, /lead-archive/);
+  assert.match(html, /deleteRecord\('leads',btn\.closest\('\.deal'\)\?\.dataset\.recordId\)/);
+});
