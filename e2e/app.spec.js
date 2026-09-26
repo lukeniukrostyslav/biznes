@@ -129,9 +129,11 @@ test('B07 fresh workspace is clean and has no demo financial records', async ({ 
 test('B07 new client form starts empty after an earlier record was created', async ({ page }) => {
   await page.locator('#nav button[data-screen="2"]').click();
   await page.getByRole('button', { name: /New client/i }).click();
+  await expect(page.locator('#fName')).toBeVisible();
+  await expect(page.locator('#fStatus')).toBeVisible();
+  await expect(page.locator('#fCompany')).toBeHidden();
+  await expect(page.locator('#fEmail')).toBeHidden();
   await page.locator('#fName').fill('Temporary Client');
-  await page.locator('#fCompany').fill('Temporary Company');
-  await page.locator('#fEmail').fill('temporary@example.com');
   await page.locator('#drawerSave').click();
   await page.getByRole('button', { name: /New client/i }).click();
   await expect(page.locator('#fName')).toHaveValue('');
