@@ -1,13 +1,7 @@
 name: B14 E2E
 
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,24 +13,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Install dependencies
         run: npm install
-
-      - name: Install Playwright browser matrix
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox webkit
-
       - name: Run unit and static regression
         run: npm test
-
       - name: Run B14 E2E
         run: npm run test:e2e
-
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
