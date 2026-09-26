@@ -142,3 +142,79 @@ test('B07 new client form starts empty after an earlier record was created', asy
   await expect(page.locator('#fValue')).toHaveValue('0');
   await page.locator('#drawerCancel').click();
 });
+
+
+test('B07.7 invoice create/edit calculates lines discount tax and status', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+
+  await page.goto('http://127.0.0.1:4173/app/index.html');
+  await page.waitForLoadState('networkidle');
+
+  await page.locator('#nav button[data-screen="2"]').click();
+  await page.getByRole('button', { name: /New client/i }).click();
+  await page.locator('#fName').fill('B077 Client');
+  await page.locator('#drawerSave').click();
+
+  let stored = await page.evaluate(() => JSON.parse(localStorage.getItem('business-os-store-v1')));
+  const client = stored.clients.find(x => x.name === 'B077 Client');
+  expect(client).toBeTruthy();
+
+  await page.locator('#nav button[data-screen="5"]').click();
+  await page.getByRole('button', { name: /New invoice/i }).click();
+  await page.locator('#fName').fill('B077 Invoice');
+  await page.locator('#fClientId').selectOption(client.id);
+
+  const line = page.locator('#fInvoiceLines .invoice-line').first();
+  await line.locator('[data-line="description"]').fill('B077 Service');
+  await line.locator('[data-line="quantity"]').fill('2');
+  await line.locator('[data-line="unitPrice"]').fill('100');
+  await page.locator('#fInvoiceDiscountType').selectOption('percent');
+  await page.locator('#fInvoiceDiscountValue').fill('10');
+  await page.locator('#fInvoiceTaxRate').fill('20');
+  await page.locator('#fStatus').selectOption('Sent');
+  await page.locator('#drawerSave').click();
+
+  stored = await page.evaluate(() => JSON.parse(localStorage.getItem('business-os-store-v1')));
+  let invoice = stored.invoices.find(x => x.name === 'B077 Invoice');
+  expect(invoice).toBeTruthy();
+  expect(invoice.clientId).toBe(client.id);
+  expect(invoice.lineItems).toHaveLength(1);
+  expect(invoice.lineItems[0]).toMatchObject({ description: 'B077 Service', quantity: 2, unitPrice: 100 });
+  expect(invoice.discountType).toBe('percent');
+  expect(invoice.discountValue).toBe(10);
+  expect(invoice.taxRate).toBe(20);
+  expect(invoice.value).toBe(216);
+  expect(invoice.amount).toBe(216);
+  expect(invoice.status).toBe('Sent');
+
+  const invoiceRow = page.locator('#invoicesScreen tbody tr').filter({ hasText: 'B077 Invoice' }).first();
+  await expect(invoiceRow).toContainText('€216');
+
+  await invoiceRow.click();
+  await expect(page.locator('#detailDrawer')).toHaveClass(/open/);
+  await page.locator('#fInvoiceDiscountValue').fill('20');
+  await page.locator('#fInvoiceTaxRate').fill('10');
+  await page.locator('#drawerSave').click();
+
+  stored = await page.evaluate(() => JSON.parse(localStorage.getItem('business-os-store-v1')));
+  invoice = stored.invoices.find(x => x.name === 'B077 Invoice');
+  expect(invoice.discountValue).toBe(20);
+  expect(invoice.taxRate).toBe(10);
+  expect(invoice.value).toBe(198);
+  expect(invoice.amount).toBe(198);
+  expect(invoice.status).toBe('Sent');
+
+  await page.getByRole('button', { name: /New invoice/i }).click();
+  await page.locator('#fName').fill('B077 Invalid Tax');
+  await page.locator('#fClientId').selectOption(client.id);
+  await page.locator('#fInvoiceLines .invoice-line [data-line="description"]').fill('Invalid tax test');
+  await page.locator('#fInvoiceLines .invoice-line [data-line="quantity"]').fill('1');
+  await page.locator('#fInvoiceLines .invoice-line [data-line="unitPrice"]').fill('100');
+  await page.locator('#fInvoiceTaxRate').fill('101');
+  await page.locator('#drawerSave').click();
+
+  stored = await page.evaluate(() => JSON.parse(localStorage.getItem('business-os-store-v1')));
+  expect(stored.invoices.some(x => x.name === 'B077 Invalid Tax')).toBeFalsy();
+  expect(errors).toEqual([]);
+});
