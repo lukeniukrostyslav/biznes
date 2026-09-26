@@ -202,3 +202,19 @@ test('commercial lifecycle exposes client-to-project-to-invoice-to-payment relat
   assert.match(html, /clientId/);
 });
 
+
+test('B07 create drawer resets editable fields so previous user data cannot leak into a new record', () => {
+  assert.match(html, /function openCreateDrawer\(type\)\{[\s\S]*fName[\s\S]*\.value=''[\s\S]*fCompany[\s\S]*\.value=''[\s\S]*fEmail[\s\S]*\.value=''[\s\S]*fValue[\s\S]*\.value=''/);
+  assert.match(html, /setInvoiceLines\(\[\{description:'',quantity:1,unitPrice:0\}\]\)/);
+  assert.match(html, /setInvoicePlanLines\(\[\]\)/);
+  assert.match(html, /fInvoiceTaxRate.*\.value='0'/);
+  assert.match(html, /fInvoiceDiscountType.*\.value='none'/);
+});
+
+test('B07 production empty states are driven by store collections', () => {
+  assert.match(html, /const leads=\(businessStore\.leads\|\|\[\]\)/);
+  assert.match(html, /const invoices=businessStore\.invoices\|\|\[\]/);
+  assert.match(html, /const projects=businessStore\.projects\|\|\[\]/);
+  assert.match(html, /No projects|Пока нет данных/);
+});
+
