@@ -1,14 +1,7 @@
 name: LQ05 Localization
-run-name: LQ05 Localization
 
 on:
-  push:
-    branches: [main, master]
   workflow_dispatch:
-
-concurrency:
-  group: lq05-localization-${{ github.ref }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -20,21 +13,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Install dependencies
         run: npm install
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox webkit
-
       - name: Run LQ05 Localization only
         run: npx playwright test e2e/lq05-localization.spec.js
-
       - name: Upload LQ05 report
         if: always()
         uses: actions/upload-artifact@v4
@@ -44,5 +32,3 @@ jobs:
             playwright-report/
             test-results/
           if-no-files-found: ignore
-
-# LQ05 rerun trigger
