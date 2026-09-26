@@ -1800,12 +1800,12 @@ function renderLeads(){
   pipeline.innerHTML=result.stages.map(stage=>{
     const items=result.byStage[stage]||[];
     return '<div class="stage"><div class="stage-head"><span>'+escapeHtml(stage)+'</span><span>'+items.length+'</span></div>'+
-      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.company||x.email||x.notes||copy.opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+copy.nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><small>Probability · '+Number(x.probability||0)+'%</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div>'+(String(x.status).toLowerCase()==='won'&&!x.clientId?'<button class="secondary lead-convert" style="margin-top:8px">'+leadConvertLabel+'</button>':'')+'</div>').join(''):'<div class="empty" style="padding:22px 8px">'+copy.noLeads+'</div>')+
+      (items.length?items.map(x=>'<div class="deal" data-record-type="leads" data-record-id="'+escapeHtml(x.id)+'"><strong>'+recordLabel(x)+'</strong><small>'+escapeHtml(x.company||x.email||x.notes||copy.opportunity)+'</small><div class="deal-value">'+recordAmount(x)+'</div><small>'+copy.nextAction+' · '+escapeHtml(x.nextAction||'—')+'</small><small>Probability · '+Number(x.probability||0)+'%</small><div style="margin-top:8px">'+statusBadge(x.status)+'</div>'+(String(x.status).toLowerCase()==='won'&&!x.clientId?'<button class="secondary lead-convert" style="margin-top:8px">'+leadConvertLabel+'</button>':'')+'<button class="secondary lead-archive" style="margin-top:8px">'+(copy.delete||'Archive')+'</button></div>').join(''):'<div class="empty" style="padding:22px 8px">'+copy.noLeads+'</div>')+
       '</div>';
   }).join('');
   if(filter)filter.onchange=renderLeads;
   if(search)search.oninput=renderLeads;
-  pipeline.querySelectorAll('.lead-convert').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();convertLeadToClientInUi(btn.closest('.deal')?.dataset.recordId);}));
+  pipeline.querySelectorAll('.lead-convert').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();convertLeadToClientInUi(btn.closest('.deal')?.dataset.recordId);})); pipeline.querySelectorAll('.lead-archive').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();deleteRecord('leads',btn.closest('.deal')?.dataset.recordId);}));
   pipeline.querySelectorAll('.deal').forEach(el=>el.addEventListener('click',()=>{
     const rec=(businessStore.leads||[]).find(x=>x.id===el.dataset.recordId);
     if(rec) openEditDrawer('leads',rec);
