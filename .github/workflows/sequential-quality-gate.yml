@@ -1,0 +1,62 @@
+name: Sequential Quality Gate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: sequential-quality-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers once
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: "1. Core Tests"
+        run: npm test
+
+      - name: "2. LQ02 Runtime Boot"
+        run: npx playwright test e2e/lq02-runtime.spec.js
+
+      - name: "3. LQ04 CRUD Forms"
+        run: npx playwright test e2e/lq04-crud.spec.js
+
+      - name: "4. LQ05 Localization"
+        run: npx playwright test e2e/lq05-localization.spec.js
+
+      - name: "5. Design Regression"
+        run: npm run test:e2e
+
+      - name: "6. B14 E2E"
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sequential-quality-gate-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
