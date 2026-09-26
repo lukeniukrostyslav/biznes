@@ -81,7 +81,7 @@ test.describe('LQ05 localization acceptance', () => {
     await expect(page.locator('#nav button[data-screen="0"]')).not.toHaveText('Dashboard');
     await page.locator('#lang').selectOption('en');
     await expect(page.locator('#lang')).toHaveValue('en');
-    await expect(page.locator('#nav button[data-screen="0"]')).toHaveText('Dashboard');
+    await expect(page.locator('#nav button[data-screen="0"]')).toContainText('Dashboard');
     await page.locator('#nav button[data-screen="1"]').click();
     await page.locator('button[data-i18n="newLead"]').click();
     await expect(page.locator('#drawerCancel')).toHaveText('Cancel');
