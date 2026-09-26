@@ -256,3 +256,17 @@ test('B07 leads expose archive action without breaking lead-to-client conversion
   assert.match(html, /lead-archive/);
   assert.match(html, /deleteRecord\('leads',btn\.closest\('\.deal'\)\?\.dataset\.recordId\)/);
 });
+
+
+test('B07 commercial preview is also free of seeded demo records and amounts', () => {
+  const previewPath = new URL('../profit-os/index.html', import.meta.url);
+  const preview = fs.readFileSync(previewPath, 'utf8');
+  for (const demoText of [
+    'Rossi Studio','AB Design','Studio Nova',
+    '#INV-1048','#INV-1047','#INV-1043',
+    '€24,680','€10,920','€8,420','€18,640','€31.4k','€14.8k',
+    'Website redesign','Brand system','Landing page'
+  ]) {
+    assert.equal(preview.includes(demoText), false, 'commercial preview must not contain demo data: ' + demoText);
+  }
+});
