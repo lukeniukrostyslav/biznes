@@ -112,3 +112,31 @@ test('B14 accessibility smoke: named controls and keyboard activation', async ({
   await expect(page.locator('label[for="fName"]')).toBeVisible();
   await page.locator('#drawerCancel').click();
 });
+
+
+test('B07 fresh workspace is clean and has no demo financial records', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/app/index.html');
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('#metricRevenue')).toHaveText('€0');
+  await expect(page.locator('#metricOutstanding')).toHaveText('€0');
+  await expect(page.locator('#metricPipeline')).toHaveText('€0');
+  await expect(page.locator('#metricProfit')).toHaveText('€0');
+  await expect(page.locator('body')).not.toContainText('Rossi Studio');
+  await expect(page.locator('body')).not.toContainText('AB Design');
+  await expect(page.locator('body')).not.toContainText('#INV-1048');
+});
+
+test('B07 new client form starts empty after an earlier record was created', async ({ page }) => {
+  await page.locator('#nav button[data-screen="2"]').click();
+  await page.getByRole('button', { name: /New client/i }).click();
+  await page.locator('#fName').fill('Temporary Client');
+  await page.locator('#fCompany').fill('Temporary Company');
+  await page.locator('#fEmail').fill('temporary@example.com');
+  await page.locator('#drawerSave').click();
+  await page.getByRole('button', { name: /New client/i }).click();
+  await expect(page.locator('#fName')).toHaveValue('');
+  await expect(page.locator('#fCompany')).toHaveValue('');
+  await expect(page.locator('#fEmail')).toHaveValue('');
+  await expect(page.locator('#fValue')).toHaveValue('0');
+  await page.locator('#drawerCancel').click();
+});
