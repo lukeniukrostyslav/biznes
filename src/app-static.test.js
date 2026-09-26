@@ -186,7 +186,7 @@ test('empty workspace renders zero financial state before user data exists', () 
 test('commercial financial chain uses user records rather than seeded dashboard values', () => {
   assert.match(html, /calculateDashboardAnalytics\(store/);
   assert.match(html, /calculateBusinessMetrics\(store/);
-  assert.match(html, /renderStoredRecords\(store/);
+  assert.match(html, /function renderStoredRecords\(\)/);
   assert.match(html, /refreshDashboardMetrics\(store/);
   for (const demoText of ['€24,680','€10,920','€8,420','€18,640','€31.4k','€14.8k','#INV-1048','Rossi Studio','AB Design']) {
     assert.equal(html.includes(demoText), false, 'commercial app must not ship hardcoded demo financial data: ' + demoText);
@@ -204,7 +204,7 @@ test('commercial lifecycle exposes client-to-project-to-invoice-to-payment relat
 
 
 test('B07 create drawer resets editable fields so previous user data cannot leak into a new record', () => {
-  assert.match(html, /function openCreateDrawer\(type\)\{[\s\S]*fName[\s\S]*\.value=''[\s\S]*fCompany[\s\S]*\.value=''[\s\S]*fEmail[\s\S]*\.value=''[\s\S]*fValue[\s\S]*\.value=''/);
+  assert.match(html, /function openCreateDrawer\(type\)\{[\s\S]*fName[\s\S]*\.value=''[\s\S]*fCompany[\s\S]*\.value=''[\s\S]*fEmail[\s\S]*\.value=''/);\n  assert.match(html, /\['fCompany','fEmail'[\s\S]*'fValue'[\s\S]*\]\.forEach\(id=>document\.getElementById\(id\)\.value=''/);
   assert.match(html, /setInvoiceLines\(\[\{description:'',quantity:1,unitPrice:0\}\]\)/);
   assert.match(html, /setInvoicePlanLines\(\[\]\)/);
   assert.match(html, /fInvoiceTaxRate.*\.value='0'/);
