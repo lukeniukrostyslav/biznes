@@ -1,4 +1,4 @@
-# PROFIT OS — MASTER SPEC v1.0
+# PROFIT OS — MASTER SPEC v1.1
 
 ## Product
 Offline Profit & Pricing Calculator for creators, freelancers, marketplace sellers and small operators.
@@ -88,7 +88,7 @@ No analytics or remote data transfer in core app.
 Do not require login.
 No personal/business data leaves the device.
 
-## Localization
+## Localization — STRICT RULE
 Required UI languages:
 - English
 - Russian
@@ -97,7 +97,32 @@ Required UI languages:
 - German
 - French
 
-English is the primary commercial language. Translation keys must be centralized; no hard-coded UI strings.
+English is the primary commercial language.
+
+**Translations must NOT be generated dynamically or automatically inside the application.**
+Each language must have its own dedicated, manually reviewed translation resource/file.
+
+Required language resources:
+- en
+- ru
+- it
+- es
+- de
+- fr
+
+Rules:
+1. English is the canonical source language for all UI strings.
+2. Every other language is translated separately into its own language resource.
+3. Do not use machine translation at runtime.
+4. Do not use automatic translation APIs or browser auto-translation as the product localization system.
+5. No language may be considered complete until its complete resource has been manually reviewed.
+6. The same key structure must exist in every language resource.
+7. Missing translation keys must fail QA; they must not silently fall back to English in the final commercial build.
+8. Do not hard-code user-facing UI text in components.
+9. All buttons, menus, validation errors, onboarding text, empty states, dialogs, settings, help text and calculator labels must use localization resources.
+10. After implementation, test every screen separately in every supported language for untranslated English text, duplicated labels, truncation, incorrect meaning and layout problems.
+11. English must be reviewed first and treated as the commercial master copy before translating the other five languages.
+12. If a professional human translation/review is required, it must be completed before the corresponding language is marked production-ready.
 
 ## Currency
 Support:
@@ -216,9 +241,14 @@ Q2 Calculation
 
 Q3 Localization
 - all six languages
+- English is reviewed as the canonical commercial source
+- each language resource is reviewed separately
+- no runtime automatic translation
 - no English leakage in translated UI
+- no missing translation keys
 - no duplicated labels
 - no clipped text
+- no incorrect/misleading translations
 
 Q4 Responsive
 - phone
@@ -254,6 +284,7 @@ Do not label the product sale-ready until:
 - zero known broken primary buttons
 - zero known calculation defects
 - zero untranslated required UI strings
+- every supported language resource has been separately reviewed
 - import/export round trip passes
 - responsive smoke tests pass
 - clean ZIP tested on a fresh environment
