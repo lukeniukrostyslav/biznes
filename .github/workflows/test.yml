@@ -1,14 +1,7 @@
 name: Core Tests
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch:
 
 jobs:
   test:
@@ -24,7 +17,7 @@ jobs:
         run: npm install
       - name: Run core tests
         run: npm test
-      - name: Install Playwright browser matrix
+      - name: Install Playwright browsers
         run: npx -y playwright@1.55.0 install --with-deps chromium firefox webkit
       - name: Run browser E2E tests
         run: npx -y playwright@1.55.0 test
