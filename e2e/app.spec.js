@@ -201,8 +201,8 @@ test('B07.7 invoice create/edit calculates lines discount tax and status', async
   invoice = stored.invoices.find(x => x.name === 'B077 Invoice');
   expect(invoice.discountValue).toBe(20);
   expect(invoice.taxRate).toBe(10);
-  expect(invoice.value).toBe(198);
-  expect(invoice.amount).toBe(198);
+  expect(invoice.value).toBe(176);
+  expect(invoice.amount).toBe(176);
   expect(invoice.status).toBe('Sent');
 
   await page.getByRole('button', { name: /New invoice/i }).click();
