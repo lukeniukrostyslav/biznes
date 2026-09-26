@@ -1873,13 +1873,13 @@ function renderStoredRecords(){
         const clientPayments=(businessStore.payments||[]).filter(p=>p.clientId===record.id||p.client===record.name||clientInvoices.some(i=>i.id===p.invoiceId));
         const revenue=clientPayments.reduce((s,p)=>s+Number(p.amount||0),0);
         const outstanding=clientInvoices.reduce((s,i)=>s+Number(calculateInvoicePaymentStatus(i,clientPayments,new Date()).outstanding||0),0);
-        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+projectCount+'</td><td>'+money(revenue)+'</td><td>'+money(outstanding)+'</td><td>'+statusBadge(record.status||'Active')+'</td>';
+        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+projectCount+'</td><td>'+money(revenue)+'</td><td>'+money(outstanding)+'</td><td>'+statusBadge(record.status||'Active')+'</td><td><button class="secondary row-edit">'+tc.edit+'</button> <button class="secondary row-delete">'+tc.delete+'</button></td>';
       }else if(type==='projects'){
         const profit=calculateProjectProfit(record,{expenses:businessStore.expenses||[]});
         const hasInvoice=(businessStore.invoices||[]).some(invoice=>invoice.projectId===record.id);
         const invoiceLabel={en:'Create invoice',ru:'Создать счёт',es:'Crear factura',de:'Rechnung erstellen',fr:'Créer une facture'}[activeLanguage]||'Create invoice';
         const invoiceAction=!hasInvoice&&String(record.billingType||'').toLowerCase()!=='non-billable'?'<button class="secondary row-invoice">'+invoiceLabel+'</button>':'';
-        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+money(profit.revenue)+'</td><td>'+money(profit.profit)+' / '+escapeHtml(profit.margin!=null?profit.margin+'%':'—')+'</td><td><small>'+tc.forecast+' '+money(profit.forecastProfit)+' · '+tc.budgetLeft+' '+(profit.budgetRemaining==null?'—':money(profit.budgetRemaining))+'</small></td><td>'+invoiceAction+' <button class="secondary row-edit">'+tc.edit+'</button></td>';
+        cells='<td><strong>'+recordLabel(record)+'</strong></td><td>'+statusBadge(record.status)+'</td><td>'+money(profit.revenue)+'</td><td>'+money(profit.profit)+' / '+escapeHtml(profit.margin!=null?profit.margin+'%':'—')+'</td><td><small>'+tc.forecast+' '+money(profit.forecastProfit)+' · '+tc.budgetLeft+' '+(profit.budgetRemaining==null?'—':money(profit.budgetRemaining))+'</small></td><td>'+invoiceAction+' <button class="secondary row-edit">'+tc.edit+'</button> <button class="secondary row-delete">'+tc.delete+'</button></td>';
       }else if(type==='proposals'){
         const status=String(record.status||'').toLowerCase(),alreadyLinked=(businessStore.projects||[]).some(project=>project.proposalId===record.id);
         const canConvert=['won','accepted'].includes(status)&&!alreadyLinked;
