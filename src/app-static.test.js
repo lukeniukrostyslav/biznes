@@ -231,3 +231,20 @@ test('B07 dashboard empty collections render explicit empty states instead of fa
   assert.match(html, /dashboardProjects\.length\?dashboardProjects\.slice/);
 });
 
+
+
+test('B07 primary record tables expose edit and archive actions for every core collection', () => {
+  assert.match(html, /type==='clients'[\s\S]*row-edit[\s\S]*row-delete/);
+  assert.match(html, /type==='projects'[\s\S]*row-edit[\s\S]*row-delete/);
+  assert.match(html, /type==='proposals'[\s\S]*row-edit[\s\S]*row-delete/);
+  assert.match(html, /else\{[\s\S]*row-edit[\s\S]*row-delete/);
+  assert.match(html, /row\.querySelector\('\.row-delete'\)\?\.addEventListener/);
+  assert.match(html, /deleteRecord\(type,rec\.id\)/);
+});
+
+test('B07 archive lifecycle protects active relationships and supports restore', () => {
+  assert.match(html, /Cannot archive record with active dependents/);
+  assert.match(html, /function restoreRecord\(store, archivedId\)/);
+  assert.match(html, /businessStore=saveStore\(archiveRecord\(businessStore,type,id\)\)/);
+  assert.match(html, /businessStore=saveStore\(restoreRecord\(businessStore,btn\.dataset\.id\)\)/);
+});
