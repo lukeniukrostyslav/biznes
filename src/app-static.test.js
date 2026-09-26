@@ -187,7 +187,7 @@ test('commercial financial chain uses user records rather than seeded dashboard 
   assert.match(html, /calculateDashboardAnalytics\(store/);
   assert.match(html, /calculateBusinessMetrics\(store/);
   assert.match(html, /function renderStoredRecords\(\)/);
-  assert.match(html, /refreshDashboardMetrics\(store/);
+  assert.match(html, /refreshDashboardMetrics\(\);/);
   for (const demoText of ['€24,680','€10,920','€8,420','€18,640','€31.4k','€14.8k','#INV-1048','Rossi Studio','AB Design']) {
     assert.equal(html.includes(demoText), false, 'commercial app must not ship hardcoded demo financial data: ' + demoText);
   }
