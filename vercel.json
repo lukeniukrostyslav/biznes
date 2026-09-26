@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    {"source": "/", "destination": "/app/index.html"},
+    {"source": "/", "destination": "/profit-os/index.html"},
     {"source": "/premium-design.css", "destination": "/app/premium-design.css"},
     {"source": "/profit-os", "destination": "/profit-os/index.html"},
     {"source": "/profit-os/", "destination": "/profit-os/index.html"}
